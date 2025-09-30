@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.TBK.crc.common.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "crc.refmap.json",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "HumanoidModelMixin"
+  ]
+}
