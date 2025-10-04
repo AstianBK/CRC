@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "crc:block/upgrade_table"
+    }
+  }
+}

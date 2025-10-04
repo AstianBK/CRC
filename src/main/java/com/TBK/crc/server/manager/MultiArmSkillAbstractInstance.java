@@ -14,10 +14,6 @@ public class MultiArmSkillAbstractInstance implements Comparable<MultiArmSkillAb
     protected final int spellLevel;
     protected final boolean locked;
 
-    private MultiArmSkillAbstractInstance() throws Exception {
-        throw new Exception("Cannot create empty power slots.");
-    }
-
     public MultiArmSkillAbstractInstance(MultiArmSkillAbstract spell, int level, boolean locked) {
         this.power = Objects.requireNonNull(spell);
         this.spellLevel = level;
@@ -54,14 +50,6 @@ public class MultiArmSkillAbstractInstance implements Comparable<MultiArmSkillAb
 
     public int getLevel() {
         return spellLevel;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public boolean canRemove() {
-        return !locked;
     }
 
     @Override

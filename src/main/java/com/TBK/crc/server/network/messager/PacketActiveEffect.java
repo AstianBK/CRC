@@ -22,7 +22,7 @@ public class PacketActiveEffect {
         recastInstance.readFromBuffer(buf);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         if (recastInstance != null) {
             recastInstance.writeToBuffer(buf);
         }

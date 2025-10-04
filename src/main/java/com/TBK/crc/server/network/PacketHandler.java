@@ -1,10 +1,7 @@
 package com.TBK.crc.server.network;
 
 import com.TBK.crc.CRC;
-import com.TBK.crc.server.network.messager.PacketActionRex;
-import com.TBK.crc.server.network.messager.PacketHandlerPowers;
-import com.TBK.crc.server.network.messager.PacketKeySync;
-import com.TBK.crc.server.network.messager.PacketSyncPosHotBar;
+import com.TBK.crc.server.network.messager.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,8 +36,21 @@ public class PacketHandler {
                 PacketKeySync::new, PacketKeySync::handle);
         channel.registerMessage(index++, PacketHandlerPowers.class, PacketHandlerPowers::write,
                 PacketHandlerPowers::new, PacketHandlerPowers::handle);
+        channel.registerMessage(index++, PacketActiveEffect.class, PacketActiveEffect::write,
+                PacketActiveEffect::new, PacketActiveEffect::handle);
+        channel.registerMessage(index++, PacketSyncCooldown.class, PacketSyncCooldown::write,
+                PacketSyncCooldown::new, PacketSyncCooldown::handle);
+        channel.registerMessage(index++, PacketSyncDurationEffect.class, PacketSyncDurationEffect::write,
+                PacketSyncDurationEffect::new, PacketSyncDurationEffect::handle);
+        channel.registerMessage(index++, PacketRemoveActiveEffect.class, PacketRemoveActiveEffect::write,
+                PacketRemoveActiveEffect::new, PacketRemoveActiveEffect::handle);
+        channel.registerMessage(index++, PacketAddSkill.class, PacketAddSkill::write,
+                PacketAddSkill::new, PacketAddSkill::handle);
+        channel.registerMessage(index++, PacketAddImplant.class, PacketAddImplant::write,
+                PacketAddImplant::new, PacketAddImplant::handle);
 
-
+        channel.registerMessage(index++, PacketSyncSkill.class, PacketSyncSkill::write,
+                PacketSyncSkill::new, PacketSyncSkill::handle);
 
     }
 

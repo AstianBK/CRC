@@ -5,15 +5,13 @@ import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.entity.TeleportEntity;
-import com.TBK.crc.server.manager.ActiveEffectDuration;
-import com.TBK.crc.server.manager.DurationInstance;
-import com.TBK.crc.server.manager.DurationResult;
-import com.TBK.crc.server.manager.PlayerCooldowns;
+import com.TBK.crc.server.manager.*;
 import com.TBK.crc.server.multiarm.*;
 import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketAddSkill;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import com.TBK.crc.server.network.messager.PacketSyncPosHotBar;
-import com.google.common.collect.Maps;
+import com.TBK.crc.server.network.messager.PacketSyncSkill;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -37,9 +34,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -60,12 +55,12 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public Entity catchEntity = null;
     public PlayerCooldowns cooldowns=new PlayerCooldowns();
     public ActiveEffectDuration durationEffect=new ActiveEffectDuration();
-
     public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(new HashMap<>());
+    public ImplantStore implantStore = new ImplantStore();
     public EntityType<?>[] types = new EntityType[]{
             BKEntityType.CYBORG_ROBOT_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get()
     };
-
+    public boolean dirty = false;
     public static MultiArmCapability get(Player player){
         return CRCCapability.getEntityCap(player,MultiArmCapability.class);
     }
@@ -160,11 +155,16 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.invokeTimer--;
             }
         }
-        if(Util.hasMultiArm()){
+        if(Util.hasMultiArm(this)){
+
             if (this.cooldownReUse>0){
                 this.cooldownReUse--;
             }
             if(player instanceof ServerPlayer){
+                if(this.dirty){
+                    PacketHandler.sendToPlayer(new PacketSyncSkill(this.skills.powers), (ServerPlayer) player);
+                    this.dirty = false;
+                }
                 if (this.cooldowns.hasCooldownsActive()){
                     this.cooldowns.tick(1);
                 }
@@ -180,7 +180,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
             if(!this.skills.getSkills().isEmpty()){
                 this.skills.getSkills().forEach(e->{
-                    if(this.durationEffect.hasDurationForSkill(e.getSkillAbstract())){
+                    if(this.durationEffect.hasDurationForSkill(e.getSkillAbstract()) || e.getSkillAbstract().canReactive){
                         e.getSkillAbstract().tick(this);
                         this.durationEffect.decrementDurationCount(e.getSkillAbstract());
                     }
@@ -202,6 +202,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
         }
     }
+
     public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
         Level level = entity.level();
         BlockPos origin = entity.blockPosition();
@@ -227,11 +228,27 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void onJoinGame(Player player, EntityJoinLevelEvent event) {
-        MultiArmSkillsAbstracts skillAbstracts = new MultiArmSkillsAbstracts(new HashMap<>());
-        skillAbstracts.addMultiArmSkillAbstracts(0,new SwordArm());
-        skillAbstracts.addMultiArmSkillAbstracts(1,new CannonArm());
-        skillAbstracts.addMultiArmSkillAbstracts(2,new GanchoArm());
-        this.setSetHotbar(skillAbstracts);
+        this.dirty = true;
+    }
+    public void clearAbilityStore(){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
+
+        setSetHotbar(map);
+        if(this.level.isClientSide){
+            PacketHandler.sendToServer(new PacketHandlerPowers(3,player, player));
+        }
+    }
+    public void addNewAbility(MultiArmSkillAbstract skill){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
+        int indexForUpgrade = Util.getIndexForName(skill.name);
+        if(indexForUpgrade !=-1){
+            map.addMultiArmSkillAbstracts(indexForUpgrade,skill);
+            setSetHotbar(map);
+            setPosSelectMultiArmSkillAbstract(indexForUpgrade);
+            if(this.level.isClientSide){
+                PacketHandler.sendToServer(new PacketAddSkill(skill.name,indexForUpgrade));
+            }
+        }
     }
 
     public void setSetHotbar(MultiArmSkillsAbstracts skillAbstracts){
@@ -246,7 +263,10 @@ public class MultiArmCapability implements IMultiArmPlayer {
     @Override
     public void stopSkill(MultiArmSkillAbstract power) {
         this.setLastUsingSkill(MultiArmSkillAbstract.NONE);
-        //power.stopMultiArmSkillAbstract(this);
+        power.stopAbility(this);
+        this.castingClientTimer = 0;
+        this.castingTimer = 0;
+        this.maxCastingClientTimer = 0;
         this.syncSkill(this.getPlayer());
     }
 
@@ -257,7 +277,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public boolean canUseSkill(MultiArmSkillAbstract skillAbstract) {
-        return !this.getCooldowns().isOnCooldown(skillAbstract) && !this.isCasting();
+        return !this.getCooldowns().isOnCooldown(skillAbstract) && !this.isCasting() && this.player.getMainHandItem().isEmpty();
     }
 
     @Override
@@ -276,6 +296,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(player instanceof ServerPlayer serverPlayer){
             this.cooldowns.syncToPlayer(serverPlayer);
             this.durationEffect.syncAllToPlayer();
+
         }
     }
     public void syncPos(int pos,Player player){
@@ -284,42 +305,40 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void upSkill() {
-        this.posSelectMultiArmSkillAbstract=this.posSelectMultiArmSkillAbstract+1>=this.skills.powers.size() ? 0 : this.posSelectMultiArmSkillAbstract+1;
-        if (this.getPlayer()!=null){
-            //this.getPlayer().sendSystemMessage(Component.nullToEmpty(this.posSelectMultiArmSkillAbstract+" Se cambio al"+this.getSelectSkill().name));
-        }
-        if(!this.level.isClientSide && this.getPlayer()!=null){
-            this.syncPos(this.posSelectMultiArmSkillAbstract,this.getPlayer());
-        }
+
     }
 
     @Override
     public void downSkill() {
-        this.posSelectMultiArmSkillAbstract=this.posSelectMultiArmSkillAbstract-1<0 ? this.skills.powers.size()-1 : this.posSelectMultiArmSkillAbstract-1;
-        if (this.getPlayer()!=null){
-            //this.getPlayer().sendSystemMessage(Component.nullToEmpty(this.posSelectMultiArmSkillAbstract+" Se cambio al "+this.getSelectSkill().name));
-        }
-        if(!this.level.isClientSide && this.getPlayer()!=null){
-            this.syncPos(this.posSelectMultiArmSkillAbstract,this.getPlayer());
-        }
+
     }
 
     @Override
     public void startCasting(Player player) {
-
         if(!this.level.isClientSide){
             PacketHandler.sendToPlayer(new PacketHandlerPowers(0,player, player), (ServerPlayer) player);
         }
 
         if(this.canUseSkill(this.getSelectSkill())){
+
             boolean skillActive=this.durationEffect.hasDurationForSkill(this.getSelectSkill());
-            if(!skillActive || this.getSelectSkill().isCanReActive()){
-                MultiArmSkillAbstract power=this.getSelectSkill();
-                this.setLastUsingSkill(this.getSelectSkill());
-                this.handledSkill(power);
+            if(this.getSelectSkill().isCasting){
+
+                this.startCasting(this.getSelectSkill(),this.player);
+                this.castingTimer = 20;
+                this.castingClientTimer = 20;
+                this.maxCastingClientTimer = 20;
+            }else {
+                if((!skillActive || this.getSelectSkill().isCanReActive())){
+                    MultiArmSkillAbstract power=this.getSelectSkill();
+                    this.setLastUsingSkill(this.getSelectSkill());
+                    this.handledSkill(power);
+                }
             }
+
         }
     }
+
     public void stopCasting(Player player) {
         if(!this.level.isClientSide){
             PacketHandler.sendToPlayer(new PacketHandlerPowers(2,player, player), (ServerPlayer) player);
@@ -332,13 +351,10 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.removeActiveEffect(instance,DurationResult.CLICKUP);
             }
         }
-        this.castingClientTimer=0;
-        this.maxCastingClientTimer=0;
-        this.castingTimer=0;
     }
 
     public void startCasting(MultiArmSkillAbstract power,Player player){
-        DurationInstance instance=new DurationInstance(power.name,0,10,200);
+        DurationInstance instance=new DurationInstance(power.name,0,20,200);
         this.addActiveEffect(instance,player);
         this.setLastUsingSkill(this.getSelectSkill());
         this.handledSkill(power);
@@ -361,6 +377,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
         CompoundTag tag=new CompoundTag();
         tag.putBoolean("publicEnemy",this.chickenEnemy);
         this.skills.save(tag);
+        CRC.LOGGER.debug("implant :"+this.implantStore);
+        this.implantStore.save(tag);
         tag.putInt("select_power",this.posSelectMultiArmSkillAbstract);
         if(this.cooldowns.hasCooldownsActive()){
             tag.put("cooldowns",this.cooldowns.saveNBTData());
@@ -374,10 +392,12 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        this.skills =new MultiArmSkillsAbstracts(nbt);
+        this.skills = new MultiArmSkillsAbstracts(nbt);
         this.posSelectMultiArmSkillAbstract=nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
-
+        CRC.LOGGER.debug("nbt :"+nbt);
+        this.implantStore = new ImplantStore(nbt);
+        CRC.LOGGER.debug("store :"+this.implantStore);
         if(nbt.contains("cooldowns")){
             ListTag listTag=nbt.getList("cooldowns",10);
             this.cooldowns.loadNBTData(listTag);
@@ -405,13 +425,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void setActiveEffectDuration(ActiveEffectDuration activeEffectDuration){
         this.durationEffect=activeEffectDuration;
     }
-
-
-    /*public <P extends SkillPlayerCapability> P getPatch(LivingEntity replaced, Class<P> pClass){
-        return SGCapability.getEntityCap(replaced,pClass);
-    }*/
-
-
 
     public static class SkillPlayerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
         private final LazyOptional<IMultiArmPlayer> instance = LazyOptional.of(MultiArmCapability::new);

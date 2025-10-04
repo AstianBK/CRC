@@ -1,11 +1,16 @@
 package com.TBK.crc.server.multiarm;
 
+import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MultiArmSkillsAbstracts {
@@ -14,30 +19,45 @@ public class MultiArmSkillsAbstracts {
     public MultiArmSkillsAbstracts(Map<Integer,MultiArmSkillAbstractInstance> powers){
         this.powers=powers;
     }
+    public MultiArmSkillsAbstracts(FriendlyByteBuf buf){
+        Map<Integer,MultiArmSkillAbstractInstance> map = new HashMap<>();
+        this.powers = buf.readMap(FriendlyByteBuf::readInt, buf1 -> {
+            return new MultiArmSkillAbstractInstance(Util.getTypeSkillForName(buf1.readUtf()),0);
+        });
+    }
+
+    public void write(FriendlyByteBuf buf){
+        buf.writeMap(this.powers, FriendlyByteBuf::writeInt,(buf1, multiArmSkillAbstractInstance) -> buf1.writeUtf(multiArmSkillAbstractInstance.getSkillAbstract().name));
+    }
 
     public MultiArmSkillsAbstracts(CompoundTag tag){
-        if(tag.contains("skills",9)){
+        Map<Integer,MultiArmSkillAbstractInstance> map = new HashMap<>();
+        if(tag.contains("skills")){
             ListTag listTag = tag.getList("skills",10);
             for(int i = 0 ; i<listTag.size() ; i++){
                 CompoundTag tag1=listTag.getCompound(i);
                 if(tag1.contains("name")){
                     int pos=tag1.getInt("pos");
-                    MultiArmSkillAbstract power = new MultiArmSkillAbstract(tag1);
-                    this.powers.put(pos, new MultiArmSkillAbstractInstance(power,0));
+                    MultiArmSkillAbstract power = Util.getTypeSkillForName(tag1.getString("name"));
+                    if(power!=null){
+                        map.put(pos, new MultiArmSkillAbstractInstance(power,0));
+                    }
                 }
             }
         }
+        this.powers = map;
     }
+
 
     public void save(CompoundTag tag){
         ListTag listtag = new ListTag();
-        for (int i=1;i<this.powers.size()+1;i++){
+        for (int i=0;i<this.powers.size();i++){
             if(this.powers.get(i)!=null){
                 MultiArmSkillAbstract power=this.powers.get(i).getSkillAbstract();
                 CompoundTag tag1=new CompoundTag();
                 tag1.putString("name",power.name);
                 tag1.putInt("pos",i);
-                //power.save(tag1);
+                power.save(tag1);
                 listtag.add(tag1);
             }
         }
@@ -70,6 +90,9 @@ public class MultiArmSkillsAbstracts {
     }
 
     public MultiArmSkillAbstract get(int pos){
-        return this.powers.get(pos).getSkillAbstract();
+        if(this.powers.containsKey(pos)){
+            return this.powers.get(pos).getSkillAbstract();
+        }
+        return MultiArmSkillAbstract.NONE;
     }
 }

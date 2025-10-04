@@ -5,8 +5,12 @@ import com.TBK.crc.client.gui.MultiArmOverlay;
 import com.TBK.crc.client.layer.GanchoLayer;
 import com.TBK.crc.client.layer.MultiarmLayer;
 import com.TBK.crc.client.model.*;
+import com.TBK.crc.common.registry.BKContainers;
+import com.TBK.crc.common.screen.CyborgTableScreen;
+import com.TBK.crc.common.screen.UpgradeTableScreen;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,12 +22,17 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = CRC.MODID, bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
 public class ClientEvent {
     public static final CubeDeformation OUT_ARMOR_DEFORMATION = new CubeDeformation(2F);
 
-
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        MenuScreens.register(BKContainers.POTION_MENU.get(), CyborgTableScreen::new);
+        MenuScreens.register(BKContainers.UPGRADE_MENU.get(), UpgradeTableScreen::new);
+    }
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(BoomChickenModel.LAYER_LOCATION, BoomChickenModel::createBodyLayer);
@@ -44,12 +53,7 @@ public class ClientEvent {
             //event.getSkin(s).addLayer(new GanchoLayer(event.getSkin(s)));
             //event.getSkin(s).addLayer(new LivingProtectionLayer(event.getSkin(s)));
         });
-        Minecraft.getInstance().getEntityRenderDispatcher().renderers.values().forEach(s->{
-            if(s instanceof LivingEntityRenderer<?,?> l){
-               // l.addLayer(new GanchoLayer(l));
-            }
 
-        });
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

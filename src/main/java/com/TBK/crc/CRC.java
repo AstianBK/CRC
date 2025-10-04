@@ -1,7 +1,7 @@
 package com.TBK.crc;
 
 import com.TBK.crc.client.renderer.*;
-import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.*;
 import com.TBK.crc.server.entity.GanchoEntity;
 import com.TBK.crc.server.entity.RexChicken;
 import com.TBK.crc.server.network.PacketHandler;
@@ -40,6 +40,10 @@ public class CRC
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         BKEntityType.ENTITY_TYPES.register(modEventBus);
+        BKItems.ITEMS.register(modEventBus);
+        BKBlocks.BLOCKS.register(modEventBus);
+        BKCreativeModeTab.TABS.register(modEventBus);
+        BKContainers.CONTAINERS.register(modEventBus);
         PacketHandler.registerMessages();
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -52,6 +56,7 @@ public class CRC
         EntityRenderers.register(BKEntityType.TELEPORT.get(), TeleportRenderer::new);
         EntityRenderers.register(BKEntityType.REX_CHICKEN.get(), RexChickenRenderer::new);
         EntityRenderers.register(BKEntityType.GANCHO.get(), GanchoRenderer::new);
+        EntityRenderers.register(BKEntityType.ELECTRO.get(), ElectroProjectileRenderer::new);
 
         EntityRenderers.register(BKEntityType.BOOM_CHICKEN.get(), BoomChickenRenderer::new);
 

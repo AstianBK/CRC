@@ -2,6 +2,8 @@ package com.TBK.crc;
 
 import com.TBK.crc.client.model.GanchoModel;
 import com.TBK.crc.client.model.MultiArmModel;
+import com.TBK.crc.common.Util;
+import com.TBK.crc.common.block.CyborgTableBlock;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
@@ -20,6 +22,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -44,9 +47,16 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+
+import java.util.Optional;
 
 @Mod.EventBusSubscriber()
 public class ModBusEvent {
@@ -98,6 +108,13 @@ public class ModBusEvent {
                     " YQ :" + CRC.yq + " ZQ :"+CRC.zq);
         }
 
+        if (event.getItemStack().is(Items.PRISMARINE_SHARD)){
+            MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
+            if (cap!=null){
+                cap.clearAbilityStore();
+            }
+
+        }
     }
     @SubscribeEvent
     public static void renderPreEvent(RenderLivingEvent.Post<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event){
@@ -178,17 +195,21 @@ public class ModBusEvent {
     }
     @SubscribeEvent
     public static void renderHand(RenderArmEvent event) {
-        boolean flag = true;
-        float f = flag ? 1.0F : -1.0F;
+        MultiArmCapability cap = MultiArmCapability.get(event.getPlayer());
+        if(cap!=null && Util.hasMultiArm(cap)){
+            boolean flag = true;
+            float f = flag ? 1.0F : -1.0F;
 
-        float partialTicks=Minecraft.getInstance().getPartialTick();
-        MultiArmModel<Player> modelLeft=new MultiArmModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(MultiArmModel.LAYER_LOCATION));
+            float partialTicks=Minecraft.getInstance().getPartialTick();
+            MultiArmModel<Player> modelLeft=new MultiArmModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(MultiArmModel.LAYER_LOCATION));
 
-        RenderType renderType = RenderType.entityTranslucent(TEXTURE);
-        modelLeft.selectArm(event.getPlayer(),event.getPlayer().tickCount+partialTicks);
-        modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
-        modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        event.setCanceled(true);
+            RenderType renderType = RenderType.entityTranslucent(TEXTURE);
+
+            modelLeft.selectArm(cap.getSelectSkill().name,cap.getSelectSkill(),event.getPlayer().tickCount+partialTicks);
+            modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
+            modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
@@ -213,6 +234,33 @@ public class ModBusEvent {
             }
         }
     }
+    @SubscribeEvent
+    public void sleepTimeCheck(@NotNull SleepingLocationCheckEvent event) {
+        if (event.getEntity().level().getBlockState(event.getSleepingLocation()).getBlock() instanceof CyborgTableBlock) {
+            event.setResult(Event.Result.ALLOW);
+        }
+    }
+    @SubscribeEvent
+    public void sleepTimeCheck(@NotNull SleepingTimeCheckEvent event) {
+        event.getSleepingLocation().ifPresent((blockPos -> {
+            if (event.getEntity().level().getBlockState(blockPos).getBlock() instanceof CyborgTableBlock) {
+                event.setResult(Event.Result.ALLOW);
+            }}));
+    }
+
+    @SubscribeEvent
+    public void sleepTimeFinish(@NotNull SleepFinishedTimeEvent event) {
+        if (event.getLevel() instanceof ServerLevel) {
+            boolean sleepingInCoffin = event.getLevel().players().stream().anyMatch(player -> {
+                Optional<BlockPos> pos = player.getSleepingPos();
+                return pos.isPresent() && event.getLevel().getBlockState(pos.get()).getBlock() instanceof CyborgTableBlock;
+            });
+            if (sleepingInCoffin) {
+                event.setTimeAddition(1000);
+            }
+        }
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SubscribeEvent
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> event) {
