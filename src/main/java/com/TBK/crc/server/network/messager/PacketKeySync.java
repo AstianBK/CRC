@@ -1,7 +1,9 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.CRCKeybinds;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -52,43 +54,24 @@ public class PacketKeySync implements Packet<PacketListener>{
         assert skillPlayerCapability != null;
         switch (this.key){
             case 0x52->{
+                if(this.action==0){
+                    skillPlayerCapability.stopCasting(player);
+                    CRC.LOGGER.debug("Stop casting");
+                }
                 if(skillPlayerCapability.cooldownReUse<=0){
-                    if(skillPlayerCapability.getSelectSkill().canReactive){
-                        if(this.action==0){
-                            skillPlayerCapability.stopCasting(player);
-                        }else if(this.action==1){
-                            skillPlayerCapability.startCasting(player);
-                        }
-                    }else {
-                        if(this.action==1){
-                            skillPlayerCapability.startCasting(player);
-                        }
+                    if(this.action==1){
+                        skillPlayerCapability.startCasting(player);
                     }
-                    skillPlayerCapability.cooldownReUse=10;
+                    skillPlayerCapability.cooldownReUse=2;
                 }
             }
             case 0x12->{
-                if(CRCKeybinds.attackKey3.isDown()){
-                    if(action==0){
-                        upPower(skillPlayerCapability);
-                    }else {
-                        downPower(skillPlayerCapability);
-                    }
-                }
+                MultiArmSkillAbstract skill = skillPlayerCapability.getSelectSkill();
+                skill.swapArm(skillPlayerCapability,skillPlayerCapability.getSkillForHotBar(this.action));
+                skillPlayerCapability.setPosSelectMultiArmSkillAbstract(this.action);
+                skillPlayerCapability.getSelectSkill().swapArm(skillPlayerCapability,skill);
             }
-            default ->{
-                //bite(player);
-            }
+
         }
     }
-
-    public static void upPower(MultiArmCapability skillPlayerCapability){
-        skillPlayerCapability.upSkill();
-
-    }
-
-    public static void downPower(MultiArmCapability skillPlayerCapability){
-        skillPlayerCapability.downSkill();
-    }
-
 }

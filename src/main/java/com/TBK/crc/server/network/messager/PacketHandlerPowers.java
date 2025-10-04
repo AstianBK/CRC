@@ -43,14 +43,21 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(()->{
-            assert context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-            this.handlerAnim();
+            if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT){
+                this.handler();
+            }else {
+                Player player=context.get().getSender();
+                MultiArmCapability cap=MultiArmCapability.get(player);
+                if(cap!=null){
+                    CRC.LOGGER.debug("Clear");
+                    cap.clearAbilityStore();
+                }
+            }
         });
         context.get().setPacketHandled(true);
     }
     @OnlyIn(Dist.CLIENT)
-    private void handlerAnim() {
-        CRC.LOGGER.debug("Packet id :"+id);
+    private void handler() {
         Player player=Minecraft.getInstance().player;
         MultiArmCapability cap=MultiArmCapability.get(player);
         if(cap!=null){
@@ -59,17 +66,13 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                     this.start(cap,player);
                 }
                 case 1->{
-                    CRC.LOGGER.debug("Entro");
                     cap.catchEntity = this.newEntity;
                 }
                 case 2->{
                     this.stop(cap,player);
-
                 }
             }
         }
-
-
     }
     @OnlyIn(Dist.CLIENT)
     public void start(MultiArmCapability cap,Player player){

@@ -6,6 +6,7 @@ package com.TBK.crc.client.model;// Made with Blockbench 4.12.6
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.GanchoArm;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
@@ -145,23 +146,20 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
 	}
-	public void selectArm(Player entity,float ageInTicks){
-		MultiArmCapability cap = MultiArmCapability.get(entity);
-		if(cap!=null){
-			if(cap.getSelectSkill().name.equals("claws_arm")){
-				maincannon.visible=false;
-				mainharpoon.visible=false;
-				mainmelee.visible=true;
-			}else if(cap.getSelectSkill().name.equals("cannon_arm")){
-				maincannon.visible=true;
-				mainharpoon.visible=false;
-				mainmelee.visible=false;
-			}else if(cap.getSelectSkill().name.equals("gancho_arm")){
-				maincannon.visible=false;
-				mainharpoon.visible=true;
-				mainmelee.visible=false;
-				harpoon.visible = ((GanchoArm)cap.getSelectSkill()).hasGancho;
-			}
+	public void selectArm(String name, MultiArmSkillAbstract arm, float ageInTicks){
+		if(name.equals("claws_arm")){
+			maincannon.visible=false;
+			mainharpoon.visible=false;
+			mainmelee.visible=true;
+		}else if(name.equals("cannon_arm")){
+			maincannon.visible=true;
+			mainharpoon.visible=false;
+			mainmelee.visible=false;
+		}else if(name.equals("gancho_arm")){
+			maincannon.visible=false;
+			mainharpoon.visible=true;
+			mainmelee.visible=false;
+			harpoon.visible = ((GanchoArm)arm).hasGancho;
 		}
 	}
 

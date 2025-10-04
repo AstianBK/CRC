@@ -1,5 +1,6 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +23,7 @@ public class PacketRemoveActiveEffect {
         this.id=buf.readInt();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeUtf(this.powerId);
         buf.writeInt(this.id);
     }
@@ -34,7 +35,9 @@ public class PacketRemoveActiveEffect {
     @OnlyIn(Dist.CLIENT)
     public void sync(){
         Minecraft mc = Minecraft.getInstance();
-
+        MultiArmCapability cap = MultiArmCapability.get(mc.player);
+        assert cap!=null;
+        cap.getActiveEffectDuration().removeDuration(powerId,cap);
 
     }
 }

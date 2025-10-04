@@ -1,0 +1,35 @@
+{
+  "variants": {
+    "facing=north,part=head": {
+      "model": "crc:block/cyborg_table_top"
+    },
+    "facing=north,part=foot": {
+      "model": "crc:block/cyborg_table_bottom"
+    },
+    "facing=east,part=head": {
+      "model": "crc:block/cyborg_table_top",
+      "y": 90
+    },
+    "facing=east,part=foot": {
+      "model": "crc:block/cyborg_table_bottom",
+      "y": 90
+    },
+    "facing=south,part=head": {
+      "model": "crc:block/cyborg_table_top",
+      "y": 180
+
+    },
+    "facing=south,part=foot": {
+      "model": "crc:block/cyborg_table_bottom",
+      "y": 180
+    },
+    "facing=west,part=head": {
+      "model": "crc:block/cyborg_table_top",
+      "y": 270
+    },
+    "facing=west,part=foot": {
+      "model": "crc:block/cyborg_table_bottom",
+      "y": 270
+    }
+  }
+}

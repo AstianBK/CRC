@@ -30,6 +30,9 @@ public class BKEntityType {
     public static final RegistryObject<EntityType<GanchoEntity>> GANCHO = ENTITY_TYPES
             .register("gancho", () -> EntityType.Builder.<GanchoEntity>of(GanchoEntity::new, MobCategory.MISC)
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "gancho"));
+    public static final RegistryObject<EntityType<ElectroProjectile>> ELECTRO = ENTITY_TYPES
+            .register("electro", () -> EntityType.Builder.<ElectroProjectile>of(ElectroProjectile::new, MobCategory.MISC)
+                    .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "electro"));
 
 
 }
