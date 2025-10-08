@@ -21,8 +21,11 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.CYBORG_ARM.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_SYNTHARM.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_EYE.get()));
+                a.accept(new ItemStack(BKItems.CYBORG_EYE_HACKER.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_HEART.get()));
+                a.accept(new ItemStack(BKItems.CYBORG_THORACIC_CAGE.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_KNEES.get()));
+                a.accept(new ItemStack(BKItems.CYBORG_COIL_FEET.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CLAWS.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CANNON.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_GANCHO.get()));
