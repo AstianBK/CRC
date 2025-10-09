@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " ##",
+    "#B#",
+    "R# "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:leather"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "crc:cyborg_syntharm",
+    "count": 1
+  }
+}
