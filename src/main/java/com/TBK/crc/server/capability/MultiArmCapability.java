@@ -161,6 +161,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             if (this.cooldownReUse>0){
                 this.cooldownReUse--;
             }
+
             if(player instanceof ServerPlayer){
                 if(this.dirty){
                     PacketHandler.sendToPlayer(new PacketSyncImplant(player.getId(),this.implantStore.store), (ServerPlayer) player);
@@ -204,7 +205,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
         }
     }
-
+    
     public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
         Level level = entity.level();
         BlockPos origin = entity.blockPosition();
@@ -224,6 +225,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
         return origin;
     }
+
     public boolean isCasting(){
         return this.castingTimer>0;
     }
@@ -241,15 +243,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
     }
     public void clearForUpgradeStore(){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
-        setSetHotbar(map);
-        passives = map;
+        passives = new MultiArmSkillsAbstracts(new HashMap<>());
         if(this.level.isClientSide){
             PacketHandler.sendToServer(new PacketHandlerPowers(4,player, player));
         }
     }
-    public void setPassivesActive(MultiArmSkillsAbstracts map){
-        int i = 0;
+    public void setPassivesActive(MultiArmSkillsAbstracts map,int index){
+        int i = index;
         for (ItemStack stack : this.implantStore.getItems()){
             if (stack.getItem() instanceof CyberImplantItem implant && implant.getTypePart()!= UpgradeableParts.ARM){
                 for (MultiArmSkillAbstract passive : CyberImplantItem.getUpgrade(stack.getOrCreateTag())){
@@ -260,13 +260,14 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
     }
     public void addNewPassive(MultiArmSkillAbstract skill){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(this.passives.upgrades);
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
         int index = this.passives.upgrades.size();
+
         map.addMultiArmSkillAbstracts(index,skill);
-        this.setPassivesActive(map);
+        //this.setPassivesActive(map,index);
         this.passives = map;
+        CRC.LOGGER.debug("index "+index +" map :"+map);
         if(this.level.isClientSide){
-            CRC.LOGGER.debug("Passive :"+this.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
             PacketHandler.sendToServer(new PacketAddSkill(skill.name, index,1));
         }
     }
@@ -279,6 +280,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             setPosSelectMultiArmSkillAbstract(indexForUpgrade);
             if(this.level.isClientSide){
                 PacketHandler.sendToServer(new PacketAddSkill(skill.name,indexForUpgrade,0));
+                CRC.LOGGER.debug("Passive :"+this.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
             }
         }
     }

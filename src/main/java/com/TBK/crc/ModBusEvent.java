@@ -122,6 +122,8 @@ public class ModBusEvent {
             if (cap!=null){
                 cap.clearAbilityStore();
                 cap.clearForUpgradeStore();
+                cap.implantStore.store.clearContent();
+                cap.dirty = true;
             }
 
         }

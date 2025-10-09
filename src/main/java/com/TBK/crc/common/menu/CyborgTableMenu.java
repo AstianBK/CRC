@@ -40,9 +40,14 @@ public class CyborgTableMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
+            }
+
+            @Override
+            public void setByPlayer(ItemStack p_270152_) {
+                super.setByPlayer(p_270152_);
             }
         });
         this.addSlot(new Slot(container, 1, 36,16){
@@ -51,8 +56,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.EYE;
             }
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
@@ -62,8 +67,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.SYSTEMS;
             }
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
@@ -72,9 +77,10 @@ public class CyborgTableMenu extends AbstractContainerMenu {
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.SYSTEMS;
             }
+
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
@@ -84,8 +90,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.LEGS;
             }
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
@@ -95,8 +101,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.LEGS;
             }
             @Override
-            public void onTake(Player p_150645_, ItemStack p_150646_) {
-                super.onTake(p_150645_, p_150646_);
+            public void setChanged() {
+                super.setChanged();
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
@@ -117,7 +123,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         }
         this.addDataSlots(data);
     }
-
+    
     public ImplantStore getPlayerStore(){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
@@ -144,7 +150,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 ItemStack storeItem = this.getPlayerStore().store.getItem(i);
 
                 if(menuItem.isEmpty() && !storeItem.isEmpty() && storeItem.getItem() instanceof CyberImplantItem implantStore){
-                    cap.implantStore.setImplant(player.level(),ItemStack.EMPTY,implantStore.typePart);
+                    cap.implantStore.setImplant(ItemStack.EMPTY,i);
                     if(implantStore.typePart==UpgradeableParts.ARM){
                         cap.clearAbilityStore();
                     }else {

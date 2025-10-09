@@ -2,9 +2,11 @@ package com.TBK.crc.server.manager;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
+import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketAddImplant;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,14 +21,37 @@ public class ImplantStore{
     }
     public ImplantStore(CompoundTag nbt){
         this.store = new SimpleContainer(6);
-        this.store.fromTag(nbt.getList("store",10));
+        fromTag(this.store,nbt.getList("store",10));
     }
 
-    public void fromStore(CompoundTag tag){
+    public void fromTag(SimpleContainer store, ListTag tags){
+        store.clearContent();
+
+        for(int i = 0; i < tags.size(); ++i) {
+            ItemStack itemstack = ItemStack.of(tags.getCompound(i));
+            if (!itemstack.isEmpty()) {
+                store.setItem(tags.getCompound(i).getInt("index"),itemstack);
+            }
+        }
 
     }
     public void save(CompoundTag tag){
-        tag.put("store",this.store.createTag());
+        tag.put("store",createTag());
+    }
+
+    public ListTag createTag() {
+        ListTag listtag = new ListTag();
+
+        for(int i = 0; i < this.store.getContainerSize(); ++i) {
+            ItemStack itemstack = this.store.getItem(i);
+            if (!itemstack.isEmpty()) {
+                CompoundTag nbt = new CompoundTag();
+                nbt.putInt("index",i);
+                listtag.add(itemstack.save(nbt));
+            }
+        }
+
+        return listtag;
     }
     public void setImplant(Level level, ItemStack implant, UpgradeableParts type){
         int index = getSlotForType(type);

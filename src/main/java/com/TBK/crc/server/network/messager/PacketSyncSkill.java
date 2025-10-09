@@ -64,13 +64,17 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         Minecraft minecraft =Minecraft.getInstance();
         Player player= minecraft.player;
         MultiArmCapability cap = MultiArmCapability.get(player);
+
         var upgrades = cap.skills;
         var passives = cap.passives;
+
         upgrades.upgrades.clear();
         passives.upgrades.clear();
+
         this.upgrades.forEach((k, v) -> {
             upgrades.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
         });
+
         this.upgradesPassive.forEach((k, v) -> {
             passives.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
         });

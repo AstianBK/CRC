@@ -56,7 +56,7 @@ public class PacketAddSkill implements Packet<PacketListener> {
                 }else {
                     cap.passives.addMultiArmSkillAbstracts(this.index,Util.getTypeSkillForName(this.name));
                 }
-                CRC.LOGGER.debug("Passive :"+cap.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
+                cap.dirty = true;
             }
         });
         context.get().setPacketHandled(true);
