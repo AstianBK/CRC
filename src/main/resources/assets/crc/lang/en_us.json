@@ -1,0 +1,23 @@
+{
+  "itemGroup.crcTab": "Cyborg Robot Chicken Tab",
+
+  "item.crc.signal_jammer": "Signal Jammer",
+  "item.crc.tantalum_ingot": "Tantalum",
+
+  "item.crc.cyborg_syntharm": "Synthetic Arm",
+  "item.crc.cyborg_arm": "Cyborg Multi-Arm",
+  "item.crc.cyborg_knees": "Cyborg Knees",
+  "item.crc.cyborg_coil_feet": "Cyborg Coil Feet",
+  "item.crc.cyborg_eye": "Cyborg Eye",
+  "item.crc.cyborg_eye_hacker": "Cyborg Eye Hacker",
+  "item.crc.cyborg_thoracic_cage": "Cyborg Thoracic Cage",
+  "item.crc.cyborg_heart": "Cyborg Heart",
+
+  "item.crc.cyborg_bone": "Cyborg Bone",
+  "item.crc.cyborg_microchip": "Cyborg Microchip",
+  "item.crc.cyborg_resistor": "Cyborg Resistor",
+  "item.crc.cyborg_capacitor": "Cyborg Capacitor"
+}
+
+
+
