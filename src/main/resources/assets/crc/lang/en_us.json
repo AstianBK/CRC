@@ -9,7 +9,8 @@
 
   "item.crc.cyborg_syntharm": "Synthetic Arm",
   "item.crc.cyborg_arm": "Cyborg Multi-Arm",
-  "item.crc.cyborg_knees": "Cyborg Knees",
+  "item.crc.cyborg_knees": "Cyborg Knee",
+  "item.crc.cyborg_knees_spiked": "Cyborg Spiked Knee",
   "item.crc.cyborg_coil_feet": "Cyborg Coil Feet",
   "item.crc.cyborg_eye": "Cyborg Eye",
   "item.crc.cyborg_eye_hacker": "Cyborg Eye Hacker",
@@ -24,6 +25,7 @@
   "item.crc.upgrade_arm_claws": "Multi-Arm Upgrade: Electric Claws",
   "item.crc.upgrade_arm_cannon": "Multi-Arm Upgrade: Plasma Cannon",
   "item.crc.upgrade_arm_harpoon": "Multi-Arm Upgrade: Harpoon",
+  "item.crc.upgrade_system_heart": "Heart Upgrade: Better Reflexes",
 
   "upgrades.claws_arm": "Upgrade: Electric Claws",
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",

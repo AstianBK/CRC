@@ -17,7 +17,9 @@ public class BKCreativeModeTab {
             .displayItems((s,a)-> {
                 a.accept(new ItemStack(BKBlocks.CYBORG_TABLE.get()));
                 a.accept(new ItemStack(BKBlocks.UPGRADE_TABLE.get()));
+
                 a.accept(new ItemStack(BKItems.SIGNAL_JAMMER.get()));
+
                 a.accept(new ItemStack(BKItems.CYBORG_ARM.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_SYNTHARM.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_EYE.get()));
@@ -25,10 +27,13 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.CYBORG_HEART.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_THORACIC_CAGE.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_KNEES.get()));
+                a.accept(new ItemStack(BKItems.CYBORG_KNEES_SPIKED.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_COIL_FEET.get()));
+
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CLAWS.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CANNON.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_GANCHO.get()));
+                a.accept(new ItemStack(BKItems.UPGRADE_SYSTEM_HEART.get()));
 
                 a.accept(new ItemStack(BKItems.TANTALUM_INGOT.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_MICROCHIP.get()));

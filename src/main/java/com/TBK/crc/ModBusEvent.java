@@ -1,59 +1,39 @@
 package com.TBK.crc;
 
-import com.TBK.crc.client.model.GanchoModel;
 import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.block.CyborgTableBlock;
-import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.entity.CyborgRobotChicken;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.TBK.crc.server.multiarm.PassivePart;
-import com.TBK.crc.server.multiarm.UltraInstictHeart;
-import com.TBK.crc.server.network.PacketHandler;
-import com.TBK.crc.server.network.messager.PacketHandlerPowers;
+import com.TBK.crc.server.multiarm.HeartReflex;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderArmEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
@@ -64,7 +44,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber()
@@ -145,7 +124,7 @@ public class ModBusEvent {
                 renderLeash(entity,partialTick,stack,bufferSource,player,event.getPackedLight());
             }
             if(event.getEntity() instanceof Player){
-                if(event.getRenderer() instanceof PlayerRenderer renderer && cap.getPassives().hasMultiArmSkillAbstract("ultra_instict_hearth") && cap.getPassives().getForName("ultra_instict_hearth") instanceof UltraInstictHeart instictHeart){
+                if(event.getRenderer() instanceof PlayerRenderer renderer && cap.getPassives().hasMultiArmSkillAbstract("ultra_instict_hearth") && cap.getPassives().getForName("ultra_instict_hearth") instanceof HeartReflex instictHeart){
                     if(instictHeart.getEffectTimer(partialTick)>0.0F){
                         stack.pushPose();
                         float alpha = instictHeart.getEffectTimer(partialTick)/20.0F;

@@ -1,15 +1,11 @@
 package com.TBK.crc.common;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Util {
     //Map<String,MultiArmSkillAbstract> upgradeSkill= new HashMap<>();
@@ -28,8 +24,8 @@ public class Util {
             case "claws_arm"->{
                 return new SwordArm();
             }
-            case "ultra_instict_hearth"->{
-                return new UltraInstictHeart();
+            case "heart_reflex"->{
+                return new HeartReflex();
             }
         }
         return null;

@@ -5,11 +5,10 @@ import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-public class UltraInstictHeart extends PassivePart{
+public class HeartReflex extends PassivePart{
     public double oldX = 0.0F;
     public double oldY = 0.0F;
     public double oldZ = 0.0F;
@@ -19,8 +18,8 @@ public class UltraInstictHeart extends PassivePart{
     public double z = 0.0F;
     public int effectTimer0 = 0;
     public int effectTimer = 0;
-    public UltraInstictHeart() {
-        super("ultra_instict_hearth", true);
+    public HeartReflex() {
+        super("heart_reflex", true);
     }
 
     @Override
