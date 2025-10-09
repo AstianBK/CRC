@@ -1,0 +1,8 @@
+{
+  "netherforge_idle": {
+    "subtitle": "sounds.crc.netherforge_idle",
+    "sounds": [
+      "crc:netherforge_idle"
+    ]
+  }
+}
