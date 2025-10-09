@@ -8,16 +8,24 @@ import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.CyborgRobotChicken;
+import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.multiarm.PassivePart;
+import com.TBK.crc.server.multiarm.UltraInstictHeart;
+import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -56,6 +64,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber()
@@ -112,6 +121,7 @@ public class ModBusEvent {
             MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
             if (cap!=null){
                 cap.clearAbilityStore();
+                cap.clearForUpgradeStore();
             }
 
         }
@@ -121,15 +131,50 @@ public class ModBusEvent {
         if(event.getRenderer().getModel() instanceof MultiArmModel model){
             model.root().visible = false;
         }
-        Player player = Minecraft.getInstance().player;
+        AbstractClientPlayer player = Minecraft.getInstance().player;
         MultiArmCapability cap = MultiArmCapability.get(player);
-        PoseStack stack = event.getPoseStack();
-        MultiBufferSource bufferSource = event.getMultiBufferSource();
-        float partialTick = event.getPartialTick();
-        LivingEntity entity = event.getEntity();
+        
         if(cap!=null){
+            PoseStack stack = event.getPoseStack();
+            MultiBufferSource bufferSource = event.getMultiBufferSource();
+            float partialTick = event.getPartialTick();
+            LivingEntity entity = event.getEntity();
             if (cap.isCatchedTarget(entity)){
                 renderLeash(entity,partialTick,stack,bufferSource,player,event.getPackedLight());
+            }
+            if(event.getEntity() instanceof Player){
+                if(event.getRenderer() instanceof PlayerRenderer renderer && cap.getPassives().hasMultiArmSkillAbstract("ultra_instict_hearth") && cap.getPassives().getForName("ultra_instict_hearth") instanceof UltraInstictHeart instictHeart){
+                    if(instictHeart.getEffectTimer(partialTick)>0.0F){
+                        stack.pushPose();
+                        float alpha = instictHeart.getEffectTimer(partialTick)/20.0F;
+                        Vec3 renderingAt = new Vec3(Mth.lerp(partialTick, player.xo, player.getX()), Mth.lerp(partialTick, player.yo, player.getY()), Mth.lerp(partialTick, player.zo, player.getZ()));
+                        Vec3 pos=instictHeart.getPos();
+                        Vec3 end=instictHeart.getOldPos();
+                        Vec3 delta = end.subtract(pos);
+                        double distance = end.length();
+                        delta = delta.normalize();
+                        Vec3 backPos=pos.add(delta.x,delta.y+2,delta.z);
+                        for(int i=0;i<distance;i++){
+                            Vec3 move=backPos.subtract(renderingAt);
+                            Vec3 moveOri=pos.subtract(renderingAt);
+                            Vec3 lastPos=moveOri.subtract(move);
+                            if(lastPos.z<0){
+                                lastPos= lastPos.multiply(1.0f,1.0f,-1.0f);
+                            }
+                            if(lastPos.x<0){
+                                lastPos=lastPos.multiply(-1.0f,1.0f,1.0f);
+                            }
+                            stack.translate(move.x,move.y,move.z);
+                            renderer.getModel().copyPropertiesTo(renderer.getModel());
+                            renderer.getModel().setupAnim(player,0.0F, 0.0F, entity.tickCount+partialTick, 0.0F,0.0F);
+                            renderer.getModel().renderToBuffer(stack,bufferSource.getBuffer(RenderType.entityTranslucentEmissive(renderer.getTextureLocation(player))),event.getPackedLight(), OverlayTexture.NO_OVERLAY,0.0f,0.0f,0.1f,alpha);
+                            pos=backPos;
+                            backPos=backPos.add(delta.x,delta.y+2,delta.z);
+                        }
+                        stack.popPose();
+                    }
+
+                }
             }
         }
     }
@@ -221,6 +266,16 @@ public class ModBusEvent {
                 if(cap!=null){
                     cap.chickenEnemy=true;
                 }
+            }
+        }
+        if(entity instanceof Player player){
+            MultiArmCapability cap = MultiArmCapability.get(player);
+            if(cap!=null){
+                boolean flag = false;
+                for (MultiArmSkillAbstractInstance instance : cap.getPassives().getSkills()){
+                    flag = flag || ((PassivePart)instance.getSkillAbstract()).onDie(cap,event.getSource().getEntity());
+                }
+                event.setCanceled(flag);
             }
         }
     }

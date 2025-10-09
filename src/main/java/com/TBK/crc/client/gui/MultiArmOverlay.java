@@ -2,6 +2,7 @@ package com.TBK.crc.client.gui;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.ForgeInputEvent;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import net.minecraft.client.Minecraft;
@@ -26,12 +27,12 @@ public class MultiArmOverlay implements IGuiOverlay {
         if (this.mc.player != null) {
             Player player = this.mc.player;
             MultiArmCapability cap=MultiArmCapability.get(player);
-            if(cap!=null){
+            if(cap!=null && Util.hasMultiArm(cap)){
                 int i = width / 2 -140;
 
                 graphics.pose().pushPose();
                 if(cap.hotbarActive){
-                    for(int i1 = 0; i1 < cap.skills.powers.size(); ++i1) {
+                    for(int i1 = 0; i1 < cap.skills.upgrades.size(); ++i1) {
                         MultiArmSkillAbstract skillAbstract=cap.getHotBarSkill().get(i1);
                         int j1 =  i + 101 + i1 * 20;
                         int k1 = height - 58;

@@ -3,7 +3,6 @@ package com.TBK.crc.common.menu;
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberImplantItem;
-import com.TBK.crc.common.item.CyberUpgradeItem;
 import com.TBK.crc.common.registry.BKContainers;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.ImplantStore;
@@ -34,8 +33,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         this.id=data.get(0);
         this.craftSlots = container;
         this.player = p_39357_.player;
-
-        this.addSlot(new Slot(container, 0, 36,16){
+        this.addSlot(new Slot(container, 0, 18,50){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.ARM;
@@ -47,7 +45,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
-        this.addSlot(new Slot(container, 1, 18,50){
+        this.addSlot(new Slot(container, 1, 36,16){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.EYE;
@@ -102,9 +100,11 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 CyborgTableMenu.this.upgradePlayer(false);
             }
         });
+
         for (int i = 0 ; i<6 ; i++){
             this.craftSlots.setItem(i,skills.getItem(i));
         }
+
         this.level = p_39357_.player.level();
         for(int k = 0; k < 3; ++k) {
             for(int i1 = 0; i1 < 9; ++i1) {
@@ -116,7 +116,6 @@ public class CyborgTableMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(p_39357_, l, 8 + l * 18, 223));
         }
         this.addDataSlots(data);
-
     }
 
     public ImplantStore getPlayerStore(){
@@ -126,6 +125,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         }
         return null;
     }
+
     @Override
     public ItemStack quickMoveStack(Player p_38941_, int p_38987_) {
         return ItemStack.EMPTY;
@@ -148,21 +148,24 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                     if(implantStore.typePart==UpgradeableParts.ARM){
                         cap.clearAbilityStore();
                     }else {
-                        // Algo va a pasar
+                        cap.clearForUpgradeStore();
                     }
                 }
-                if(operar){
-                    if((!menuItem.isEmpty() && storeItem.isEmpty() || menuItem.getItem()!=storeItem.getItem()) && (menuItem.getItem() instanceof CyberImplantItem implantMenu)){
-                        cap.implantStore.setImplant(player.level(), menuItem.copy(),implantMenu.typePart);
-                        if(implantMenu.typePart==UpgradeableParts.ARM){
-                            for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(menuItem.getOrCreateTag())){
-                                if(upgrade != MultiArmSkillAbstract.NONE){
-                                    cap.addNewAbility(upgrade);
-                                    CRC.LOGGER.debug("Se agrego una abilidad nueva");
-                                }
+                if((!menuItem.isEmpty() && storeItem.isEmpty() || menuItem.getItem()!=storeItem.getItem()) && (menuItem.getItem() instanceof CyberImplantItem implantMenu)){
+                    cap.implantStore.setImplant(player.level(), menuItem.copy(),implantMenu.typePart);
+                    if(implantMenu.typePart==UpgradeableParts.ARM){
+                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(menuItem.getOrCreateTag())){
+                            if(upgrade != MultiArmSkillAbstract.NONE){
+                                cap.addNewAbility(upgrade);
+                                CRC.LOGGER.debug("Se agrego una abilidad nueva");
                             }
-                        }else {
-                            // Algo va a pasar
+                        }
+                    }else {
+                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(menuItem.getOrCreateTag())){
+                            if(upgrade != MultiArmSkillAbstract.NONE){
+                                cap.addNewPassive(upgrade);
+                                CRC.LOGGER.debug("Se agrego una pasiva nueva");
+                            }
                         }
                     }
                 }

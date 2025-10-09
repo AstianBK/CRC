@@ -15,7 +15,7 @@ public class MultiArmSkillAbstractInstance implements Comparable<MultiArmSkillAb
     protected final boolean locked;
 
     public MultiArmSkillAbstractInstance(MultiArmSkillAbstract spell, int level, boolean locked) {
-        this.power = Objects.requireNonNull(spell);
+        this.power = spell;
         this.spellLevel = level;
         this.locked = locked;
     }

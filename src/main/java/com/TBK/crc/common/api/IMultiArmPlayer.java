@@ -1,14 +1,13 @@
 package com.TBK.crc.common.api;
 
-import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.TBK.crc.server.multiarm.MultiArmSkillsAbstracts;
+import com.TBK.crc.server.multiarm.PassivePart;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 
-import java.util.List;
 import java.util.Map;
 
 public interface IMultiArmPlayer extends INBTSerializable<CompoundTag> {
@@ -28,7 +27,7 @@ public interface IMultiArmPlayer extends INBTSerializable<CompoundTag> {
     public void stopSkill(MultiArmSkillAbstract power);
     void handledPassive(Player player,MultiArmSkillAbstract power);
     boolean canUseSkill(MultiArmSkillAbstract skillAbstract);
-    Map<Integer,MultiArmSkillAbstract> getPassives();
+    MultiArmSkillsAbstracts getPassives();
     MultiArmSkillsAbstracts getHotBarSkill();
     void syncSkill(Player player);
     void upSkill();

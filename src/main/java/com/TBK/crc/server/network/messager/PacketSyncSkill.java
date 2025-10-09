@@ -1,10 +1,8 @@
 package com.TBK.crc.server.network.messager;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.TBK.crc.server.multiarm.MultiArmSkillsAbstracts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -18,7 +16,25 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PacketSyncSkill implements Packet<PacketListener> {
-    private final Map<Integer, MultiArmSkillAbstractInstance> powerCooldowns;
+    private final Map<Integer, MultiArmSkillAbstractInstance> upgradesPassive;
+
+    private final Map<Integer, MultiArmSkillAbstractInstance> upgrades;
+
+
+    public PacketSyncSkill(FriendlyByteBuf buf) {
+        this.upgrades = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
+        this.upgradesPassive = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
+    }
+    public PacketSyncSkill(Map<Integer, MultiArmSkillAbstractInstance> upgrade,Map<Integer, MultiArmSkillAbstractInstance> passives) {
+        this.upgrades = upgrade;
+        this.upgradesPassive = passives;
+    }
+    @Override
+    public void write(FriendlyByteBuf buf) {
+        buf.writeMap(upgrades, PacketSyncSkill::writePowerId, PacketSyncSkill::writeCoolDownInstance);
+        buf.writeMap(upgradesPassive, PacketSyncSkill::writePowerId, PacketSyncSkill::writeCoolDownInstance);
+    }
+
 
     public static Integer readPowerID(FriendlyByteBuf buffer) {
         return buffer.readInt();
@@ -37,14 +53,6 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         buf.writeUtf(cooldownInstance.getSkillAbstract().name);
     }
 
-    public PacketSyncSkill(Map<Integer, MultiArmSkillAbstractInstance> powerCooldowns) {
-        this.powerCooldowns = powerCooldowns;
-    }
-
-    public PacketSyncSkill(FriendlyByteBuf buf) {
-        this.powerCooldowns = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(this::sync);
@@ -56,17 +64,18 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         Minecraft minecraft =Minecraft.getInstance();
         Player player= minecraft.player;
         MultiArmCapability cap = MultiArmCapability.get(player);
-        var cooldowns = cap.skills;
-        cooldowns.powers.clear();
-        this.powerCooldowns.forEach((k, v) -> {
-            cooldowns.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
+        var upgrades = cap.skills;
+        var passives = cap.passives;
+        upgrades.upgrades.clear();
+        passives.upgrades.clear();
+        this.upgrades.forEach((k, v) -> {
+            upgrades.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
+        });
+        this.upgradesPassive.forEach((k, v) -> {
+            passives.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
         });
     }
 
-    @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeMap(powerCooldowns, PacketSyncSkill::writePowerId, PacketSyncSkill::writeCoolDownInstance);
-    }
 
     @Override
     public void handle(PacketListener p_131342_) {

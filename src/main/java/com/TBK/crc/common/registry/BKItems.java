@@ -8,6 +8,7 @@ import com.TBK.crc.common.item.CyberUpgradeItem;
 import com.TBK.crc.server.multiarm.CannonArm;
 import com.TBK.crc.server.multiarm.GanchoArm;
 import com.TBK.crc.server.multiarm.SwordArm;
+import com.TBK.crc.server.multiarm.UltraInstictHeart;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,6 +32,7 @@ public class BKItems {
     public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties()));
     public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties()));
 
+    public static final RegistryObject<Item> UPGRADE_ULTRA_INSTICT= ITEMS.register("upgrade_ultra_instict",()->new CyberUpgradeItem(new Item.Properties(),UpgradeableParts.SYSTEMS,new UltraInstictHeart(),0));
 
     public static final RegistryObject<Item> UPGRADE_ARM_CANNON = ITEMS.register("upgrade_arm_cannon",()->new CyberUpgradeItem(new Item.Properties(),UpgradeableParts.ARM,new CannonArm(),0));
     public static final RegistryObject<Item> UPGRADE_ARM_GANCHO = ITEMS.register("upgrade_arm_harpoon",()->new CyberUpgradeItem(new Item.Properties(),UpgradeableParts.ARM,new GanchoArm(),0));

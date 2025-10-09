@@ -52,6 +52,8 @@ public class PacketHandler {
         channel.registerMessage(index++, PacketSyncSkill.class, PacketSyncSkill::write,
                 PacketSyncSkill::new, PacketSyncSkill::handle);
 
+        channel.registerMessage(index++, PacketSyncImplant.class,  PacketSyncImplant::write,
+                PacketSyncImplant::new,  PacketSyncImplant::handle);
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {

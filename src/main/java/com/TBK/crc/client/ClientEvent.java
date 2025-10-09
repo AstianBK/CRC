@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.client.gui.MultiArmOverlay;
 import com.TBK.crc.client.layer.GanchoLayer;
 import com.TBK.crc.client.layer.MultiarmLayer;
+import com.TBK.crc.client.layer.PassiveLayer;
 import com.TBK.crc.client.model.*;
 import com.TBK.crc.common.registry.BKContainers;
 import com.TBK.crc.common.screen.CyborgTableScreen;
@@ -50,6 +51,7 @@ public class ClientEvent {
     public static void registerLayers(EntityRenderersEvent.AddLayers event){
         event.getSkins().forEach(s -> {
             event.getSkin(s).addLayer(new MultiarmLayer(event.getSkin(s)));
+            //event.getSkin(s).addLayer(new PassiveLayer(event.getSkin(s)));
             //event.getSkin(s).addLayer(new GanchoLayer(event.getSkin(s)));
             //event.getSkin(s).addLayer(new LivingProtectionLayer(event.getSkin(s)));
         });
