@@ -1,23 +1,26 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "  #",
-    " i ",
-    " P#"
+    " # ",
+    "iEi",
+    " F "
   ],
   "key": {
     "#": {
-      "item": "crc:cyborg_bone"
+      "item": "crc:cyborg_capacitor"
     },
     "i": {
       "item": "crc:tantalum_ingot"
     },
-    "P": {
+    "E": {
+      "item": "crc:cyborg_microchip"
+    },
+    "F": {
       "item": "crc:cyborg_resistor"
     }
   },
   "result": {
-    "item": "crc:cyborg_knees",
+    "item": "crc:cyborg_heart",
     "count": 1
   }
 }

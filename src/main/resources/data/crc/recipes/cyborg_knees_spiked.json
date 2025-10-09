@@ -13,11 +13,11 @@
       "item": "crc:tantalum_ingot"
     },
     "P": {
-      "item": "crc:cyborg_resistor"
+      "item": "crc:tantalum_ingot"
     }
   },
   "result": {
-    "item": "crc:cyborg_knees",
+    "item": "crc:cyborg_knees_spiked",
     "count": 1
   }
 }

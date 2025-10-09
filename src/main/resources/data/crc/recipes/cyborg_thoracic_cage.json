@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " ##",
-    "#B#",
-    "R# "
+    "i i",
+    "BIB",
+    "i i"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:leather"
+    "i": {
+      "item": "crc:tantalum_ingot"
     },
     "B": {
       "item": "crc:cyborg_bone"
     },
-    "R": {
-      "item": "crc:cyborg_microchip"
+    "I": {
+      "item": "minecraft:iron_block"
     }
   },
   "result": {
-    "item": "crc:cyborg_syntharm",
+    "item": "crc:cyborg_thoracic_cage",
     "count": 1
   }
 }

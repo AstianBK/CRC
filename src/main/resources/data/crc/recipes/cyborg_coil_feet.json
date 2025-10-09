@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " ##",
-    "#B#",
-    "R# "
+    "  i",
+    " B ",
+    "P  "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:leather"
+    "i": {
+      "item": "crc:tantalum_ingot"
     },
     "B": {
       "item": "crc:cyborg_bone"
     },
-    "R": {
-      "item": "crc:cyborg_microchip"
+    "P": {
+      "item": "minecraft:piston"
     }
   },
   "result": {
-    "item": "crc:cyborg_syntharm",
+    "item": "crc:cyborg_coil_feet",
     "count": 1
   }
 }

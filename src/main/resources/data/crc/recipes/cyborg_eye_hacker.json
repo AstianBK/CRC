@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#R ",
+    "iGi",
+    " i "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:comparator"
+    },
+    "R": {
+      "item": "crc:cyborg_microchip"
+    },
+    "i": {
+      "item": "crc:tantalum_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "result": {
+    "item": "crc:cyborg_eye_hacker",
+    "count": 1
+  }
+}

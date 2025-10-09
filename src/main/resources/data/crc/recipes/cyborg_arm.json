@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " ##",
-    "#B#",
-    "R# "
+    " i_",
+    "iBi",
+    "Ri "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:leather"
+    "i": {
+      "item": "crc:tantalum_ingot"
+    },
+    "_": {
+      "item": "crc:cyborg_microchip"
     },
     "B": {
       "item": "crc:cyborg_bone"
@@ -17,7 +20,7 @@
     }
   },
   "result": {
-    "item": "crc:cyborg_syntharm",
+    "item": "crc:cyborg_arm",
     "count": 1
   }
 }

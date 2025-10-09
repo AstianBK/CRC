@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " ##",
-    "#B#",
-    "R# "
+    "#  ",
+    "iRi",
+    " i "
   ],
   "key": {
     "#": {
-      "item": "minecraft:leather"
+      "item": "minecraft:redstone_torch"
     },
-    "B": {
-      "item": "crc:cyborg_bone"
+    "i": {
+      "item": "crc:tantalum_ingot"
     },
     "R": {
       "item": "crc:cyborg_microchip"
     }
   },
   "result": {
-    "item": "crc:cyborg_syntharm",
+    "item": "crc:signal_jammer",
     "count": 1
   }
 }
