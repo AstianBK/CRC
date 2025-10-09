@@ -5,10 +5,8 @@ import com.TBK.crc.common.Util;
 import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.common.screen.CyborgTableScreen;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.CannonArm;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
-import com.TBK.crc.server.multiarm.SwordArm;
+import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
+import com.TBK.crc.server.multiarm.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -28,20 +26,24 @@ public class PacketAddSkill implements Packet<PacketListener> {
 
     public final String name;
     public final int index;
+    public final int id;
     public PacketAddSkill(FriendlyByteBuf buf) {
         this.name = buf.readUtf();
         this.index = buf.readInt();
+        this.id = buf.readInt();
     }
 
-    public PacketAddSkill(String name,int index) {
+    public PacketAddSkill(String name,int index,int id) {
         this.name = name;
         this.index = index;
+        this.id = id;
     }
 
     @Override
     public void write(FriendlyByteBuf buf) {
         buf.writeUtf(this.name);
         buf.writeInt(this.index);
+        buf.writeInt(this.id);
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
@@ -49,13 +51,16 @@ public class PacketAddSkill implements Packet<PacketListener> {
             assert context.get().getDirection() == NetworkDirection.PLAY_TO_SERVER;
             MultiArmCapability cap = MultiArmCapability.get(context.get().getSender());
             if(cap!=null){
-                cap.getHotBarSkill().addMultiArmSkillAbstracts(this.index, Util.getTypeSkillForName(this.name));
+                if(this.id==0){
+                    cap.getHotBarSkill().addMultiArmSkillAbstracts(this.index, Util.getTypeSkillForName(this.name));
+                }else {
+                    cap.passives.addMultiArmSkillAbstracts(this.index,Util.getTypeSkillForName(this.name));
+                }
+                CRC.LOGGER.debug("Passive :"+cap.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
             }
         });
         context.get().setPacketHandled(true);
     }
-
-
 
     @Override
     public void handle(PacketListener p_131342_) {

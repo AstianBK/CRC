@@ -1,17 +1,16 @@
 package com.TBK.crc.server.capability;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
+import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.entity.TeleportEntity;
 import com.TBK.crc.server.manager.*;
 import com.TBK.crc.server.multiarm.*;
 import com.TBK.crc.server.network.PacketHandler;
-import com.TBK.crc.server.network.messager.PacketAddSkill;
-import com.TBK.crc.server.network.messager.PacketHandlerPowers;
-import com.TBK.crc.server.network.messager.PacketSyncPosHotBar;
-import com.TBK.crc.server.network.messager.PacketSyncSkill;
+import com.TBK.crc.server.network.messager.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class MultiArmCapability implements IMultiArmPlayer {
@@ -56,6 +55,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public PlayerCooldowns cooldowns=new PlayerCooldowns();
     public ActiveEffectDuration durationEffect=new ActiveEffectDuration();
     public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(new HashMap<>());
+    public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(new HashMap<>());
+
     public ImplantStore implantStore = new ImplantStore();
     public EntityType<?>[] types = new EntityType[]{
             BKEntityType.CYBORG_ROBOT_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get()
@@ -162,7 +163,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
             if(player instanceof ServerPlayer){
                 if(this.dirty){
-                    PacketHandler.sendToPlayer(new PacketSyncSkill(this.skills.powers), (ServerPlayer) player);
+                    PacketHandler.sendToPlayer(new PacketSyncImplant(player.getId(),this.implantStore.store), (ServerPlayer) player);
+                    PacketHandler.sendToPlayer(new PacketSyncSkill(this.passives.upgrades,this.skills.upgrades), (ServerPlayer) player);
                     this.dirty = false;
                 }
                 if (this.cooldowns.hasCooldownsActive()){
@@ -186,11 +188,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
                     }
                 });
             }
-            /*if(!this.passives.getSkills().isEmpty()){
-                this.passives.getSkills().forEach(e->{
-                    e.getMultiArmSkillAbstract().tick(this);
+            if(!this.getPassives().upgrades.isEmpty()){
+                this.getPassives().upgrades.forEach((i, passive)->{
+                    passive.getSkillAbstract().tick(this);
                 });
-            }*/
+            }
             if(this.level.isClientSide){
                 if(this.castingClientTimer>0){
                     this.castingClientTimer--;
@@ -238,15 +240,45 @@ public class MultiArmCapability implements IMultiArmPlayer {
             PacketHandler.sendToServer(new PacketHandlerPowers(3,player, player));
         }
     }
-    public void addNewAbility(MultiArmSkillAbstract skill){
+    public void clearForUpgradeStore(){
         MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
+        setSetHotbar(map);
+        passives = map;
+        if(this.level.isClientSide){
+            PacketHandler.sendToServer(new PacketHandlerPowers(4,player, player));
+        }
+    }
+    public void setPassivesActive(MultiArmSkillsAbstracts map){
+        int i = 0;
+        for (ItemStack stack : this.implantStore.getItems()){
+            if (stack.getItem() instanceof CyberImplantItem implant && implant.getTypePart()!= UpgradeableParts.ARM){
+                for (MultiArmSkillAbstract passive : CyberImplantItem.getUpgrade(stack.getOrCreateTag())){
+                    map.addMultiArmSkillAbstracts(i,passive);
+                    i++;
+                }
+            }
+        }
+    }
+    public void addNewPassive(MultiArmSkillAbstract skill){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(this.passives.upgrades);
+        int index = this.passives.upgrades.size();
+        map.addMultiArmSkillAbstracts(index,skill);
+        this.setPassivesActive(map);
+        this.passives = map;
+        if(this.level.isClientSide){
+            CRC.LOGGER.debug("Passive :"+this.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
+            PacketHandler.sendToServer(new PacketAddSkill(skill.name, index,1));
+        }
+    }
+    public void addNewAbility(MultiArmSkillAbstract skill){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(this.getHotBarSkill().upgrades);
         int indexForUpgrade = Util.getIndexForName(skill.name);
         if(indexForUpgrade !=-1){
             map.addMultiArmSkillAbstracts(indexForUpgrade,skill);
             setSetHotbar(map);
             setPosSelectMultiArmSkillAbstract(indexForUpgrade);
             if(this.level.isClientSide){
-                PacketHandler.sendToServer(new PacketAddSkill(skill.name,indexForUpgrade));
+                PacketHandler.sendToServer(new PacketAddSkill(skill.name,indexForUpgrade,0));
             }
         }
     }
@@ -281,8 +313,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
     @Override
-    public Map<Integer, MultiArmSkillAbstract> getPassives() {
-        return null;
+    public MultiArmSkillsAbstracts getPassives() {
+        return this.passives;
     }
 
     @Override
@@ -377,8 +409,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
         CompoundTag tag=new CompoundTag();
         tag.putBoolean("publicEnemy",this.chickenEnemy);
         this.skills.save(tag);
-        CRC.LOGGER.debug("implant :"+this.implantStore);
         this.implantStore.save(tag);
+        CompoundTag passiveTag = new CompoundTag();
+        this.passives.save(passiveTag);
+        tag.put("passives",passiveTag);
+        CRC.LOGGER.debug("implant :"+tag);
+        CRC.LOGGER.debug("passive:"+passiveTag);
+        CRC.LOGGER.debug("ITEMS :"+this.passives.upgrades);
         tag.putInt("select_power",this.posSelectMultiArmSkillAbstract);
         if(this.cooldowns.hasCooldownsActive()){
             tag.put("cooldowns",this.cooldowns.saveNBTData());
@@ -393,6 +430,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         this.skills = new MultiArmSkillsAbstracts(nbt);
+        this.passives = new MultiArmSkillsAbstracts(nbt.getCompound("passives"));
         this.posSelectMultiArmSkillAbstract=nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
         CRC.LOGGER.debug("nbt :"+nbt);

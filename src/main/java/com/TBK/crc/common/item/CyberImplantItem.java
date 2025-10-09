@@ -73,9 +73,10 @@ public class CyberImplantItem extends ItemCyborg{
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         List<MultiArmSkillAbstract> upgrades = getUpgrade(p_41421_.getOrCreateTag());
-        if(upgrades.isEmpty()){
+        if(!upgrades.isEmpty()){
             for (MultiArmSkillAbstract upgrade : upgrades){
-                p_41423_.add(Component.translatable("upgrade."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
+                if (upgrade==MultiArmSkillAbstract.NONE)continue;
+                p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
             }
         }
     }

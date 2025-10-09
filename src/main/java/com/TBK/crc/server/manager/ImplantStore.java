@@ -9,6 +9,9 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ImplantStore{
     public SimpleContainer store;
     public ImplantStore(){
@@ -17,6 +20,10 @@ public class ImplantStore{
     public ImplantStore(CompoundTag nbt){
         this.store = new SimpleContainer(6);
         this.store.fromTag(nbt.getList("store",10));
+    }
+
+    public void fromStore(CompoundTag tag){
+
     }
     public void save(CompoundTag tag){
         tag.put("store",this.store.createTag());
@@ -32,7 +39,6 @@ public class ImplantStore{
     }
     public void setImplant(ItemStack implant, int index){
         if(index!=-1){
-            CRC.LOGGER.debug("implant");
             this.store.setItem(index,implant);
         }
     }
@@ -40,6 +46,19 @@ public class ImplantStore{
         return this.store.getItem(index);
     }
 
+    public List<ItemStack> getItems(){
+        List<ItemStack> list = new ArrayList<>();
+        for (int i = 0 ; i<this.store.getContainerSize() ; i++){
+            list.add(this.store.getItem(i));
+        }
+        return list;
+    }
+    public void setStoreForList(List<ItemStack> list){
+        this.store.clearContent();
+        list.forEach(e->{
+            this.store.addItem(e);
+        });
+    }
     private int getSlotForType(UpgradeableParts type) {
         switch (type){
             case ARM -> {

@@ -12,6 +12,8 @@ public class GanchoArm extends MultiArmSkillAbstract{
     public static final int MAX_RANGE = 20;
     public boolean hasGancho = true;
     public int ganchoId = -1;
+    public float largoActual = 0.0F;
+    public boolean atraction = false;
     public GanchoArm() {
         super("gancho_arm", 100, true, false);
     }
@@ -20,42 +22,66 @@ public class GanchoArm extends MultiArmSkillAbstract{
     public void tick(MultiArmCapability multiArmCapability) {
         super.tick(multiArmCapability);
         Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
-        if(gancho instanceof GanchoEntity ganchoEntity){
-            if(ganchoEntity.hit){
-                Player player = multiArmCapability.getPlayer();
-                Vec3 positionInitial = player.position();
-                Vec3 delta = player.getDeltaMovement();
-                Vec3 ganchoPosition = ganchoEntity.position();
-                Vec3 direction = ganchoPosition.subtract(positionInitial).normalize().scale(0.2F);
-                boolean atraction = false;
-                if(positionInitial.add(delta.x,0,0).subtract(ganchoPosition).length()>MAX_RANGE){
-                    player.addDeltaMovement(new Vec3(direction.x,0,0));
-                    atraction = true;
-                }
-                if(positionInitial.add(0, delta.y, 0).subtract(ganchoPosition).length()>MAX_RANGE){
-                    player.addDeltaMovement(new Vec3(0,direction.y,0));
-                    atraction = true;
-                }
-                if(positionInitial.add(0,0,delta.z).subtract(ganchoPosition).length()>MAX_RANGE){
-                    player.addDeltaMovement(new Vec3(0,0,direction.z));
-                    atraction = true;
-                }
-                if(atraction){
-                    player.hurtMarked=true;
-                }
-                if(multiArmCapability.getPlayer().level().isClientSide){
-                    CRC.LOGGER.debug("Client distance :"+player.position().add(player.getDeltaMovement()).subtract(ganchoEntity.position()).length());
-                }else {
-                    CRC.LOGGER.debug("Server distance :"+player.position().add(player.getDeltaMovement()).subtract(ganchoEntity.position()).length());
+        if (gancho instanceof GanchoEntity ganchoEntity) {
+            Player player = multiArmCapability.getPlayer();
+            Vec3 playerPos = player.position();
+            Vec3 ganchoPos = ganchoEntity.position();
+            Vec3 toGancho = ganchoPos.subtract(playerPos);
+            double distance = toGancho.length();
 
+            if (largoActual <= 0) {
+                largoActual = MAX_RANGE;
+            }
+            if (ganchoEntity.hit) {
+
+                Vec3 direction = toGancho.normalize();
+                Vec3 velocity = player.getDeltaMovement();
+
+                // === CONFIGURACIONES ===
+                double damping = 0.96;         // fricción del aire
+                double gravityReduction = 0.04; // para un balanceo más suave
+                double tensionForce = 0.25;     // fuerza de la cuerda al tensarse
+                double shortenSpeed = 0.55;     // qué tan rápido se acorta con shift
+                double minLength = 1.0;         // distancia mínima al gancho
+
+                // === ACORTAR CUERDA CON SHIFT ===
+                if (player.isShiftKeyDown()) {
+                    if(!this.atraction){
+                        largoActual = (float) Math.min(distance,MAX_RANGE);
+                        CRC.LOGGER.debug("Largo actual :"+largoActual);
+                        this.atraction = true;
+                    }
+                    largoActual = (float) Math.max(minLength, largoActual - shortenSpeed);
                 }
-            }else {
-                if(!ganchoEntity.isBack && gancho.distanceTo(multiArmCapability.getPlayer())>MAX_RANGE){
+
+                // === FÍSICA DEL BALANCEO ===
+                velocity = velocity.scale(damping);
+                velocity = velocity.add(0, gravityReduction, 0);
+
+                // === SI SUPERA EL LARGO DE LA CUERDA ===
+                if (distance > largoActual) {
+                    double excess = distance - largoActual;
+
+                    // Aplica una fuerza de tensión proporcional a cuánto se pasó
+                    Vec3 tension = direction.scale(excess * tensionForce);
+
+                    // Evita que el jugador siga alejándose
+                    double awaySpeed = velocity.dot(direction);
+                    if (awaySpeed < 0) {
+                        velocity = velocity.subtract(direction.scale(awaySpeed));
+                    }
+
+                    velocity = velocity.add(tension);
+                }
+
+                player.setDeltaMovement(velocity);
+
+            } else {
+                if (!ganchoEntity.isBack && gancho.distanceTo(player) > MAX_RANGE) {
                     ganchoEntity.isBack = true;
                 }
             }
         }
-
     }
 
     @Override
@@ -67,6 +93,8 @@ public class GanchoArm extends MultiArmSkillAbstract{
             multiArmCapability.getPlayer().level().addFreshEntity(gancho);
             this.hasGancho = false;
             this.ganchoId = gancho.getId();
+            this.largoActual = 0.0F;
+            this.atraction = false;
         }else {
             Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
             if(gancho instanceof GanchoEntity ganchoEntity){
@@ -89,9 +117,6 @@ public class GanchoArm extends MultiArmSkillAbstract{
                     multiArmCapability.getPlayer().level().addFreshEntity(gancho1);
                 }
             }
-
-
-
             multiArmCapability.catchEntity=null;
         }
     }

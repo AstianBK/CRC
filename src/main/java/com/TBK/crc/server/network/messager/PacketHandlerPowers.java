@@ -2,6 +2,8 @@ package com.TBK.crc.server.network.messager;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
+import com.TBK.crc.server.multiarm.PassivePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -30,14 +32,14 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
 
     public PacketHandlerPowers(int id, Entity entity, Player player) {
         this.id=id;
-        this.newEntity =entity;
-        this.oldEntity =player;
+        this.newEntity = entity;
+        this.oldEntity = player;
     }
 
     @Override
     public void write(FriendlyByteBuf buf) {
         buf.writeInt(this.id);
-        buf.writeInt(this.newEntity.getId());
+        buf.writeInt(this.newEntity!=null ? this.newEntity.getId() : -1);
         buf.writeInt(this.oldEntity.getId());
     }
 
@@ -49,8 +51,15 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                 Player player=context.get().getSender();
                 MultiArmCapability cap=MultiArmCapability.get(player);
                 if(cap!=null){
-                    CRC.LOGGER.debug("Clear");
-                    cap.clearAbilityStore();
+                    switch (id){
+                        case 3->{
+                            cap.clearAbilityStore();
+                        }
+                        case 4 ->{
+                            CRC.LOGGER.debug("Clear");
+                            cap.clearForUpgradeStore();
+                        }
+                    }
                 }
             }
         });
@@ -70,6 +79,13 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                 }
                 case 2->{
                     this.stop(cap,player);
+                }
+                case 5 ->{
+                    CRC.LOGGER.debug("Passives en cliente :"+cap.getPassives());
+                    for (MultiArmSkillAbstractInstance instance : cap.getPassives().getSkills()){
+                        CRC.LOGGER.debug("instance :"+instance.getSkillAbstract().name);
+                        ((PassivePart)instance.getSkillAbstract()).onDie(cap,this.newEntity);
+                    }
                 }
             }
         }
