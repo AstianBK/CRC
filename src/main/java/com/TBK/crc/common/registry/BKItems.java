@@ -20,10 +20,11 @@ public class BKItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, CRC.MODID);
 
     //CYBER-COMPONENT
+
     public static final RegistryObject<Item> CYBORG_RESISTOR = ITEMS.register("cyborg_resistor",()->new CyberComponentItem(new Item.Properties()));
     public static final RegistryObject<Item> CYBORG_CAPACITOR = ITEMS.register("cyborg_capacitor",()->new CyberComponentItem(new Item.Properties()));
-    public static final RegistryObject<Item> CYBORG_MICROCHIP = ITEMS.register("cyborg_microchip",()->new CyberComponentItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> CYBORG_BONE = ITEMS.register("cyborg_bone",()->new CyberComponentItem(new Item.Properties()));
+    public static final RegistryObject<Item> CYBORG_MICROCHIP = ITEMS.register("cyborg_microchip",()->new CyberComponentItem(new Item.Properties().stacksTo(16)));
 
 
 
@@ -36,7 +37,6 @@ public class BKItems {
     public static final RegistryObject<Item> CYBORG_EYE_HACKER = ITEMS.register("cyborg_eye_hacker",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE));
     public static final RegistryObject<Item> CYBORG_HEART = ITEMS.register("cyborg_heart",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS));
     public static final RegistryObject<Item> CYBORG_THORACIC_CAGE = ITEMS.register("cyborg_thoracic_cage",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS));
-
     public static final RegistryObject<Item> CYBORG_KNEES_SPIKED = ITEMS.register("cyborg_knees_spiked",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS));
     public static final RegistryObject<Item> CYBORG_KNEES = ITEMS.register("cyborg_knees",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS));
     public static final RegistryObject<Item> CYBORG_SYNTHARM = ITEMS.register("cyborg_syntharm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM));
@@ -44,10 +44,10 @@ public class BKItems {
 
 
     //CYBER-UPGRADE
+
     public static final RegistryObject<Item> UPGRADE_ARM_CANNON = ITEMS.register("upgrade_arm_cannon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new CannonArm(),0));
     public static final RegistryObject<Item> UPGRADE_ARM_GANCHO = ITEMS.register("upgrade_arm_harpoon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new GanchoArm(),0));
     public static final RegistryObject<Item> UPGRADE_ARM_CLAWS = ITEMS.register("upgrade_arm_claws",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new SwordArm(),0));
-
     public static final RegistryObject<Item> UPGRADE_SYSTEM_HEART= ITEMS.register("upgrade_system_heart",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.SYSTEMS,new HeartReflex(),0));
 
     //REGULAR-ITEM
