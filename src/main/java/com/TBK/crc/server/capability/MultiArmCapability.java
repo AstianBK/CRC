@@ -2,6 +2,7 @@ package com.TBK.crc.server.capability;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
+import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
 import com.TBK.crc.common.item.CyberImplantItem;
@@ -16,7 +17,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +38,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MultiArmCapability implements IMultiArmPlayer {
@@ -45,6 +51,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     int posSelectMultiArmSkillAbstract=0;
     int castingTimer=0;
     int castingClientTimer=0;
+    public int clientPulsingTimer=0;
+    public int clientPulsingTimer0=0;
     int maxCastingClientTimer=0;
     public boolean isTransform=false;
     public boolean hotbarActive = false;
@@ -52,11 +60,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public int invokeTimer = 0;
     public int warningLevel = 0;
     public Entity catchEntity = null;
-    public PlayerCooldowns cooldowns=new PlayerCooldowns();
-    public ActiveEffectDuration durationEffect=new ActiveEffectDuration();
-    public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(new HashMap<>());
-    public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(new HashMap<>());
-
+    public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(Util.getMapEmpty());
+    public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
     public EntityType<?>[] types = new EntityType[]{
             BKEntityType.CYBORG_ROBOT_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get()
@@ -80,10 +85,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     @Override
     public void setPlayer(Player player) {
         this.player=player;
-    }
-
-    public void setIsTransform(boolean isTransform){
-        this.isTransform=isTransform;
     }
 
 
@@ -145,7 +146,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void tick(Player player) {
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
-
                 for (int i = 0 ; i < this.warningLevel ; i++){
                     TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,2)],findRandomSurfaceNear(this.player,10,level.random),player);
                     this.level.addFreshEntity(tp);
@@ -156,45 +156,36 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.invokeTimer--;
             }
         }
+        if(player instanceof ServerPlayer){
+            if(this.dirty){
+                PacketHandler.sendToPlayer(new PacketSyncImplant(player.getId(),this.implantStore.store), (ServerPlayer) player);
+                PacketHandler.sendToPlayer(new PacketSyncSkill(this.skills.upgrades,this.passives.upgrades), (ServerPlayer) player);
+                this.dirty = false;
+            }
+            PacketHandler.sendToPlayer(new PacketSyncPosHotBar(this.posSelectMultiArmSkillAbstract), (ServerPlayer) player);
+        }
+
+        if(!this.getPassives().upgrades.isEmpty()){
+            this.getPassives().upgrades.forEach((i, passive)->{
+                passive.getSkillAbstract().tick(this);
+            });
+        }
         if(Util.hasMultiArm(this)){
 
-            if (this.cooldownReUse>0){
-                this.cooldownReUse--;
-            }
-
-            if(player instanceof ServerPlayer){
-                if(this.dirty){
-                    PacketHandler.sendToPlayer(new PacketSyncImplant(player.getId(),this.implantStore.store), (ServerPlayer) player);
-                    PacketHandler.sendToPlayer(new PacketSyncSkill(this.passives.upgrades,this.skills.upgrades), (ServerPlayer) player);
-                    this.dirty = false;
-                }
-                if (this.cooldowns.hasCooldownsActive()){
-                    this.cooldowns.tick(1);
-                }
-                if(this.durationEffect.hasDurationsActive()){
-                    this.durationEffect.tick(1);
-                }
-                PacketHandler.sendToPlayer(new PacketSyncPosHotBar(this.posSelectMultiArmSkillAbstract), (ServerPlayer) player);
-            }else if(this.level.isClientSide){
-                if (this.cooldowns.hasCooldownsActive()){
-                    this.cooldowns.tick(1);
-                }
-
-            }
             if(!this.skills.getSkills().isEmpty()){
                 this.skills.getSkills().forEach(e->{
-                    if(this.durationEffect.hasDurationForSkill(e.getSkillAbstract()) || e.getSkillAbstract().canReactive){
-                        e.getSkillAbstract().tick(this);
-                        this.durationEffect.decrementDurationCount(e.getSkillAbstract());
-                    }
+                    e.getSkillAbstract().tick(this);
                 });
             }
-            if(!this.getPassives().upgrades.isEmpty()){
-                this.getPassives().upgrades.forEach((i, passive)->{
-                    passive.getSkillAbstract().tick(this);
-                });
-            }
+
             if(this.level.isClientSide){
+                this.clientPulsingTimer0 = this.clientPulsingTimer;
+                if(this.player.tickCount%55 == 0){
+                    this.clientPulsingTimer = 30;
+                }
+                if(this.clientPulsingTimer>0){
+                    this.clientPulsingTimer--;
+                }
                 if(this.castingClientTimer>0){
                     this.castingClientTimer--;
                 }
@@ -204,6 +195,10 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 }
             }
         }
+    }
+
+    public float getPulsingAnim(float partialTick){
+        return Mth.lerp(partialTick,this.clientPulsingTimer0,this.clientPulsingTimer);
     }
     
     public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
@@ -226,6 +221,24 @@ public class MultiArmCapability implements IMultiArmPlayer {
         return origin;
     }
 
+    public static boolean hasEffect(MobEffect effect,Player player){
+        MultiArmCapability cap = MultiArmCapability.get(player);
+        if (cap!=null){
+            return cap.passives.upgrades.values().stream().anyMatch(e-> e.getSkillAbstract().hasEffect(cap,effect));
+        }
+        return false;
+    }
+
+    public static boolean canEffect(MobEffect effect,Player player){
+        MultiArmCapability cap = MultiArmCapability.get(player);
+        if (cap!=null){
+            return cap.passives.upgrades.values().stream().allMatch(e-> e.getSkillAbstract().canEffect(cap,effect));
+        }
+        return false;
+    }
+
+
+
     public boolean isCasting(){
         return this.castingTimer>0;
     }
@@ -234,43 +247,39 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void onJoinGame(Player player, EntityJoinLevelEvent event) {
         this.dirty = true;
     }
+
     public void clearAbilityStore(){
         MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
-
         setSetHotbar(map);
-        if(this.level.isClientSide){
-            PacketHandler.sendToServer(new PacketHandlerPowers(3,player, player));
-        }
+        this.dirty = true;
+        CRC.LOGGER.debug("clear ability");
     }
+
     public void clearForUpgradeStore(){
         passives = new MultiArmSkillsAbstracts(new HashMap<>());
-        if(this.level.isClientSide){
-            PacketHandler.sendToServer(new PacketHandlerPowers(4,player, player));
-        }
+        this.dirty = true;
+        CRC.LOGGER.debug("clear passive");
     }
-    public void setPassivesActive(MultiArmSkillsAbstracts map,int index){
-        int i = index;
-        for (ItemStack stack : this.implantStore.getItems()){
-            if (stack.getItem() instanceof CyberImplantItem implant && implant.getTypePart()!= UpgradeableParts.ARM){
-                for (MultiArmSkillAbstract passive : CyberImplantItem.getUpgrade(stack.getOrCreateTag())){
-                    map.addMultiArmSkillAbstracts(i,passive);
-                    i++;
-                }
-            }
-        }
-    }
-    public void addNewPassive(MultiArmSkillAbstract skill){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
-        int index = this.passives.upgrades.size();
 
-        map.addMultiArmSkillAbstracts(index,skill);
-        //this.setPassivesActive(map,index);
-        this.passives = map;
-        CRC.LOGGER.debug("index "+index +" map :"+map);
-        if(this.level.isClientSide){
-            PacketHandler.sendToServer(new PacketAddSkill(skill.name, index,1));
-        }
+    public void clearForIndex(int index){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(passives.getUpgrades());
+
+        map.upgrades.put(index,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+
+        passives = map;
+        this.dirty = true;
     }
+
+    public void addNewPassive(MultiArmSkillAbstract skill,int index){
+        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(Util.getMapEmpty());
+        for (Map.Entry<Integer,MultiArmSkillAbstractInstance> entry : this.passives.getUpgrades().entrySet()){
+            map.addMultiArmSkillAbstracts(entry.getKey(),entry.getValue().getSkillAbstract());
+        }
+        map.addMultiArmSkillAbstracts(index,skill);
+        this.passives = map;
+        this.dirty = true;
+    }
+
     public void addNewAbility(MultiArmSkillAbstract skill){
         MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(this.getHotBarSkill().upgrades);
         int indexForUpgrade = Util.getIndexForName(skill.name);
@@ -278,10 +287,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             map.addMultiArmSkillAbstracts(indexForUpgrade,skill);
             setSetHotbar(map);
             setPosSelectMultiArmSkillAbstract(indexForUpgrade);
-            if(this.level.isClientSide){
-                PacketHandler.sendToServer(new PacketAddSkill(skill.name,indexForUpgrade,0));
-                CRC.LOGGER.debug("Passive :"+this.passives.getSkills().stream().findFirst().orElse(new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0)).getSkillAbstract().name);
-            }
+            this.dirty = true;
         }
     }
 
@@ -298,10 +304,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void stopSkill(MultiArmSkillAbstract power) {
         this.setLastUsingSkill(MultiArmSkillAbstract.NONE);
         power.stopAbility(this);
-        this.castingClientTimer = 0;
-        this.castingTimer = 0;
-        this.maxCastingClientTimer = 0;
-        this.syncSkill(this.getPlayer());
+
     }
 
     @Override
@@ -311,7 +314,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public boolean canUseSkill(MultiArmSkillAbstract skillAbstract) {
-        return !this.getCooldowns().isOnCooldown(skillAbstract) && !this.isCasting() && this.player.getMainHandItem().isEmpty();
+        return this.player.getMainHandItem().isEmpty();
     }
 
     @Override
@@ -327,14 +330,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void syncSkill(Player player) {
-        if(player instanceof ServerPlayer serverPlayer){
-            this.cooldowns.syncToPlayer(serverPlayer);
-            this.durationEffect.syncAllToPlayer();
 
-        }
-    }
-    public void syncPos(int pos,Player player){
-        PacketHandler.sendToAllTracking(new PacketSyncPosHotBar(pos),player);
     }
 
     @Override
@@ -349,61 +345,38 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void startCasting(Player player) {
+
         if(!this.level.isClientSide){
             PacketHandler.sendToPlayer(new PacketHandlerPowers(0,player, player), (ServerPlayer) player);
         }
 
         if(this.canUseSkill(this.getSelectSkill())){
-
-            boolean skillActive=this.durationEffect.hasDurationForSkill(this.getSelectSkill());
             if(this.getSelectSkill().isCasting){
-
                 this.startCasting(this.getSelectSkill(),this.player);
-                this.castingTimer = 20;
-                this.castingClientTimer = 20;
-                this.maxCastingClientTimer = 20;
+
             }else {
-                if((!skillActive || this.getSelectSkill().isCanReActive())){
+                if(this.getSelectSkill().isCanReActive()){
                     MultiArmSkillAbstract power=this.getSelectSkill();
                     this.setLastUsingSkill(this.getSelectSkill());
                     this.handledSkill(power);
                 }
             }
-
         }
+
     }
 
     public void stopCasting(Player player) {
         if(!this.level.isClientSide){
             PacketHandler.sendToPlayer(new PacketHandlerPowers(2,player, player), (ServerPlayer) player);
         }
-        boolean skillActive=this.durationEffect.hasDurationForSkill(this.getLastUsingSkill());
-        if (this.isCasting()){
-            if(skillActive){
-                MultiArmSkillAbstract skill=this.getLastUsingSkill();
-                DurationInstance instance=this.durationEffect.getDurationInstance(skill.name);
-                this.removeActiveEffect(instance,DurationResult.CLICKUP);
-            }
+        if (this.getLastUsingSkill() == this.getSelectSkill()){
+            this.stopSkill(this.getSelectSkill());
         }
     }
 
     public void startCasting(MultiArmSkillAbstract power,Player player){
-        DurationInstance instance=new DurationInstance(power.name,0,20,200);
-        this.addActiveEffect(instance,player);
         this.setLastUsingSkill(this.getSelectSkill());
         this.handledSkill(power);
-    }
-
-    public void removeActiveEffect(DurationInstance instance){
-        this.durationEffect.removeDuration(instance, DurationResult.TIMEOUT,true);
-    }
-
-    public void removeActiveEffect(DurationInstance instance,DurationResult result){
-        this.durationEffect.removeDuration(instance,result,true);
-    }
-
-    public void addActiveEffect(DurationInstance instance, Player player){
-        this.durationEffect.addDuration(instance,this);
     }
 
     @Override
@@ -415,16 +388,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
         CompoundTag passiveTag = new CompoundTag();
         this.passives.save(passiveTag);
         tag.put("passives",passiveTag);
-        CRC.LOGGER.debug("implant :"+tag);
-        CRC.LOGGER.debug("passive:"+passiveTag);
-        CRC.LOGGER.debug("ITEMS :"+this.passives.upgrades);
         tag.putInt("select_power",this.posSelectMultiArmSkillAbstract);
-        if(this.cooldowns.hasCooldownsActive()){
-            tag.put("cooldowns",this.cooldowns.saveNBTData());
-        }
-        if(this.durationEffect.hasDurationsActive()){
-            tag.put("activeEffect",this.durationEffect.saveNBTData());
-        }
+
 
         return tag;
     }
@@ -435,36 +400,15 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.passives = new MultiArmSkillsAbstracts(nbt.getCompound("passives"));
         this.posSelectMultiArmSkillAbstract=nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
-        CRC.LOGGER.debug("nbt :"+nbt);
         this.implantStore = new ImplantStore(nbt);
-        CRC.LOGGER.debug("store :"+this.implantStore);
-        if(nbt.contains("cooldowns")){
-            ListTag listTag=nbt.getList("cooldowns",10);
-            this.cooldowns.loadNBTData(listTag);
-        }
-        if(nbt.contains("activeEffect")){
-            ListTag listTag=nbt.getList("activeEffect",10);
-            this.durationEffect.loadNBTData(listTag);
-        }
     }
 
     public void init(Player player) {
         this.setPlayer(player);
         this.level=player.level();
-        if(player instanceof ServerPlayer serverPlayer){
-            this.durationEffect=new ActiveEffectDuration(serverPlayer);
-        }
     }
 
-    public PlayerCooldowns getCooldowns() {
-        return this.cooldowns;
-    }
-    public ActiveEffectDuration getActiveEffectDuration(){
-        return this.durationEffect;
-    }
-    public void setActiveEffectDuration(ActiveEffectDuration activeEffectDuration){
-        this.durationEffect=activeEffectDuration;
-    }
+
 
     public static class SkillPlayerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
         private final LazyOptional<IMultiArmPlayer> instance = LazyOptional.of(MultiArmCapability::new);

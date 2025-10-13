@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketKeySync;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeInputEvent {
     public static int selectActual = -1;
     public static int selectInitial = -1;
+    public static int cooldownUse = 0;
     @SubscribeEvent
     public static void onKeyPress(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();
@@ -56,10 +58,19 @@ public class ForgeInputEvent {
             }
 
         }
-        if (mc.screen == null && (key==1)) {
+        /*if(){
+            CRC.LOGGER.debug("relese"+cooldownUse);
+            cooldownUse = 0;
+            CRC.LOGGER.debug("relese despues"+cooldownUse);
+        }*/
+        if (mc.screen == null && (key==1) && cooldownUse<=0) {
             PacketHandler.sendToServer(new PacketKeySync(0x52,action,-1));
+            cooldownUse = 10;
             return true;
+        }else if(mc.screen == null && CRCKeybinds.bottomImplantStore.consumeClick()){
+            PacketHandler.sendToServer(new PacketKeySync(key,action,-1));
         }
+
         return false;
     }
 }

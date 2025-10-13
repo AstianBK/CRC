@@ -5,10 +5,7 @@ import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberComponentItem;
 import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.item.CyberUpgradeItem;
-import com.TBK.crc.server.multiarm.CannonArm;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import com.TBK.crc.server.multiarm.SwordArm;
-import com.TBK.crc.server.multiarm.HeartReflex;
+import com.TBK.crc.server.multiarm.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.registries.DeferredRegister;
@@ -32,15 +29,15 @@ public class BKItems {
 
     //CYBER-IMPLANT
 
-    public static final RegistryObject<Item> CYBORG_ARM = ITEMS.register("cyborg_arm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM));
-    public static final RegistryObject<Item> CYBORG_EYE = ITEMS.register("cyborg_eye",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE));
-    public static final RegistryObject<Item> CYBORG_EYE_HACKER = ITEMS.register("cyborg_eye_hacker",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE));
-    public static final RegistryObject<Item> CYBORG_HEART = ITEMS.register("cyborg_heart",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS));
-    public static final RegistryObject<Item> CYBORG_THORACIC_CAGE = ITEMS.register("cyborg_thoracic_cage",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS));
-    public static final RegistryObject<Item> CYBORG_KNEES_SPIKED = ITEMS.register("cyborg_knees_spiked",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS));
-    public static final RegistryObject<Item> CYBORG_KNEES = ITEMS.register("cyborg_knees",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS));
-    public static final RegistryObject<Item> CYBORG_SYNTHARM = ITEMS.register("cyborg_syntharm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM));
-    public static final RegistryObject<Item> CYBORG_COIL_FEET= ITEMS.register("cyborg_coil_feet",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS));
+    public static final RegistryObject<Item> CYBORG_ARM = ITEMS.register("cyborg_arm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM, MultiArmSkillAbstract.NONE));
+    public static final RegistryObject<Item> CYBORG_EYE = ITEMS.register("cyborg_eye",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE,new NightEye()));
+    public static final RegistryObject<Item> CYBORG_EYE_HACKER = ITEMS.register("cyborg_eye_hacker",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE,new HackerEye()));
+    public static final RegistryObject<Item> CYBORG_HEART = ITEMS.register("cyborg_heart",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS,new HeartReflex()));
+    public static final RegistryObject<Item> CYBORG_THORACIC_CAGE = ITEMS.register("cyborg_thoracic_cage",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.SYSTEMS,new ContraAttack()));
+    public static final RegistryObject<Item> CYBORG_KNEES_SPIKED = ITEMS.register("cyborg_knees_spiked",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS,new KneesSpiked()));
+    public static final RegistryObject<Item> CYBORG_KNEES = ITEMS.register("cyborg_knees",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS,new KneesHard()));
+    public static final RegistryObject<Item> CYBORG_SYNTHARM = ITEMS.register("cyborg_syntharm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM,MultiArmSkillAbstract.NONE));
+    public static final RegistryObject<Item> CYBORG_COIL_FEET= ITEMS.register("cyborg_coil_feet",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.LEGS,new RabbitFeet()));
 
 
     //CYBER-UPGRADE

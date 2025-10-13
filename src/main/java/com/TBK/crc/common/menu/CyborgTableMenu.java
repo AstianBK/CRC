@@ -1,13 +1,15 @@
 package com.TBK.crc.common.menu;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.registry.BKContainers;
+import com.TBK.crc.common.slot.CyberTableSlot;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.ImplantStore;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketAddImplant;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,92 +20,54 @@ import net.minecraft.world.level.Level;
 public class CyborgTableMenu extends AbstractContainerMenu {
 
     public final SimpleContainer craftSlots;
-
     protected final Level level;
     public int id;
+    public int slotCarried = -1;
     public ContainerData data;
     public Player player;
-    public boolean initialize = false;
     public CyborgTableMenu(int i, Inventory inventory, FriendlyByteBuf buf) {
         this(i,inventory,new SimpleContainer(6),new SimpleContainerData(1),new SimpleContainer(6));
     }
     public CyborgTableMenu(int p_39356_, Inventory p_39357_, SimpleContainer container, ContainerData data,SimpleContainer skills) {
-        super(BKContainers.POTION_MENU.get(), p_39356_);
+        super(BKContainers.TABLE_MENU.get(), p_39356_);
         this.data=data;
         this.id=data.get(0);
         this.craftSlots = container;
         this.player = p_39357_.player;
-        this.addSlot(new Slot(container, 0, 18,50){
+        this.addSlot(new CyberTableSlot(this,container, 0, 18,50){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.ARM;
             }
-
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
-            }
-
-            @Override
-            public void setByPlayer(ItemStack p_270152_) {
-                super.setByPlayer(p_270152_);
-            }
         });
-        this.addSlot(new Slot(container, 1, 36,16){
+        this.addSlot(new CyberTableSlot(this,container, 1, 36,16){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.EYE;
             }
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
-            }
         });
-        this.addSlot(new Slot(container, 2, 114,39){
+        this.addSlot(new CyberTableSlot(this,container, 2, 114,39){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.SYSTEMS;
             }
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
-            }
         });
-        this.addSlot(new Slot(container, 3, 132,39){
+        this.addSlot(new CyberTableSlot(this,container, 3, 132,39){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.SYSTEMS;
             }
-
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
-            }
         });
-        this.addSlot(new Slot(container, 4, 116,90){
+        this.addSlot(new CyberTableSlot(this,container, 4, 116,90){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.LEGS;
             }
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
-            }
         });
-        this.addSlot(new Slot(container, 5, 134,90){
+        this.addSlot(new CyberTableSlot(this,container, 5, 134,90){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem implant && implant.typePart == UpgradeableParts.LEGS;
-            }
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                CyborgTableMenu.this.upgradePlayer(false);
             }
         });
 
@@ -123,6 +87,7 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         }
         this.addDataSlots(data);
     }
+
     
     public ImplantStore getPlayerStore(){
         MultiArmCapability cap = MultiArmCapability.get(player);
@@ -131,6 +96,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         }
         return null;
     }
+
+
 
     @Override
     public ItemStack quickMoveStack(Player p_38941_, int p_38987_) {
@@ -142,46 +109,68 @@ public class CyborgTableMenu extends AbstractContainerMenu {
         return true;
     }
 
-    public void upgradePlayer(boolean operar) {
+    public void refreshPlayer(Player player) {
+        for (int i = 0 ; i<6 ; i++){
+            refreshSlot(i,player);
+        }
+    }
+
+    public void refreshSlot(int i,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if(cap!=null){
-            for (int i = 0 ; i<6 ; i++){
-                ItemStack menuItem = this.craftSlots.getItem(i);
-                ItemStack storeItem = this.getPlayerStore().store.getItem(i);
-
-                if(menuItem.isEmpty() && !storeItem.isEmpty() && storeItem.getItem() instanceof CyberImplantItem implantStore){
-                    cap.implantStore.setImplant(ItemStack.EMPTY,i);
-                    if(implantStore.typePart==UpgradeableParts.ARM){
-                        cap.clearAbilityStore();
-                    }else {
-                        cap.clearForUpgradeStore();
-                    }
-                }
-                if((!menuItem.isEmpty() && storeItem.isEmpty() || menuItem.getItem()!=storeItem.getItem()) && (menuItem.getItem() instanceof CyberImplantItem implantMenu)){
-                    cap.implantStore.setImplant(player.level(), menuItem.copy(),implantMenu.typePart);
-                    if(implantMenu.typePart==UpgradeableParts.ARM){
-                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(menuItem.getOrCreateTag())){
-                            if(upgrade != MultiArmSkillAbstract.NONE){
-                                cap.addNewAbility(upgrade);
-                                CRC.LOGGER.debug("Se agrego una abilidad nueva");
-                            }
-                        }
-                    }else {
-                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(menuItem.getOrCreateTag())){
-                            if(upgrade != MultiArmSkillAbstract.NONE){
-                                cap.addNewPassive(upgrade);
-                                CRC.LOGGER.debug("Se agrego una pasiva nueva");
-                            }
-                        }
-                    }
-                }
+            ItemStack menuItem = this.craftSlots.getItem(i);
+            ItemStack storeItem = this.getPlayerStore().store.getItem(i);
+            if(menuItem.isEmpty() && !storeItem.isEmpty()){
+                PacketHandler.sendToServer(new PacketAddImplant(ItemStack.EMPTY,i));
+            }
+            if((!menuItem.isEmpty() && storeItem.isEmpty() || menuItem.getItem()!=storeItem.getItem())){
+                PacketHandler.sendToServer(new PacketAddImplant(menuItem,i));
             }
         }
     }
 
+
     @Override
     public void removed(Player p_38940_) {
-        super.removed(p_38940_);
+        ItemStack itemstack = this.getCarried();
+        if (!itemstack.isEmpty() && this.slotCarried != -1 && getSlot(this.slotCarried).getItem().isEmpty()){
+            MultiArmCapability cap = MultiArmCapability.get(p_38940_);
+            if (cap!=null){
+                cap.implantStore.setImplant(itemstack,this.slotCarried);
+                if(this.slotCarried == 0){
+                    cap.clearAbilityStore();
+                }else {
+                    cap.clearForIndex(this.slotCarried);
+                }
+                if(!this.level.isClientSide){
+                    cap.dirty = true;
+                }
+            }
+        }
+        if (p_38940_ instanceof ServerPlayer){
+            if (!itemstack.isEmpty()) {
+                if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
+                    p_38940_.getInventory().placeItemBackInInventory(itemstack);
+                } else {
+                    p_38940_.drop(itemstack, false);
+                }
+                this.setCarried(ItemStack.EMPTY);
+            }
+            for (int i = 0 ; i < 6 ; i++){
+                getSlot(i).setChanged();
+                CyberTableSlot slot = (CyberTableSlot) getSlot(i);
+                ItemStack itemstack1 = slot.getItem();
+                if(!itemstack1.isEmpty() && slot.isDirty()){
+                    if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
+                        p_38940_.getInventory().placeItemBackInInventory(itemstack1);
+                    } else {
+                        p_38940_.drop(itemstack1, false);
+                    }
+                }
+            }
+        }
+
+        this.slotCarried = -1;
         this.craftSlots.clearContent();
     }
 }

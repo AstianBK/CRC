@@ -1,8 +1,11 @@
 package com.TBK.crc.server.network.messager;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.menu.CyborgTableMenu;
+import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.TBK.crc.server.multiarm.PassivePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +13,7 @@ import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
@@ -40,7 +44,7 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
     public void write(FriendlyByteBuf buf) {
         buf.writeInt(this.id);
         buf.writeInt(this.newEntity!=null ? this.newEntity.getId() : -1);
-        buf.writeInt(this.oldEntity.getId());
+        buf.writeInt(this.oldEntity!=null ? this.oldEntity.getId() : -1);
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
@@ -52,12 +56,13 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                 MultiArmCapability cap=MultiArmCapability.get(player);
                 if(cap!=null){
                     switch (id){
-                        case 3->{
-                            cap.clearAbilityStore();
-                        }
-                        case 4 ->{
-                            CRC.LOGGER.debug("Clear");
-                            cap.clearForUpgradeStore();
+                        case 3-> cap.clearAbilityStore();
+                        case 4 -> cap.clearForUpgradeStore();
+                        case 5 ->{
+                            AbstractContainerMenu menu = context.get().getSender().containerMenu;
+                            if(menu instanceof CyborgTableMenu tableMenu){
+                                cap.dirty = true;
+                            }
                         }
                     }
                 }
@@ -78,21 +83,35 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                     cap.catchEntity = this.newEntity;
                 }
                 case 2->{
-                    this.stop(cap,player);
+                    if (cap.getLastUsingSkill() == cap.getSelectSkill()){
+                        cap.stopSkill(cap.getSelectSkill());
+                    }
                 }
                 case 5 ->{
-                    CRC.LOGGER.debug("Passives en cliente :"+cap.getPassives());
                     for (MultiArmSkillAbstractInstance instance : cap.getPassives().getSkills()){
-                        CRC.LOGGER.debug("instance :"+instance.getSkillAbstract().name);
                         ((PassivePart)instance.getSkillAbstract()).onDie(cap,this.newEntity);
                     }
+                }
+                case 6->{
+                    Minecraft.getInstance().particleEngine.createTrackingEmitter(this.newEntity, BKParticles.LIGHTNING_TRAIL_PARTICLES.get());
                 }
             }
         }
     }
     @OnlyIn(Dist.CLIENT)
     public void start(MultiArmCapability cap,Player player){
-        cap.startCasting(player);
+        if(cap.canUseSkill(cap.getSelectSkill())){
+            if(cap.getSelectSkill().isCasting){
+                cap.startCasting(cap.getSelectSkill(),player);
+
+            }else {
+                if(cap.getSelectSkill().isCanReActive()){
+                    MultiArmSkillAbstract power=cap.getSelectSkill();
+                    cap.setLastUsingSkill(cap.getSelectSkill());
+                    cap.handledSkill(power);
+                }
+            }
+        }
     }
 
     @OnlyIn(Dist.CLIENT)

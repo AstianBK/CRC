@@ -1,0 +1,59 @@
+package com.TBK.crc.server.multiarm;
+
+import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketHandlerPowers;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+
+public class ContraAttack extends PassivePart{
+    public float damageActually = 0 ;
+    public boolean contraAttack = false;
+    public ContraAttack() {
+        super("contra_attack", false);
+    }
+
+    @Override
+    public void tick(MultiArmCapability multiArmCapability) {
+        super.tick(multiArmCapability);
+    }
+
+
+    @Override
+    public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
+        if(event.getSource().getEntity()==null)return;
+        float amount = event.getAmount();
+        DamageSource source = event.getSource();
+        if(!this.contraAttack){
+            float damage = Math.min(this.damageActually + amount,20.0F);
+            if(damage==20.0F){
+                this.contraAttack = true;
+            }
+            this.damageActually = damage;
+        }else {
+            Entity sourceEntity = source.getEntity();
+            if(sourceEntity instanceof LivingEntity living){
+                living.invulnerableTime = 0;
+                living.hurt(living.damageSources().generic(),20.0F);
+                if(!multiArmCapability.getPlayer().level().isClientSide){
+                    PacketHandler.sendToAllTracking(new PacketHandlerPowers(6,living,multiArmCapability.getPlayer()), living);
+                }
+                this.damageActually = 0.0F;
+                this.contraAttack = false;
+            }
+        }
+
+    }
+
+    @Override
+    public boolean canActive(MultiArmCapability multiArmCapability) {
+        return false;
+    }
+
+    @Override
+    public boolean handlerPassive(MultiArmCapability multiArmCapability, Entity source) {
+        return false;
+    }
+}

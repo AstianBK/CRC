@@ -5,11 +5,13 @@
   "minVersion": "0.8",
   "refmap": "crc.refmap.json",
   "mixins": [
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "HumanoidModelMixin"
+    "HumanoidModelMixin",
+    "LightTextureMixin"
   ]
 }

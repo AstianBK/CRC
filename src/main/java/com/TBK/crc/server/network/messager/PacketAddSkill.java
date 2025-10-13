@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -50,13 +51,17 @@ public class PacketAddSkill implements Packet<PacketListener> {
         context.get().enqueueWork(() ->{
             assert context.get().getDirection() == NetworkDirection.PLAY_TO_SERVER;
             MultiArmCapability cap = MultiArmCapability.get(context.get().getSender());
+
             if(cap!=null){
-                if(this.id==0){
-                    cap.getHotBarSkill().addMultiArmSkillAbstracts(this.index, Util.getTypeSkillForName(this.name));
-                }else {
-                    cap.passives.addMultiArmSkillAbstracts(this.index,Util.getTypeSkillForName(this.name));
+                switch (this.id){
+                    case 0 -> {
+                        cap.getHotBarSkill().addMultiArmSkillAbstracts(this.index, Util.getTypeSkillForName(this.name));
+                    }
+                    case 1 -> {
+                        cap.passives.addMultiArmSkillAbstracts(this.index,Util.getTypeSkillForName(this.name));
+                    }
+
                 }
-                cap.dirty = true;
             }
         });
         context.get().setPacketHandled(true);

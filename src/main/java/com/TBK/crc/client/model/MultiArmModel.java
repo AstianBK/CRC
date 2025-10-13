@@ -10,12 +10,16 @@ import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
@@ -160,6 +164,10 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 			mainharpoon.visible=true;
 			mainmelee.visible=false;
 			harpoon.visible = ((GanchoArm)arm).hasGancho;
+		}else{
+			maincannon.visible=false;
+			mainharpoon.visible=false;
+			mainmelee.visible=false;
 		}
 	}
 
@@ -172,4 +180,10 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 	public ModelPart root() {
 		return this.truemain;
 	}
+
+	public List<ModelPart> getRoot() {
+		return List.of(this.truemain);
+
+	}
+
 }

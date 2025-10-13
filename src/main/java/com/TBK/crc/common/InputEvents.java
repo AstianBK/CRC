@@ -26,10 +26,7 @@ public class InputEvents {
         onInput(mc, event.getButton(), event.getAction());
     }
     private static boolean onInput(Minecraft mc, int key, int action) {
-        if (mc.screen == null && (key==1)) {
-            PacketHandler.sendToServer(new PacketKeySync(0x52,action,-1));
-            return true;
-        }
+
         return false;
     }
 }

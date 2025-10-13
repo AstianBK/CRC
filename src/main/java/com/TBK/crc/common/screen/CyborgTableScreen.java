@@ -2,22 +2,15 @@ package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.CyborgTableMenu;
-import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.RecipeBookType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 
 
 public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> {
@@ -34,11 +27,17 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
     protected void init() {
         super.init();
         this.acceptButton = new Button.Builder(Component.literal("VAMOS A PERDER"),(s)->{
-            this.menu.upgradePlayer(true);
-            Minecraft.getInstance().setScreen(null);
+            this.menu.refreshPlayer(menu.player);
+            assert Minecraft.getInstance().player!=null;
+            Minecraft.getInstance().player.closeContainer();
         }).bounds(this.leftPos + 45, (this.height / 2 - this.imageHeight / 2)  + 135, 100, 20).build();
         this.acceptButton.active = false;
         this.addRenderableWidget(this.acceptButton);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
+
     }
 
     @Override
@@ -48,6 +47,8 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
         p_283065_.blit(CRAFTING_TABLE_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         this.renderTooltip(p_283065_,p_97789_,p_97790_);
     }
+
+
 
     @Override
     public void render(GuiGraphics p_283479_, int p_283661_, int p_281248_, float p_281886_) {

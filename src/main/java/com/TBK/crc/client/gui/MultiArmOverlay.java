@@ -28,7 +28,7 @@ public class MultiArmOverlay implements IGuiOverlay {
             Player player = this.mc.player;
             MultiArmCapability cap=MultiArmCapability.get(player);
             if(cap!=null && Util.hasMultiArm(cap)){
-                int i = width / 2 -140;
+                int i = width / 2 - 140;
 
                 graphics.pose().pushPose();
                 if(cap.hotbarActive){
@@ -39,15 +39,6 @@ public class MultiArmOverlay implements IGuiOverlay {
                         if(!skillAbstract.equals(MultiArmSkillAbstract.NONE)){
                             graphics.pose().pushPose();
                             graphics.blit(getIconsForSkill(skillAbstract), j1, k1 , 0,0,16, 16, 16, 16);
-                            graphics.pose().popPose();
-
-                            graphics.pose().pushPose();
-                            float f = cap.getCooldowns().getCooldownPercent(skillAbstract);
-                            if (f > 0.0F) {
-                                int i2 = k1 + Mth.floor(16.0F * (1.0F-f));
-                                int j2= i2 + Mth.floor(16.0F * f);
-                                graphics.fill(RenderType.guiOverlay(), j1, i2, j1 + 16,  j2+5, Integer.MAX_VALUE);
-                            }
                             graphics.pose().popPose();
                         }
                     }

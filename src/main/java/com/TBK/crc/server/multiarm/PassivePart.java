@@ -1,6 +1,5 @@
 package com.TBK.crc.server.multiarm;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
@@ -29,16 +28,15 @@ public abstract class PassivePart extends MultiArmSkillAbstract{
     public abstract boolean handlerPassive(MultiArmCapability multiArmCapability,Entity source);
 
     public boolean onDie(MultiArmCapability multiArmCapability, Entity source){
-        if(multiArmCapability.getPlayer().level().isClientSide){
-            CRC.LOGGER.debug("Client on die");
-        }else {
-            CRC.LOGGER.debug("Server on die");
+        if(!multiArmCapability.getPlayer().level().isClientSide){
             PacketHandler.sendToAllTracking(new PacketHandlerPowers(5,source,multiArmCapability.getPlayer()), (LivingEntity) source);
         }
         if(canActive(multiArmCapability)){
-
+            this.startAbility(multiArmCapability);
             return handlerPassive(multiArmCapability,source);
         }
+
         return false;
     }
+
 }

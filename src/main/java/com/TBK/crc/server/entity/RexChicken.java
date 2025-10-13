@@ -56,6 +56,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public AnimationState head_open = new AnimationState();
     public AnimationState head_close = new AnimationState();
     public Vec3 chargeDirection = Vec3.ZERO;
+    public BlockPos lastBlockPosBeamExplosion = null;
     public boolean laserSemiCir = true;
     public float rotHeadY = 0.0F;
     public float rotHeadY0 = 0.0F;
@@ -352,36 +353,36 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public void tickHead(){
         if(this.isLaser()){
             this.setDeltaMovement(Vec3.ZERO);
-            if (this.getTarget()!=null){
-                this.setPos(this.position());
-                if(this.laserSemiCir){
-                    this.speedLaserModifier= Math.min(10,this.speedLaserModifier+0.25F);
-                    if(this.isRage()){
-                        this.rotHeadX += Math.cos(this.tickCount*0.5)*2.5F;
-                    }
-                    this.rotHeadY = Mth.clamp(lerpRotation(this.rotHeadY,(float) this.rotHeadY+this.speedLaserModifier,10.0F),-60,60);
-                    if(this.rotHeadY>=60.0F){
-                        this.setLaser(false);
-                        this.laserSemiCir = false;
-                        this.cooldownLaser=200;
-                    }
-                }else {
-                    this.speedLaserModifier= Math.min(10,this.speedLaserModifier+0.1F);
-                    if(this.isRage()){
-                        this.rotHeadY += Math.cos(this.tickCount*0.5)*2.5F;
-                    }
-                    this.rotHeadX = Mth.clamp(lerpRotation(this.rotHeadX,(float) this.rotHeadX-this.speedLaserModifier,5.0F),0,45);
-                    if(this.rotHeadX<=0.0F){
-                        this.setLaser(false);
-                        this.laserSemiCir = true;
-                        this.cooldownLaser=200;
-                    }
+            this.setPos(this.position());
+            if(this.laserSemiCir){
+                this.speedLaserModifier= Math.min(10,this.speedLaserModifier+0.25F);
+                if(this.isRage()){
+                    this.rotHeadX += Math.cos(this.tickCount*0.5)*2.5F;
+                }
+                this.rotHeadY = Mth.clamp(lerpRotation(this.rotHeadY,(float) this.rotHeadY+this.speedLaserModifier,10.0F),-60,60);
+                if(this.rotHeadY>=60.0F){
+                    this.setLaser(false);
+                    this.laserSemiCir = false;
+                    this.cooldownLaser=200;
+                    this.lastBlockPosBeamExplosion = null;
+                }
+            }else {
+                this.speedLaserModifier= Math.min(10,this.speedLaserModifier+0.1F);
+                if(this.isRage()){
+                    this.rotHeadY += Math.cos(this.tickCount*0.5)*2.5F;
+                }
+                this.rotHeadX = Mth.clamp(lerpRotation(this.rotHeadX,(float) this.rotHeadX-this.speedLaserModifier,5.0F),0,45);
+                if(this.rotHeadX<=0.0F){
+                    this.setLaser(false);
+                    this.laserSemiCir = true;
+                    this.cooldownLaser=200;
+                    this.lastBlockPosBeamExplosion = null;
                 }
             }
             if(this.rotHeadY == this.rotHeadY0 && this.rotHeadX == this.rotHeadX0){
                 this.applyLaserEffect(this.viewHeadY());
             }else{
-                float diffY = this.rotHeadY - this.rotHeadY0;
+                float diffY = Mth.abs(this.rotHeadY - this.rotHeadY0);
                 float diffX = Mth.abs(this.rotHeadX - this.rotHeadX0);
                 float maxDiff = Math.max(diffX,diffY);
                 float rotExtra = 0.0F;
@@ -400,26 +401,28 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public void applyLaserEffect(Vec3 view){
         Vec3 origin = this.getHeadPos(1.0F);
         BlockHitResult blockEnd = this.level().clip(new ClipContext(origin,origin.add(view.scale(50.0D)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE,this));
-        List<EntityHitResult> hits = this.getBeamEntityHitResult(this.level(),this,origin,origin.add(view.scale(50.0D)),this.getBoundingBox().inflate(100.0F), e->!this.is(e),0.5F);
+        List<EntityHitResult> hits = this.getBeamEntityHitResult(this.level(),this,origin,origin.add(view.scale(50.0D)),this.getBoundingBox().inflate(100.0F), e->!this.is(e),1.5F);
+
         if(hits!=null){
             for (EntityHitResult hit : hits){
                 if(hit.getEntity() instanceof LivingEntity entity){
                     if(entity.hurt(this.damageSources().generic(),4.0F)){
+                        entity.invulnerableTime = 0;
                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,3,10));
-
+                        entity.invulnerableTime = 0;
                     }
                 }
             }
         }
-        if(!level().getBlockState(blockEnd.getBlockPos()).isAir()){
+        if(!level().getBlockState(blockEnd.getBlockPos()).isAir() && (this.lastBlockPosBeamExplosion == null || Mth.sqrt((float) blockEnd.getBlockPos().distToCenterSqr(this.lastBlockPosBeamExplosion.getCenter())) > 2.0F)){
             BlockPos end = blockEnd.getBlockPos();
-
+            this.lastBlockPosBeamExplosion = end;
             if(this.level().isClientSide){
-                for (int i = 0 ; i<3 ; i++){
-                    this.level().addParticle(ParticleTypes.EXPLOSION,end.getX()+this.random.nextInt(-2,2),end.getY()+this.random.nextInt(0,2),end.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
-                }
+
             }else {
-                //createExplosion(end,this, Explosion.BlockInteraction.KEEP);
+                BeamExplosionEntity beamCracking = new BeamExplosionEntity(BKEntityType.CRACKING_BEAM.get(),this.level());
+                beamCracking.setPos(end.getCenter());
+                this.level().addFreshEntity(beamCracking);
             }
         }
     }

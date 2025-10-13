@@ -1,7 +1,11 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.CRC;
+import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -36,7 +40,28 @@ public class PacketAddImplant implements Packet<PacketListener> {
             assert context.get().getDirection() == NetworkDirection.PLAY_TO_SERVER;
             MultiArmCapability cap = MultiArmCapability.get(context.get().getSender());
             if(cap!=null){
-                cap.implantStore.setImplant(this.stack,this.index);
+
+                if(this.stack.getItem() instanceof CyberImplantItem implant){
+                    if(implant.typePart == UpgradeableParts.ARM){
+                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                            cap.addNewAbility(upgrade);
+                            CRC.LOGGER.debug("Se agrego una abilidad nueva");
+                        }
+                    }else {
+                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                            CRC.LOGGER.debug("Se agrego una pasiva nueva");
+                            cap.addNewPassive(upgrade,index);
+                        }
+                    }
+                }else if (this.stack.isEmpty()){
+                    if(index == 0){
+                        cap.clearAbilityStore();
+                    }else {
+                        cap.clearForIndex(index);
+                    }
+                }
+                cap.implantStore.setImplant(this.stack.copy(),this.index);
+                cap.dirty = true;
             }
         });
         context.get().setPacketHandled(true);

@@ -24,7 +24,10 @@ public class UpgradeTableScreen extends AbstractContainerScreen<UpgradeTableMenu
         this.imageWidth = 175;
         this.imageHeight = 165;
     }
+    @Override
+    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
 
+    }
     @Override
     protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
         int i = this.leftPos;

@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CyberImplantItem extends ItemCyborg{
-    public CyberImplantItem(Properties p_41383_, UpgradeableParts part) {
+    public MultiArmSkillAbstract skill;
+    public CyberImplantItem(Properties p_41383_, UpgradeableParts part,MultiArmSkillAbstract skillAbstract) {
         super(p_41383_, part,0);
+        this.skill = skillAbstract;
     }
     public int getTier(CompoundTag tag){
         return tag.contains("tier") ? tag.getInt("tier") : 0;
@@ -55,15 +57,19 @@ public class CyberImplantItem extends ItemCyborg{
             tag.put("storeUpgrade",list);
         }
     }
-    public static List<MultiArmSkillAbstract> getUpgrade(CompoundTag tag){
+    public static List<MultiArmSkillAbstract> getUpgrade(CyberImplantItem implantItem,CompoundTag tag){
         List<MultiArmSkillAbstract> upgrades = new ArrayList<>();
-        upgrades.add(MultiArmSkillAbstract.NONE);
+        if(!implantItem.skill.name.equals("none")){
+            upgrades.add(Util.getTypeSkillForName(implantItem.skill.name));
+        }
         if(tag.contains("storeUpgrade")){
             ListTag list = tag.getList("storeUpgrade",10);
             if(!list.isEmpty()){
                 for (int i = 0 ; i<list.size() ; i++){
                     CompoundTag nbt = list.getCompound(i);
-                    upgrades.add(Util.getTypeSkillForName(nbt.getString("nameUpgrade")));
+                    if(!nbt.getString("nameUpgrade").equals(MultiArmSkillAbstract.NONE.name)){
+                        upgrades.add(Util.getTypeSkillForName(nbt.getString("nameUpgrade")));
+                    }
                 }
             }
         }
@@ -72,7 +78,8 @@ public class CyberImplantItem extends ItemCyborg{
 
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-        List<MultiArmSkillAbstract> upgrades = getUpgrade(p_41421_.getOrCreateTag());
+        List<MultiArmSkillAbstract> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
+        upgrades.remove(this.skill);
         if(!upgrades.isEmpty()){
             for (MultiArmSkillAbstract upgrade : upgrades){
                 if (upgrade==MultiArmSkillAbstract.NONE)continue;

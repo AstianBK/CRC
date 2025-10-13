@@ -3,13 +3,17 @@ package com.TBK.crc.server.manager;
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberImplantItem;
+import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketAddImplant;
+import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +61,7 @@ public class ImplantStore{
         int index = getSlotForType(type);
         if(index!=-1){
             this.store.setItem(index,implant);
-            if(level.isClientSide){
-                PacketHandler.sendToServer(new PacketAddImplant(implant,index));
-            }
+
         }
     }
     public void setImplant(ItemStack implant, int index){
@@ -78,11 +80,14 @@ public class ImplantStore{
         }
         return list;
     }
+    public ItemStack getImplantForSkill(MultiArmSkillAbstract skill){
+        return getItems().stream().filter(e->e.getItem() instanceof CyberImplantItem item && item.skill.name.equals(skill.name)).findFirst().orElse(null);
+    }
     public void setStoreForList(List<ItemStack> list){
         this.store.clearContent();
-        list.forEach(e->{
-            this.store.addItem(e);
-        });
+        for (int i = 0 ; i<list.size() ; i++){
+            this.store.setItem(i,list.get(i));
+        }
     }
     private int getSlotForType(UpgradeableParts type) {
         switch (type){

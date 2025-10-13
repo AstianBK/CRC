@@ -1,9 +1,13 @@
 package com.TBK.crc.server.multiarm;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.manager.DurationInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class MultiArmSkillAbstract {
     public static MultiArmSkillAbstract NONE = new MultiArmSkillAbstract("none",30,false, false);
@@ -32,7 +36,10 @@ public class MultiArmSkillAbstract {
     }
 
     public void startAbility(MultiArmCapability multiArmCapability){
-
+        ItemStack stack = multiArmCapability.implantStore.getImplantForSkill(this);
+        if(stack!=null){
+            multiArmCapability.getPlayer().getCooldowns().addCooldown(stack.getItem(),this.cd);
+        }
     }
 
     public void stopAbility(MultiArmCapability multiArmCapability){
@@ -54,12 +61,23 @@ public class MultiArmSkillAbstract {
     public boolean isCanReActive() {
         return canReactive;
     }
-    public boolean isCasting(){
-        return this.isCasting;
+
+    public boolean hasEffect(MultiArmCapability multiArmCapability, MobEffect effect){
+        return false;
+    }
+    public boolean canEffect(MultiArmCapability multiArmCapability, MobEffect effect){
+        return true;
     }
 
     public void swapArm(MultiArmCapability multiArmCapability,MultiArmSkillAbstract otherArm){
 
     }
 
+    public void onAttack(MultiArmCapability multiArmCapability, LivingEntity target){
+
+    }
+
+    public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event){
+
+    }
 }

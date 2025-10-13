@@ -1,8 +1,8 @@
 package com.TBK.crc.server.multiarm;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MultiArmSkillsAbstracts {
-    public Map<Integer, MultiArmSkillAbstractInstance> upgrades = Maps.newHashMap();
+    public Map<Integer, MultiArmSkillAbstractInstance> upgrades;
 
     public MultiArmSkillsAbstracts(Map<Integer,MultiArmSkillAbstractInstance> powers){
-        this.upgrades =powers;
+        this.upgrades = powers;
     }
 
     public void write(FriendlyByteBuf buf){
@@ -23,7 +23,7 @@ public class MultiArmSkillsAbstracts {
     }
 
     public MultiArmSkillsAbstracts(CompoundTag tag){
-        Map<Integer,MultiArmSkillAbstractInstance> map = new HashMap<>();
+        Map<Integer,MultiArmSkillAbstractInstance> map = Util.getMapEmpty();
         if(tag.contains("skills")){
             ListTag listTag = tag.getList("skills",10);
             for(int i = 0 ; i<listTag.size() ; i++){
@@ -69,17 +69,29 @@ public class MultiArmSkillsAbstracts {
         return power;
     }
 
+    public Map<Integer, MultiArmSkillAbstractInstance> getUpgrades() {
+        Map<Integer,MultiArmSkillAbstractInstance> map = new HashMap<>();
+        for (Map.Entry<Integer,MultiArmSkillAbstractInstance> entry : this.upgrades.entrySet()){
+            if(!entry.getValue().getSkillAbstract().name.equals("none")){
+                map.put(entry.getKey(),entry.getValue());
+            }
+        }
+        return map;
+    }
+
     public boolean hasMultiArmSkillAbstract(String id){
-        return this.getForName(id)!=null;
+        return !this.getForName(id).name.equals("none");
     }
 
     public void addMultiArmSkillAbstracts(int pos,MultiArmSkillAbstract power){
+        CRC.LOGGER.debug("add skill: "+power.name);
         this.upgrades.put(pos,new MultiArmSkillAbstractInstance(power,0));
     }
 
     public Collection<MultiArmSkillAbstractInstance> getSkills() {
         return this.upgrades.values();
     }
+
 
     public MultiArmSkillAbstract get(int pos){
         if(this.upgrades.containsKey(pos)){

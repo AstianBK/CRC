@@ -17,6 +17,10 @@ public class BKEntityType {
             .register("rex_chicken", () -> EntityType.Builder.<RexChicken>of(RexChicken::new, MobCategory.MISC)
                     .fireImmune().sized(2F, 2F).build(CRC.MODID+ "rex_chicken"));
 
+    public static final RegistryObject<EntityType<PortalEntity>> PORTAL = ENTITY_TYPES
+            .register("portal", () -> EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)
+                    .fireImmune().sized(0.5F, 2F).build(CRC.MODID+ "portal"));
+
     public static final RegistryObject<EntityType<CyborgRobotChicken>> CYBORG_ROBOT_CHICKEN = ENTITY_TYPES
             .register("cyborg_robot_chicken", () -> EntityType.Builder.<CyborgRobotChicken>of(CyborgRobotChicken::new, MobCategory.MISC)
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "cyborg_robot_chicken"));
@@ -30,9 +34,18 @@ public class BKEntityType {
     public static final RegistryObject<EntityType<GanchoEntity>> GANCHO = ENTITY_TYPES
             .register("gancho", () -> EntityType.Builder.<GanchoEntity>of(GanchoEntity::new, MobCategory.MISC)
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "gancho"));
+
     public static final RegistryObject<EntityType<ElectroProjectile>> ELECTRO = ENTITY_TYPES
             .register("electro", () -> EntityType.Builder.<ElectroProjectile>of(ElectroProjectile::new, MobCategory.MISC)
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "electro"));
+
+    public static final RegistryObject<EntityType<BeamExplosionEntity>> CRACKING_BEAM = ENTITY_TYPES
+            .register("cracking_beam", () -> EntityType.Builder.<BeamExplosionEntity>of(BeamExplosionEntity::new, MobCategory.MISC)
+                    .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "cracking_beam"));
+
+    public static final RegistryObject<EntityType<ResidualEntity>> RESIDUAL = ENTITY_TYPES
+            .register("residual", () -> EntityType.Builder.<ResidualEntity>of(ResidualEntity::new, MobCategory.MISC)
+                    .fireImmune().sized(0.6F, 1.95F).build(CRC.MODID+ "residual"));
 
 
 }

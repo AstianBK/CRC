@@ -43,7 +43,6 @@ public class CannonArm extends MultiArmSkillAbstract{
 
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
-        super.startAbility(multiArmCapability);
         ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),0);
         orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
         reRot(orb,0.0F,multiArmCapability.getPlayer().getYRot(),0.0F,1.0F,1.0F);
@@ -58,6 +57,7 @@ public class CannonArm extends MultiArmSkillAbstract{
         float f2 = Mth.cos(y * ((float)Math.PI / 180F)) * Mth.cos(x * ((float)Math.PI / 180F));
         reRot(projectile,f,f1,f2,miss,vel);
     }
+
     public void reRot(ElectroProjectile projectile,double x, double y, double z, float vel, float miss) {
         Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss)).scale((double) vel);
         double d0 = vec3.horizontalDistance();
@@ -66,6 +66,7 @@ public class CannonArm extends MultiArmSkillAbstract{
         projectile.yRotO = projectile.getYRot();
         projectile.xRotO = projectile.getXRot();
     }
+
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {
         super.stopAbility(multiArmCapability);

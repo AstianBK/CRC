@@ -70,16 +70,7 @@ public class GanchoEntity extends AbstractArrow {
             p_36757_.getEntity().hurt(damageSources().generic(),2.0F);
         }
     }
-    public Entity getEntityCached() {
-        if (this.cachedTarget != null && !this.cachedTarget.isRemoved()) {
-            return this.cachedTarget;
-        } else if (this.cachedUUID != null && this.level() instanceof ServerLevel) {
-            this.cachedTarget = ((ServerLevel)this.level()).getEntity(this.cachedUUID);
-            return this.cachedTarget;
-        } else {
-            return null;
-        }
-    }
+
 
 
     @Override

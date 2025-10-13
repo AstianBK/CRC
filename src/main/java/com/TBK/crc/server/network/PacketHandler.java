@@ -36,14 +36,6 @@ public class PacketHandler {
                 PacketKeySync::new, PacketKeySync::handle);
         channel.registerMessage(index++, PacketHandlerPowers.class, PacketHandlerPowers::write,
                 PacketHandlerPowers::new, PacketHandlerPowers::handle);
-        channel.registerMessage(index++, PacketActiveEffect.class, PacketActiveEffect::write,
-                PacketActiveEffect::new, PacketActiveEffect::handle);
-        channel.registerMessage(index++, PacketSyncCooldown.class, PacketSyncCooldown::write,
-                PacketSyncCooldown::new, PacketSyncCooldown::handle);
-        channel.registerMessage(index++, PacketSyncDurationEffect.class, PacketSyncDurationEffect::write,
-                PacketSyncDurationEffect::new, PacketSyncDurationEffect::handle);
-        channel.registerMessage(index++, PacketRemoveActiveEffect.class, PacketRemoveActiveEffect::write,
-                PacketRemoveActiveEffect::new, PacketRemoveActiveEffect::handle);
         channel.registerMessage(index++, PacketAddSkill.class, PacketAddSkill::write,
                 PacketAddSkill::new, PacketAddSkill::handle);
         channel.registerMessage(index++, PacketAddImplant.class, PacketAddImplant::write,
@@ -51,6 +43,9 @@ public class PacketHandler {
 
         channel.registerMessage(index++, PacketSyncSkill.class, PacketSyncSkill::write,
                 PacketSyncSkill::new, PacketSyncSkill::handle);
+
+        channel.registerMessage(index++, PacketHackerBlock.class,   PacketHackerBlock::write,
+                PacketHackerBlock::new,   PacketHackerBlock::handle);
 
         channel.registerMessage(index++, PacketSyncImplant.class,  PacketSyncImplant::write,
                 PacketSyncImplant::new,  PacketSyncImplant::handle);

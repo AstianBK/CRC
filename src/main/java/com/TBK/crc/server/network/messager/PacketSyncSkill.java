@@ -1,5 +1,6 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
@@ -78,6 +79,9 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         this.upgradesPassive.forEach((k, v) -> {
             passives.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
         });
+        for(int i = 0 ; i < 6 ; i++){
+            CRC.LOGGER.debug("skill :"+ cap.skills.get(i).name + " passive :"+cap.passives.get(i).name);
+        }
     }
 
 

@@ -1,0 +1,13 @@
+{
+  "type": "crc:the_future",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "crc:the_future",
+      "lakes": false,
+      "features": false,
+      "layers": [],
+      "structure_overrides": []
+    }
+  }
+}

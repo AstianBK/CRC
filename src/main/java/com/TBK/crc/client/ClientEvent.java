@@ -2,18 +2,17 @@ package com.TBK.crc.client;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.client.gui.MultiArmOverlay;
-import com.TBK.crc.client.layer.GanchoLayer;
 import com.TBK.crc.client.layer.MultiarmLayer;
-import com.TBK.crc.client.layer.PassiveLayer;
 import com.TBK.crc.client.model.*;
+import com.TBK.crc.client.particles.LightningTrailParticles;
 import com.TBK.crc.common.registry.BKContainers;
+import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.common.screen.CyborgTableScreen;
+import com.TBK.crc.common.screen.ImplantScreen;
 import com.TBK.crc.common.screen.UpgradeTableScreen;
 import com.google.common.base.Suppliers;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -31,8 +30,9 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        MenuScreens.register(BKContainers.POTION_MENU.get(), CyborgTableScreen::new);
+        MenuScreens.register(BKContainers.TABLE_MENU.get(), CyborgTableScreen::new);
         MenuScreens.register(BKContainers.UPGRADE_MENU.get(), UpgradeTableScreen::new);
+        MenuScreens.register(BKContainers.IMPLANT_MENU.get(), ImplantScreen::new);
     }
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -41,6 +41,7 @@ public class ClientEvent {
         event.registerLayerDefinition(RexChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(RexChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
         event.registerLayerDefinition(GanchoModel.LAYER_LOCATION, GanchoModel::createBodyLayer);
 
+        event.registerLayerDefinition(TheFuturePortalModel.LAYER_LOCATION, TheFuturePortalModel::createBodyLayer);
         event.registerLayerDefinition(CyborgRobotChickenModel.LAYER_LOCATION, CyborgRobotChickenModel::createBodyLayer);
         event.registerLayerDefinition(MultiArmModel.LAYER_LOCATION, MultiArmModel::createBodyLayer);
     }
@@ -61,7 +62,9 @@ public class ClientEvent {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @OnlyIn(Dist.CLIENT)
     public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-
+        if(BKParticles.LIGHTNING_TRAIL_PARTICLES.isPresent()){
+            event.registerSpriteSet(BKParticles.LIGHTNING_TRAIL_PARTICLES.get(), LightningTrailParticles.Factory::new);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -74,6 +77,5 @@ public class ClientEvent {
     @OnlyIn(Dist.CLIENT)
     public static void registerGui(RegisterGuiOverlaysEvent event){
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "skill_hotbar",new MultiArmOverlay());
-
     }
 }

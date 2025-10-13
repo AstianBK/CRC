@@ -31,13 +31,13 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
         this.data=data;
         this.id=data.get(0);
         this.craftSlots = container;
-        this.addSlot(new Slot(container, 0, 27,35){
+        this.addSlot(new Slot(container, 0, 76,35){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberUpgradeItem;
             }
         });
-        this.addSlot(new Slot(container, 1, 76,35){
+        this.addSlot(new Slot(container, 1, 27,35){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
                 return p_40231_.getItem() instanceof CyberImplantItem;
@@ -83,7 +83,6 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
                     UpgradeTableMenu.this.craftSlots.setItem(2,base);
                 }else {
                     UpgradeTableMenu.this.craftSlots.setItem(2,ItemStack.EMPTY);
-
                 }
             }
 

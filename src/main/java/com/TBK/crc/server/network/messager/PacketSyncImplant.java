@@ -1,8 +1,10 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.ImplantStore;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -31,9 +33,9 @@ public class PacketSyncImplant implements Packet<PacketListener> {
     }
 
     public List<ItemStack> getListForContainer(SimpleContainer container){
-        List<ItemStack> stacks = new ArrayList<>();
+        List<ItemStack> stacks = NonNullList.withSize(6,ItemStack.EMPTY);
         for(int i = 0 ; i<container.getContainerSize() ; i++){
-            stacks.add(container.getItem(i));
+            stacks.set(i,container.getItem(i));
         }
         return stacks;
     }
@@ -52,6 +54,7 @@ public class PacketSyncImplant implements Packet<PacketListener> {
             if(cap!=null){
                 cap.implantStore.setStoreForList(this.container);
             }
+
         });
         context.get().setPacketHandled(true);
     }

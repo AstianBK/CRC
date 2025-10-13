@@ -1,15 +1,16 @@
 package com.TBK.crc.server.network.messager;
 
-import com.TBK.crc.CRC;
-import com.TBK.crc.common.CRCKeybinds;
+import com.TBK.crc.common.menu.ImplantMenu;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkHooks;
 
 import java.util.function.Supplier;
 
@@ -49,27 +50,28 @@ public class PacketKeySync implements Packet<PacketListener>{
     }
 
     private void handlerAnim(Supplier<NetworkEvent.Context> contextSupplier) {
-        Player player=contextSupplier.get().getSender();
-        MultiArmCapability skillPlayerCapability=MultiArmCapability.get(player);
-        assert skillPlayerCapability != null;
+        ServerPlayer player=contextSupplier.get().getSender();
+        MultiArmCapability cap =MultiArmCapability.get(player);
+        assert cap != null;
         switch (this.key){
             case 0x52->{
                 if(this.action==0){
-                    skillPlayerCapability.stopCasting(player);
-                    CRC.LOGGER.debug("Stop casting");
+                    cap.stopCasting(player);
                 }
-                if(skillPlayerCapability.cooldownReUse<=0){
-                    if(this.action==1){
-                        skillPlayerCapability.startCasting(player);
-                    }
-                    skillPlayerCapability.cooldownReUse=2;
+                if(this.action==1){
+                    cap.startCasting(player);
                 }
             }
             case 0x12->{
-                MultiArmSkillAbstract skill = skillPlayerCapability.getSelectSkill();
-                skill.swapArm(skillPlayerCapability,skillPlayerCapability.getSkillForHotBar(this.action));
-                skillPlayerCapability.setPosSelectMultiArmSkillAbstract(this.action);
-                skillPlayerCapability.getSelectSkill().swapArm(skillPlayerCapability,skill);
+                MultiArmSkillAbstract skill = cap.getSelectSkill();
+                skill.swapArm(cap, cap.getSkillForHotBar(this.action));
+                cap.setPosSelectMultiArmSkillAbstract(this.action);
+                cap.getSelectSkill().swapArm(cap,skill);
+            }
+            case 86->{
+                NetworkHooks.openScreen(player, new SimpleMenuProvider((id, inventory, player1)->{
+                    return new ImplantMenu(id,inventory,cap.implantStore.store);
+                }, Component.literal("")),player.blockPosition());
             }
 
         }
