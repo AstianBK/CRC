@@ -1,8 +1,62 @@
 {
-  "netherforge_idle": {
-    "subtitle": "sounds.crc.netherforge_idle",
+  "chicken_bomb_loop": {
+    "subtitle": "sounds.crc.chicken_bomb_loop",
     "sounds": [
-      "crc:netherforge_idle"
+      "crc:chicken_bomb_loop"
+    ]
+  },
+  "chicken_minion_hurt": {
+    "subtitle": "sounds.crc.chicken_minion_hurt",
+    "sounds": [
+      "crc:chicken_minion_hurt"
+    ]
+  },
+  "rex_laser_loop": {
+    "subtitle": "sounds.crc.rex_laser_loop",
+    "sounds": [
+      "crc:rex_laser_loop"
+    ]
+  },
+  "rex_laser_shoot": {
+    "subtitle": "sounds.crc.rex_laser_shoot",
+    "sounds": [
+      "crc:rex_laser_shoot"
+    ]
+  },
+  "rex_start_charge": {
+    "subtitle": "sounds.crc.rex_start_charge",
+    "sounds": [
+      "crc:rex_start_charge"
+    ]
+  },
+  "rex_step1": {
+    "subtitle": "sounds.crc.rex_step1",
+    "sounds": [
+      "crc:rex_step1"
+    ]
+  },
+  "rex_step2": {
+    "subtitle": "sounds.crc.rex_step2",
+    "sounds": [
+      "crc:rex_step2"
+    ]
+  },
+  "rex_stomp": {
+    "subtitle": "sounds.crc.rex_stomp",
+    "sounds": [
+      "crc:rex_stomp"
+    ]
+  },
+  "heart_reflex_use": {
+    "subtitle": "sounds.crc.heart_reflex_use",
+    "sounds": [
+      "crc:heart_reflex_use"
+    ]
+  },
+  "cyborg_table_implant": {
+    "subtitle": "sounds.crc.cyborg_table_implant",
+    "sounds": [
+      "crc:cyborg_table_implant"
     ]
   }
 }

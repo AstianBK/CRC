@@ -47,6 +47,14 @@ public class BKItems {
     public static final RegistryObject<Item> UPGRADE_ARM_CLAWS = ITEMS.register("upgrade_arm_claws",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new SwordArm(),0));
     public static final RegistryObject<Item> UPGRADE_SYSTEM_HEART= ITEMS.register("upgrade_system_heart",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.SYSTEMS,new HeartReflex(),0));
 
+    public static final RegistryObject<Item> UPGRADE_SYSTEM_THORACIC_CAGE= ITEMS.register("upgrade_system_thoracic_cage",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.SYSTEMS,new CounterAttack(),0));
+
+    public static final RegistryObject<Item> UPGRADE_LEGS_COIL_FEET= ITEMS.register("upgrade_legs_coil_feet",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new CoilJump(),0));
+
+    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES= ITEMS.register("upgrade_legs_knees",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new KneeFallDamage(),0));
+
+    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES_SPIKED= ITEMS.register("upgrade_legs_knees_spiked",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new KneeSpikedJump(),0));
+
     //REGULAR-ITEM
     public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties().stacksTo(16)));
