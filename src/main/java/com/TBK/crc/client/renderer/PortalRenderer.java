@@ -52,16 +52,20 @@ public class PortalRenderer<T extends PortalEntity> extends NoopRenderer<T> {
     public void render(T p_115455_, float p_115456_, float p_115457_, PoseStack p_115458_, MultiBufferSource p_115459_, int p_115460_) {
         super.render(p_115455_, p_115456_, p_115457_, p_115458_, p_115459_, p_115460_);
         p_115458_.pushPose();
-        //p_115458_.translate(0,2.5F,0.0F);
+        p_115458_.translate(0,0.5F,0.0F);
         p_115458_.mulPose(this.entityRenderDispatcher.cameraOrientation());
         p_115458_.mulPose(Axis.ZP.rotationDegrees(180.0F));
-
-        this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.entityTranslucent(TEXTURE)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
-        this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.eyes(TEXTURE)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
         float ageInTick = p_115457_+p_115455_.tickCount;
+
+        this.model.setupAnim(p_115455_,0,0,ageInTick,0,0);
+        this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.entityTranslucent(TEXTURE)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
+        this.model.setupAnim(p_115455_,0,0,ageInTick,0,0);
+        this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.eyes(TEXTURE)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
         int frame = (int) ((0.25F * ageInTick) % RING_FRAMES.length);
         ResourceLocation location = RING_FRAMES[frame];
+        this.model.setupAnim(p_115455_,0,0,ageInTick,0,0);
         this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.entityTranslucent(location)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
+        this.model.setupAnim(p_115455_,0,0,ageInTick,0,0);
         this.model.renderToBuffer(p_115458_,p_115459_.getBuffer(RenderType.eyes(location)),p_115460_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
 
         p_115458_.popPose();

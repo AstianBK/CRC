@@ -4,17 +4,20 @@ package com.TBK.crc.client.model;// Made with Blockbench 4.12.6
 
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.animacion.PortalAnim;
 import com.TBK.crc.server.entity.PortalEntity;
+import com.ibm.icu.text.Normalizer2;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 
-public class TheFuturePortalModel<T extends PortalEntity> extends EntityModel<T> {
+public class TheFuturePortalModel<T extends PortalEntity> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "portal"), "main");
 	private final ModelPart truemain;
@@ -58,11 +61,17 @@ public class TheFuturePortalModel<T extends PortalEntity> extends EntityModel<T>
 
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+		this.root().getAllParts().forEach(ModelPart::resetPose);
+		this.animate(entity.idle, PortalAnim.animation,ageInTicks,1.0F);
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		truemain.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	}
+
+	@Override
+	public ModelPart root() {
+		return this.truemain;
 	}
 }

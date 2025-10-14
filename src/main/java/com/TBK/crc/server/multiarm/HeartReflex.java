@@ -6,6 +6,8 @@ import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ResidualEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +58,7 @@ public class HeartReflex extends PassivePart{
                 break;
             }
             if (!player.level().isClientSide){
-                ResidualEntity residual = new ResidualEntity(multiArmCapability.getPlayer().level(), BlockPos.containing(teleportPos),BlockPos.containing(position),i);
+                ResidualEntity residual = new ResidualEntity(multiArmCapability.getPlayer().level(), BlockPos.containing(teleportPos),BlockPos.containing(position),player,i);
                 residual.setPos(position.add(offSet));
                 player.level().addFreshEntity(residual);
             }
@@ -68,6 +70,9 @@ public class HeartReflex extends PassivePart{
                 flag = true;
             }
             i++;
+        }
+        if(multiArmCapability.getPlayer().level().isClientSide){
+            multiArmCapability.getPlayer().level().playLocalSound(teleportPos.x,teleportPos.y,teleportPos.z, SoundEvents.CHICKEN_DEATH, SoundSource.PLAYERS,1.0f,1.0f,false);
         }
         multiArmCapability.getPlayer().hurtMarked = false;
         multiArmCapability.getPlayer().setHealth(1.0F);

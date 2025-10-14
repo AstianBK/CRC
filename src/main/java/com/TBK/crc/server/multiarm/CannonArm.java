@@ -3,6 +3,7 @@ package com.TBK.crc.server.multiarm;
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroProjectile;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -42,7 +43,18 @@ public class CannonArm extends MultiArmSkillAbstract{
     }
 
     @Override
+    public SoundEvent getStartSound() {
+        return super.getStartSound();
+    }
+
+    @Override
+    public SoundEvent getStopSound() {
+        return super.getStopSound();
+    }
+
+    @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
+        super.startAbility(multiArmCapability);
         ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),0);
         orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
         reRot(orb,0.0F,multiArmCapability.getPlayer().getYRot(),0.0F,1.0F,1.0F);

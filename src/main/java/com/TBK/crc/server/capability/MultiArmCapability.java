@@ -12,6 +12,7 @@ import com.TBK.crc.server.manager.*;
 import com.TBK.crc.server.multiarm.*;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.*;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -67,6 +68,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             BKEntityType.CYBORG_ROBOT_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get()
     };
     public boolean dirty = false;
+    public SkillPose pose = SkillPose.NONE;
     public static MultiArmCapability get(Player player){
         return CRCCapability.getEntityCap(player,MultiArmCapability.class);
     }
@@ -229,6 +231,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
         return false;
     }
 
+    public void preparePose(PlayerModel model){
+
+    }
     public static boolean canEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
@@ -353,7 +358,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(this.canUseSkill(this.getSelectSkill())){
             if(this.getSelectSkill().isCasting){
                 this.startCasting(this.getSelectSkill(),this.player);
-
             }else {
                 if(this.getSelectSkill().isCanReActive()){
                     MultiArmSkillAbstract power=this.getSelectSkill();
@@ -409,6 +413,12 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
 
+    public enum SkillPose{
+        NONE,
+        CHARGE_CLAWS,
+        DASH_CLAWS,
+        CHARGE_CANNON;
+    }
 
     public static class SkillPlayerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
         private final LazyOptional<IMultiArmPlayer> instance = LazyOptional.of(MultiArmCapability::new);

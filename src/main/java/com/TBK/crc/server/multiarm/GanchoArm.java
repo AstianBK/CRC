@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.GanchoEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -84,6 +85,15 @@ public class GanchoArm extends MultiArmSkillAbstract{
         }
     }
 
+    @Override
+    public SoundEvent getStartSound() {
+        return super.getStartSound();
+    }
+
+    @Override
+    public SoundEvent getStopSound() {
+        return super.getStopSound();
+    }
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         if(hasGancho){

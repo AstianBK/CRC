@@ -103,7 +103,6 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
         if(cap.canUseSkill(cap.getSelectSkill())){
             if(cap.getSelectSkill().isCasting){
                 cap.startCasting(cap.getSelectSkill(),player);
-
             }else {
                 if(cap.getSelectSkill().isCanReActive()){
                     MultiArmSkillAbstract power=cap.getSelectSkill();

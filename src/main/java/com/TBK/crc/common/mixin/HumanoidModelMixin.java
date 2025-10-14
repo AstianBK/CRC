@@ -35,6 +35,14 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
         if (((Object)this) instanceof PlayerModel<?> model && p_102876_ instanceof Player player){
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null && Util.hasMultiArm(cap)){
+                switch (cap.pose){
+                    case DASH_CLAWS -> {
+                        model.rightArm.xRot = (float) (180.0F*(Math.PI/180.0F));
+                    }
+                    case CHARGE_CLAWS -> {
+                        model.rightArm.xRot = (float) (-90.0F*(Math.PI/180.0F));
+                    }
+                }
                 model.rightArm.visible = false;
                 model.rightArm.xScale=0;
                 model.rightArm.yScale=0;

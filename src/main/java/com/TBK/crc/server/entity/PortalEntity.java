@@ -4,6 +4,7 @@ import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.StructureData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +16,8 @@ import net.minecraft.world.phys.HitResult;
 import java.util.List;
 
 public class PortalEntity extends Entity {
+    public AnimationState idle = new AnimationState();
+    public int idleTimer = 0;
     public PortalEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }
@@ -30,16 +33,25 @@ public class PortalEntity extends Entity {
                     this.onTeleport(new EntityHitResult(intersecting.get(0)));
             }
         }else {
-            for(int i = 0; i < 4; ++i) {
-                
-                double d0 = (double)this.getX() + this.random.nextDouble();
-                double d1 = (double)this.getY() + this.random.nextDouble() * 2.0D;
-                double d2 = (double)this.getZ() + this.random.nextDouble();
-                double d3 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
-                double d4 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
-                double d5 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
+            if(this.tickCount % (15 + this.random.nextInt(0,5)) == 0){
+                for(int i = 0; i < 4; ++i) {
 
-                this.level().addParticle(BKParticles.LIGHTNING_TRAIL_PARTICLES.get(), d0, d1, d2, d3, d4, d5);
+                    double d0 = (double)this.getX() + this.random.nextDouble();
+                    double d1 = (double)this.getY() + this.random.nextDouble() * 2.0D;
+                    double d2 = (double)this.getZ() + this.random.nextDouble();
+                    double d3 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
+                    double d4 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
+                    double d5 = ((double)this.random.nextFloat() - 0.5D) * 0.5D;
+
+                    this.level().addParticle(BKParticles.LIGHTNING_TRAIL_PARTICLES.get(), d0, d1, d2, d3, d4, d5);
+                }
+            }
+
+            if(this.idleTimer<=0){
+                this.idleTimer = 80;
+                this.idle.start(this.tickCount);
+            }else {
+                this.idleTimer--;
             }
         }
     }

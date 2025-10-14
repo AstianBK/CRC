@@ -27,7 +27,9 @@ public class KneesSpiked extends PassivePart{
         Player player = multiArmCapability.getPlayer();
         if(!player.onGround()){
             for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F),e->e!=player)){
+                living.invulnerableTime = 0;
                 living.hurt(player.damageSources().playerAttack(player),5.0F);
+                living.invulnerableTime = 0;
             }
         }
     }

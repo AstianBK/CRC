@@ -42,7 +42,7 @@ public class Util {
     public static void initUpgrades(){
         upgrades.put("gancho_arm",GanchoArm::new);
         upgrades.put("cannon_arm",CannonArm::new);
-        upgrades.put("claws_arm",SwordArm::new);
+        upgrades.put("claws_arm", ClawsArm::new);
         upgrades.put("heart_reflex",HeartReflex::new);
         upgrades.put("contra_attack",ContraAttack::new);
         upgrades.put("night_eye",NightEye::new);
@@ -88,4 +88,6 @@ public class Util {
 
         return headSafe && feetSafe;
     }
+
+
 }

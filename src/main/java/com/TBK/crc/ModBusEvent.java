@@ -16,6 +16,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -110,11 +111,13 @@ public class ModBusEvent {
 
         }
     }
+
     @SubscribeEvent
     public static void renderPreEvent(RenderLivingEvent.Post<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event){
         if(event.getRenderer().getModel() instanceof MultiArmModel model){
             model.root().visible = false;
         }
+
         AbstractClientPlayer player = Minecraft.getInstance().player;
         MultiArmCapability cap = MultiArmCapability.get(player);
 
@@ -301,6 +304,7 @@ public class ModBusEvent {
             }
         }
     }
+
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event){
         if (event.getEntity() instanceof Player player){
