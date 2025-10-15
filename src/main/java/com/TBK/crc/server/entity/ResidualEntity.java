@@ -44,10 +44,12 @@ public class ResidualEntity extends Entity {
     public boolean isPushedByFluid(FluidType type) {
         return false;
     }
-    public ResidualEntity(Level p_19871_, BlockPos end, BlockPos start, Player owner, int delay,MultiArmCapability.SkillPose pose){
+    public ResidualEntity(Level p_19871_, BlockPos end, BlockPos start, Player owner, int delay,MultiArmCapability.SkillPose pose,float rotY,float rotX){
         this(p_19871_,end,start,owner,delay);
         this.pose = pose;
         this.setPoseId(pose.name());
+        this.setYRot(rotY);
+        this.setXRot(rotX);
     }
 
     public ResidualEntity(Level p_19871_, BlockPos end, BlockPos start, Player owner, int delay) {

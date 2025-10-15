@@ -3,6 +3,7 @@ package com.TBK.crc.server.multiarm;
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroProjectile;
+import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -14,7 +15,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CannonArm extends MultiArmSkillAbstract{
-    public int castingId;
+
+    public int stopAiming = 0;
+    public int chargeTime = 0;
+    public boolean charge = false;
     public CannonArm() {
         super("cannon_arm", 100, false, true);
     }
@@ -22,24 +26,29 @@ public class CannonArm extends MultiArmSkillAbstract{
     @Override
     public void tick(MultiArmCapability multiArmCapability) {
         super.tick(multiArmCapability);
-        Entity entity=multiArmCapability.getPlayer().level().getEntity(this.castingId);
-        if(multiArmCapability.getCastingTimer()%10==0){
-            if(entity instanceof ElectroProjectile projectile){
-                multiArmCapability.getPlayer().level().playSound(null,multiArmCapability.getPlayer(), SoundEvents.HONEYCOMB_WAX_ON, SoundSource.PLAYERS,1.0F,1.0F);
-                if(!multiArmCapability.getPlayer().level().isClientSide){
-                    projectile.level().broadcastEntityEvent(projectile,(byte) 4);
+
+        if(charge){
+            this.chargeTime++;
+            this.stopAiming = 20;
+            if(this.chargeTime<71){
+                if(multiArmCapability.levelCharge>0 && (this.chargeTime-10)%20==0){
+                    multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
                 }
-
+                if(multiArmCapability.levelCharge==0 && this.chargeTime>10){
+                    multiArmCapability.levelCharge=1;
+                }
+            }
+        }else {
+            if(this.stopAiming > 0 ){
+                this.stopAiming--;
+                if(this.stopAiming == 0){
+                    multiArmCapability.pose = MultiArmCapability.SkillPose.STOP_AIMING;
+                    multiArmCapability.stopAimingAnim = 5;
+                    multiArmCapability.stopAimingAnim0 = 5;
+                }
             }
         }
 
-        if(!multiArmCapability.getPlayer().level().isClientSide){
-            if(entity instanceof  ElectroProjectile projectile){
-                projectile.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
-                reRot(projectile,multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(),1.0F,1.0F);
-                projectile.level().broadcastEntityEvent(projectile,(byte) 4);
-            }
-        }
     }
 
     @Override
@@ -52,23 +61,14 @@ public class CannonArm extends MultiArmSkillAbstract{
         return super.getStopSound();
     }
 
+
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         super.startAbility(multiArmCapability);
-        ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),0);
-        orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
-        reRot(orb,0.0F,multiArmCapability.getPlayer().getYRot(),0.0F,1.0F,1.0F);
-
-        multiArmCapability.getPlayer().level().addFreshEntity(orb);
-        this.castingId = orb.getId();
+        multiArmCapability.pose =  MultiArmCapability.SkillPose.CHARGE_CANNON;
+        this.charge = true;
     }
 
-    public void reRot(ElectroProjectile projectile,float x, float y, float vel, float miss){
-        float f = -Mth.sin(y * ((float)Math.PI / 180F)) * Mth.cos(x * ((float)Math.PI / 180F));
-        float f1 = -Mth.sin((x) * ((float)Math.PI / 180F));
-        float f2 = Mth.cos(y * ((float)Math.PI / 180F)) * Mth.cos(x * ((float)Math.PI / 180F));
-        reRot(projectile,f,f1,f2,miss,vel);
-    }
 
     public void reRot(ElectroProjectile projectile,double x, double y, double z, float vel, float miss) {
         Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss)).scale((double) vel);
@@ -82,11 +82,18 @@ public class CannonArm extends MultiArmSkillAbstract{
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {
         super.stopAbility(multiArmCapability);
-        Entity entity=multiArmCapability.getPlayer().level().getEntity(this.castingId);
-        if(entity instanceof ElectroProjectile orb){
-            orb.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(), 0.0F, 1.0F, 1.0F);
-            this.castingId = -1;
-        }
+        multiArmCapability.timeShoot = 10;
+        multiArmCapability.timeShoot0 = 10;
+        this.stopAiming = 20;
+        this.charge = false;
+        multiArmCapability.levelCharge = 0;
+        ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),this.chargeTime);
+        orb.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(), 0.0F, 1.0F, 1.0F);
+        orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
+
+        multiArmCapability.getPlayer().level().addFreshEntity(orb);
+        this.chargeTime = 0;
+
     }
 
 

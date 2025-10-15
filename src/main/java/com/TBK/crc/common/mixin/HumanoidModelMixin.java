@@ -41,6 +41,8 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
                     }
                     case CHARGE_CLAWS -> {
                         model.rightArm.xRot = (float) (-90.0F*(Math.PI/180.0F));
+                        model.leftArm.xRot = (float) (-75.0F*(Math.PI/180.0F));
+                        model.leftArm.yRot = (float) (30.0F*(Math.PI/180.0F));
                     }
                 }
                 model.rightArm.visible = false;

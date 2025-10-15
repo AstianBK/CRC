@@ -46,7 +46,7 @@ public class ResidualRenderer<T extends ResidualEntity> extends NoopRenderer<T> 
 
     @Override
     public void render(T p_114485_, float p_114486_, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int p_114490_) {
-        AbstractClientPlayer player = (AbstractClientPlayer) p_114485_.getOwner();
+        AbstractClientPlayer player = p_114485_.getOwner() instanceof AbstractClientPlayer ?(AbstractClientPlayer)p_114485_.getOwner()  : null;
 
         if(this.model==null || player==null)return;
         if(p_114485_.getOrigen()!=null){
@@ -57,46 +57,50 @@ public class ResidualRenderer<T extends ResidualEntity> extends NoopRenderer<T> 
             stack.translate(0,1.5,0);
             stack.mulPose(Axis.XP.rotationDegrees(180.0F));
 
-            if(cap!=null){
-                this.setPose(p_114485_.getSkillPose(),stack,player);
-            }
+
             model.setupAnim(player,50, 0.5F, p_114486_, 0.0F,0.0F);
+            if(cap!=null){
+                this.setPose(p_114485_.getSkillPose(),stack,player,p_114485_);
+            }
             model.renderToBuffer(stack,bufferSource.getBuffer(RenderType.entityTranslucentEmissive(player.getSkinTextureLocation())),p_114490_, OverlayTexture.NO_OVERLAY,0.31f,0.83f,0.96f,alpha);
             if(cap!=null && Util.hasMultiArm(cap)){
-                this.renderArm(cap,player,stack,bufferSource,p_114490_);
+                this.renderArm(cap,player,stack,bufferSource,p_114490_,alpha);
             }
             stack.popPose();
         }
         super.render(p_114485_, p_114486_, partialTick, stack, bufferSource, p_114490_);
 
     }
-    public void renderArm(MultiArmCapability cap, Player owner, PoseStack stack,MultiBufferSource buffer,int light){
+    public void renderArm(MultiArmCapability cap, Player owner, PoseStack stack,MultiBufferSource buffer,int light,float alpha){
         stack.pushPose();
         selectPoseArm(owner,cap.getSelectSkill().name);
         armModel.root().copyFrom(model.rightArm);
         armModel.root().xScale=1.01F;
         armModel.root().yScale=1.01F;
         armModel.root().zScale=1.01F;
-        armModel.selectArm(cap.getSelectSkill().name,cap.getSelectSkill(),owner.tickCount+Minecraft.getInstance().getPartialTick());
-        armModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)),light, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
+        armModel.selectArm(owner,cap.getSelectSkill().name,cap.getSelectSkill(),owner.tickCount+Minecraft.getInstance().getPartialTick());
+        armModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE)),light, OverlayTexture.NO_OVERLAY,0.31f,0.83f,0.96f,alpha);
         stack.popPose();
     }
     private void selectPoseArm(Player entity,String name) {
         switch (name){
             case "cannon_arm","gancho_arm"->{
                 model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
-                model.poseRightArm(entity);
             }
         }
     }
-    private void setPose (MultiArmCapability.SkillPose pose, PoseStack stack,Player player){
+    private void setPose (MultiArmCapability.SkillPose pose, PoseStack stack,Player player,T residual){
+        float rotX = residual.getXRot();
+        stack.mulPose(Axis.YP.rotationDegrees(residual.getYRot()-90.0F));
         switch (pose){
             case DASH_CLAWS -> {
-                stack.translate(0,-0.5F,0);
-                Vec3 direction = player.getDeltaMovement();
-                float rotX = (float) Math.acos(direction.y);
-                stack.mulPose(Axis.XP.rotationDegrees(-90-rotX));
-
+                stack.mulPose(Axis.XP.rotationDegrees(rotX));
+                model.rightArm.xRot = (float) (-180.0F*(Math.PI/180.0F));
+            }
+            case CHARGE_CLAWS -> {
+                model.rightArm.xRot = (float) (-90.0F*(Math.PI/180.0F));
+                model.leftArm.xRot = (float) (-75.0F*(Math.PI/180.0F));
+                model.leftArm.yRot = (float) (30.0F*(Math.PI/180.0F));
             }
         }
     }

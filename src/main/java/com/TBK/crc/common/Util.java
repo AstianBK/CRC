@@ -1,10 +1,15 @@
 package com.TBK.crc.common;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.entity.ElectroExplosionEntity;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
 import com.TBK.crc.server.multiarm.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -81,12 +86,20 @@ public class Util {
 
 
         BlockState head = world.getBlockState(blockPos.above(2));
-        boolean headSafe = head.isAir() || head.getFluidState().isEmpty();
+        boolean headSafe = head.isAir() && head.getFluidState().isEmpty();
 
         BlockState feet = world.getBlockState(blockPos.above());
-        boolean feetSafe = feet.isAir()  || feet.getFluidState().isEmpty();
+        boolean feetSafe = feet.isAir()  && feet.getFluidState().isEmpty();
 
         return headSafe && feetSafe;
+    }
+
+    public static ElectroExplosionEntity createExplosion(Entity entity, Level level, BlockPos end, float radius){
+        ElectroExplosionEntity explosion = new ElectroExplosionEntity(level,entity,end.getX(),end.getY(),end.getZ(),radius,false);
+        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(level, explosion)) return explosion;
+        explosion.explode();
+        explosion.finalizeExplosion(false);
+        return explosion;
     }
 
 

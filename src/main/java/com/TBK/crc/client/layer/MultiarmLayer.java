@@ -35,7 +35,7 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
     private static final ResourceLocation TEXTURE = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm.png");
     private static final ResourceLocation GLOWING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_glowing.png");
 
-    private static final ResourceLocation PULSING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating.png");
+    private static final ResourceLocation PULSING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_3.png");
 
     public MultiArmModel<?> multiarm;
     private final DrawSelector<T, M> drawSelector;
@@ -61,7 +61,7 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
                 multiarm.root().xScale=1.01F;
                 multiarm.root().yScale=1.01F;
                 multiarm.root().zScale=1.01F;
-                multiarm.selectArm(cap.getSelectSkill().name,cap.getSelectSkill(),p_117352_.tickCount+Minecraft.getInstance().getPartialTick());
+                multiarm.selectArm((Player)p_117352_,cap.getSelectSkill().name,cap.getSelectSkill(),p_117352_.tickCount+Minecraft.getInstance().getPartialTick());
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucent(TEXTURE)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.eyes(GLOWING)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 this.onlyDrawSelectedParts();

@@ -1,11 +1,14 @@
 package com.TBK.crc.server.entity;
 
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -194,9 +197,9 @@ public class BoomChicken extends PathfinderMob {
     }
     private void explodeCreeper() {
         if (!this.level().isClientSide) {
-            float f =  1.0F;
             this.dead = true;
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
+            Util.createExplosion(this,level(),this.blockPosition(),3.0F);
+            this.level().broadcastEntityEvent(this,(byte) 8);
             this.discard();
         }
 
@@ -234,6 +237,12 @@ public class BoomChicken extends PathfinderMob {
             this.stand.start(this.tickCount);
             this.standTimer = 18;
             this.setIsLaunch(false);
+        }else if(p_21375_ == 8){
+            for (int i = 0 ; i<3 ; i++){
+                this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
+            }
+            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,false);
+
         }
         super.handleEntityEvent(p_21375_);
     }

@@ -51,32 +51,33 @@ public class HeartReflex extends PassivePart{
         boolean flag = false;
         int i = 0;
         while (!flag){
-            BlockState state = player.level().getBlockState(surface);
-            Vec3 deltaFinal = state.isAir() ? new Vec3(delta.x,-0.08f,delta.z) : delta;
+            BlockState state = player.level().getBlockState(surface.below());
+            Vec3 deltaFinal = state.isAir() ? new Vec3(delta.x,-0.09f,delta.z) : delta;
             if(!Util.isSafePosition(multiArmCapability.getPlayer().level(), position.add(offSet))){
                 teleportPos = position.add(prevOffSet);
                 break;
             }
             if (!player.level().isClientSide){
-                ResidualEntity residual = new ResidualEntity(multiArmCapability.getPlayer().level(), BlockPos.containing(teleportPos),BlockPos.containing(position),player,i);
+                ResidualEntity residual = new ResidualEntity(multiArmCapability.getPlayer().level(), BlockPos.containing(teleportPos),BlockPos.containing(position),player,i, MultiArmCapability.SkillPose.NONE, (float) Math.atan2(deltaFinal.z,deltaFinal.x)*180.0F/Mth.PI, (float) Math.acos(deltaFinal.y)*180.0F/Mth.PI);
                 residual.setPos(position.add(offSet));
                 player.level().addFreshEntity(residual);
             }
             prevOffSet = offSet;
             offSet = offSet.add(deltaFinal);
-            surface = surface.offset(BlockPos.containing(offSet));
+            surface = player.level().getBlockState(surface.offset(BlockPos.containing(offSet))).isAir() ? surface.offset(BlockPos.containing(offSet)) : surface.above();
             if(i>10){
                 teleportPos = position.add(offSet);
                 flag = true;
             }
             i++;
         }
+
         if(multiArmCapability.getPlayer().level().isClientSide){
             multiArmCapability.getPlayer().level().playLocalSound(teleportPos.x,teleportPos.y,teleportPos.z, SoundEvents.CHICKEN_DEATH, SoundSource.PLAYERS,1.0f,1.0f,false);
         }
         multiArmCapability.getPlayer().hurtMarked = false;
         multiArmCapability.getPlayer().setHealth(1.0F);
-        multiArmCapability.getPlayer().teleportTo(teleportPos.x,teleportPos.y,teleportPos.z);
+        multiArmCapability.getPlayer().teleportTo(teleportPos.x,teleportPos.y+1.0F,teleportPos.z);
         return true;
     }
 }

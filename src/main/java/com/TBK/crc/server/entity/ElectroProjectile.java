@@ -1,8 +1,16 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -19,17 +27,17 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class ElectroProjectile extends AbstractArrow {
-    public int timeRecharge = 0;
+    private static final EntityDataAccessor<Integer> RECHARGE = SynchedEntityData.defineId(ElectroProjectile.class,EntityDataSerializers.INT);
     public ElectroProjectile(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
         super(p_36721_, p_36722_);
-        this.timeRecharge = 20;
     }
     public ElectroProjectile(Level p_36722_, Player player,int time) {
-        super(BKEntityType.ELECTRO.get(), p_36722_);
+        this(BKEntityType.ELECTRO.get(), p_36722_);
         this.setOwner(player);
-        this.timeRecharge = time;
+        this.setTimeRecharge(time);
         this.pickup = Pickup.DISALLOWED;
     }
+
 
     @Override
     public void tick() {
@@ -74,7 +82,20 @@ public class ElectroProjectile extends AbstractArrow {
     }
 
     public float getScale(){
-        return (1.0F-(this.timeRecharge/20.0F));
+        return (1.0F+(this.getTimeRecharge()/30.0F));
+    }
+
+    public int getTimeRecharge(){
+        return this.entityData.get(RECHARGE);
+    }
+    public void setTimeRecharge(int recharge){
+        this.entityData.set(RECHARGE,recharge);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(RECHARGE,0);
     }
 
     @Override
@@ -84,8 +105,18 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult p_36757_) {
-        if(p_36757_.getEntity() instanceof LivingEntity){
+        if(p_36757_.getEntity() instanceof LivingEntity livingEntity){
+            int time = this.getTimeRecharge();
             p_36757_.getEntity().hurt(damageSources().generic(), (float) this.getBaseDamage());
+            if(time>=50 && !this.level().isClientSide){
+                float maxCharge = ((float) time-50.0F) / 20.0F;
+                BlockPos end = livingEntity.blockPosition();
+                if(!this.level().isClientSide){
+                    Util.createExplosion(this,this.level(),end,1.0F + 4.0F * maxCharge);
+                    this.level().broadcastEntityEvent(this,(byte) 4);
+                }
+            }
+            this.discard();
         }
     }
 
@@ -98,10 +129,11 @@ public class ElectroProjectile extends AbstractArrow {
     @Override
     public void handleEntityEvent(byte p_19882_) {
         if(p_19882_==4){
-            if(this.getOwner() instanceof Player player){
-                MultiArmCapability cap = MultiArmCapability.get(player);
-                this.timeRecharge = cap.getCastingClientTimer();
+            for (int i = 0 ; i<3 ; i++){
+                this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
             }
+            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,false);
+
         }
         super.handleEntityEvent(p_19882_);
     }

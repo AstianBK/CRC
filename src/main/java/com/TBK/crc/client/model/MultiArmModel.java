@@ -9,6 +9,7 @@ import com.TBK.crc.server.multiarm.GanchoArm;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -150,21 +151,32 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
 	}
-	public void selectArm(String name, MultiArmSkillAbstract arm, float ageInTicks){
-		if(name.equals("claws_arm")){
-			maincannon.visible=false;
-			mainharpoon.visible=false;
-			mainmelee.visible=true;
-		}else if(name.equals("cannon_arm")){
-			maincannon.visible=true;
-			mainharpoon.visible=false;
-			mainmelee.visible=false;
-		}else if(name.equals("gancho_arm")){
-			maincannon.visible=false;
-			mainharpoon.visible=true;
-			mainmelee.visible=false;
-			harpoon.visible = ((GanchoArm)arm).hasGancho;
-		}else{
+	public void selectArm(Player player,String name, MultiArmSkillAbstract arm, float ageInTicks){
+		if(player.getMainHandItem().isEmpty()){
+			switch (name) {
+				case "claws_arm" -> {
+					maincannon.visible = false;
+					mainharpoon.visible = false;
+					mainmelee.visible = true;
+				}
+				case "cannon_arm" -> {
+					maincannon.visible = true;
+					mainharpoon.visible = false;
+					mainmelee.visible = false;
+				}
+				case "gancho_arm" -> {
+					maincannon.visible = false;
+					mainharpoon.visible = true;
+					mainmelee.visible = false;
+					harpoon.visible = ((GanchoArm) arm).hasGancho;
+				}
+				default -> {
+					maincannon.visible = false;
+					mainharpoon.visible = false;
+					mainmelee.visible = false;
+				}
+			}
+		}else {
 			maincannon.visible=false;
 			mainharpoon.visible=false;
 			mainmelee.visible=false;
@@ -186,4 +198,25 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 
 	}
 
+	public void setPoseArmInGuiForPose(MultiArmCapability cap,PoseStack poseStack,float partialTicks) {
+		switch (cap.pose){
+			case CHARGE_CANNON -> {
+				float percent = cap.getAnimShoot(partialTicks);
+				float f =1.0F;
+				poseStack.mulPose(Axis.YP.rotationDegrees((float) -29.0F * f));
+
+				poseStack.mulPose(Axis.XP.rotationDegrees((float) -29.0F * f) );
+				poseStack.mulPose(Axis.ZP.rotationDegrees((float) -13.0F * f));
+				poseStack.translate(0,-0.1F*percent,0);
+			}
+			case STOP_AIMING -> {
+				float percent = cap.getStopAiming(partialTicks);
+				poseStack.mulPose(Axis.YP.rotationDegrees((float) -29.0F * percent));
+
+				poseStack.mulPose(Axis.XP.rotationDegrees((float) -29.0F * percent));
+				poseStack.mulPose(Axis.ZP.rotationDegrees((float) -13.0F * percent));
+
+			}
+		}
+	}
 }

@@ -61,6 +61,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public int invokeTimer = 0;
     public int warningLevel = 0;
     public Entity catchEntity = null;
+    public int timeShoot = 0;
+    public int timeShoot0 = 0;
+    public int stopAimingAnim = 0;
+    public int stopAimingAnim0 = 0;
+    public int levelCharge = 0;
     public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(Util.getMapEmpty());
     public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
@@ -97,7 +102,14 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public MultiArmSkillAbstract getSelectSkill() {
         return this.getHotBarSkill().get(this.posSelectMultiArmSkillAbstract);
     }
-
+    @OnlyIn(Dist.CLIENT)
+    public float getAnimShoot(float partialTick){
+        return Mth.lerp(partialTick,this.timeShoot0,this.timeShoot) / 10.0F;
+    }
+    @OnlyIn(Dist.CLIENT)
+    public float getStopAiming(float partialTick){
+        return Mth.lerp(partialTick,this.stopAimingAnim0,this.stopAimingAnim) / 5.0F;
+    }
     @OnlyIn(Dist.CLIENT)
     @Override
     public MultiArmSkillAbstract getSkillForHotBar(int pos) {
@@ -179,8 +191,16 @@ public class MultiArmCapability implements IMultiArmPlayer {
                     e.getSkillAbstract().tick(this);
                 });
             }
+            this.stopAimingAnim0 = this.stopAimingAnim;
 
+            if(this.stopAimingAnim>0){
+                this.stopAimingAnim--;
+                if(this.stopAimingAnim==0){
+                    this.pose = SkillPose.NONE;
+                }
+            }
             if(this.level.isClientSide){
+                this.timeShoot0 = this.timeShoot;
                 this.clientPulsingTimer0 = this.clientPulsingTimer;
                 if(this.player.tickCount%55 == 0){
                     this.clientPulsingTimer = 30;
@@ -190,6 +210,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 }
                 if(this.castingClientTimer>0){
                     this.castingClientTimer--;
+                }
+                if(this.timeShoot>0){
+                    this.timeShoot--;
                 }
             }else {
                 if (this.isCasting()){
@@ -231,9 +254,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
         return false;
     }
 
-    public void preparePose(PlayerModel model){
-
-    }
     public static boolean canEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
@@ -257,13 +277,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
         MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
         setSetHotbar(map);
         this.dirty = true;
-        CRC.LOGGER.debug("clear ability");
     }
 
     public void clearForUpgradeStore(){
         passives = new MultiArmSkillsAbstracts(new HashMap<>());
         this.dirty = true;
-        CRC.LOGGER.debug("clear passive");
     }
 
     public void clearForIndex(int index){
@@ -309,7 +327,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void stopSkill(MultiArmSkillAbstract power) {
         this.setLastUsingSkill(MultiArmSkillAbstract.NONE);
         power.stopAbility(this);
-
     }
 
     @Override
@@ -417,7 +434,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
         NONE,
         CHARGE_CLAWS,
         DASH_CLAWS,
-        CHARGE_CANNON;
+        CHARGE_CANNON,
+        STOP_AIMING;
     }
 
     public static class SkillPlayerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {

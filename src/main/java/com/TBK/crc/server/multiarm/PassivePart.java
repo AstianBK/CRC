@@ -28,7 +28,7 @@ public abstract class PassivePart extends MultiArmSkillAbstract{
     public abstract boolean handlerPassive(MultiArmCapability multiArmCapability,Entity source);
 
     public boolean onDie(MultiArmCapability multiArmCapability, Entity source){
-        if(!multiArmCapability.getPlayer().level().isClientSide){
+        if(!multiArmCapability.getPlayer().level().isClientSide && source!=null){
             PacketHandler.sendToAllTracking(new PacketHandlerPowers(5,source,multiArmCapability.getPlayer()), (LivingEntity) source);
         }
         if(canActive(multiArmCapability)){

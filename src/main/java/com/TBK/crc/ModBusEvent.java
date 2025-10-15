@@ -10,6 +10,7 @@ import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
 import com.TBK.crc.server.multiarm.PassivePart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -52,7 +54,12 @@ public class ModBusEvent {
     private static final ResourceLocation TEXTURE = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm.png");
     private static final ResourceLocation GLOWING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_glowing.png");
 
-    private static final ResourceLocation PULSING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating.png");
+    private static final ResourceLocation[] PULSING = {
+            new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_0.png"),
+            new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_1.png"),
+            new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_2.png"),
+            new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_3.png")
+    };
 
 
     @SubscribeEvent
@@ -199,18 +206,22 @@ public class ModBusEvent {
             boolean flag = true;
             float f = flag ? 1.0F : -1.0F;
 
+            PoseStack poseStack = event.getPoseStack();
             float partialTicks=Minecraft.getInstance().getPartialTick();
             MultiArmModel<Player> modelLeft=new MultiArmModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(MultiArmModel.LAYER_LOCATION));
 
             RenderType renderType = RenderType.entityTranslucent(TEXTURE);
 
-            modelLeft.selectArm(cap.getSelectSkill().name,cap.getSelectSkill(),event.getPlayer().tickCount+partialTicks);
+            modelLeft.setPoseArmInGuiForPose(cap,poseStack,partialTicks);
+            modelLeft.selectArm(event.getPlayer(),cap.getSelectSkill().name,cap.getSelectSkill(),event.getPlayer().tickCount+partialTicks);
             modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
             modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
             modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.eyes(GLOWING)), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-            //modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-
+            if(cap.levelCharge>0){
+                ResourceLocation texture = PULSING[cap.levelCharge];
+                modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.entityTranslucentEmissive(texture)), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
             event.setCanceled(true);
         }
     }
@@ -305,6 +316,10 @@ public class ModBusEvent {
         }
     }
 
+    @SubscribeEvent
+    public static void onAiming(ComputeFovModifierEvent event){
+
+    }
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event){
         if (event.getEntity() instanceof Player player){
