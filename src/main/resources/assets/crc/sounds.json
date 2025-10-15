@@ -65,6 +65,24 @@
       "crc:multiarm_claw_dash"
     ]
   },
+  "multiarm_cannon_charged_shot": {
+    "subtitle": "sounds.crc.multiarm_cannon_charged_shot",
+    "sounds": [
+      "crc:multiarm_cannon_charged_shot"
+    ]
+  },
+  "multiarm_cannon_normal_shot": {
+    "subtitle": "sounds.crc.multiarm_cannon_normal_shot",
+    "sounds": [
+      "crc:multiarm_cannon_normal_shot"
+    ]
+  },
+  "multiarm_cannon_charging": {
+    "subtitle": "sounds.crc.multiarm_cannon_charging",
+    "sounds": [
+      "crc:multiarm_cannon_charging"
+    ]
+  },
   "cyborg_table_implant": {
     "subtitle": "sounds.crc.cyborg_table_implant",
     "sounds": [

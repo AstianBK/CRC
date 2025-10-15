@@ -51,6 +51,15 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> MULTIARM_CLAW_DASH =
             registerSoundEvent("multiarm_claw_dash");
 
+    public static final RegistryObject<SoundEvent> MULTIARM_CANNON_CHARGING =
+            registerSoundEvent("multiarm_cannon_charging");
+
+    public static final RegistryObject<SoundEvent> MULTIARM_CANNON_CHARGED_SHOT =
+            registerSoundEvent("multiarm_cannon_charged_shot");
+
+    public static final RegistryObject<SoundEvent> MULTIARM_CANNON_NORMAL_SHOT =
+            registerSoundEvent("multiarm_cannon_normal_shot");
+
     //BLOCKS
 
     public static final RegistryObject<SoundEvent> CYBORG_TABLE_IMPLANT =
