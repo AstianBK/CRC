@@ -23,6 +23,12 @@
       "crc:rex_laser_shoot"
     ]
   },
+  "rex_cannon_shoot": {
+    "subtitle": "sounds.crc.rex_cannon_shoot",
+    "sounds": [
+      "crc:rex_cannon_shoot"
+    ]
+  },
   "rex_start_charge": {
     "subtitle": "sounds.crc.rex_start_charge",
     "sounds": [
@@ -51,6 +57,12 @@
     "subtitle": "sounds.crc.heart_reflex_use",
     "sounds": [
       "crc:heart_reflex_use"
+    ]
+  },
+  "multiarm_claw_dash": {
+    "subtitle": "sounds.crc.multiarm_claw_dash",
+    "sounds": [
+      "crc:multiarm_claw_dash"
     ]
   },
   "cyborg_table_implant": {

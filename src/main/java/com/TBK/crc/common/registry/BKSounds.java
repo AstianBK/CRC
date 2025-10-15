@@ -28,6 +28,9 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> REX_LASER_SHOOT =
             registerSoundEvent("rex_laser_shoot");
 
+    public static final RegistryObject<SoundEvent> REX_CANNON_SHOOT =
+            registerSoundEvent("rex_cannon_shoot");
+
     public static final RegistryObject<SoundEvent> REX_START_CHARGE =
             registerSoundEvent("rex_start_charge");
 
@@ -44,6 +47,9 @@ public class BKSounds {
 
     public static final RegistryObject<SoundEvent> HEART_REFLEX =
             registerSoundEvent("heart_reflex");
+
+    public static final RegistryObject<SoundEvent> MULTIARM_CLAW_DASH =
+            registerSoundEvent("multiarm_claw_dash");
 
     //BLOCKS
 
