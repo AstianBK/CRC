@@ -2,6 +2,7 @@ package com.TBK.crc.server.multiarm;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ResidualEntity;
 import net.minecraft.core.BlockPos;
@@ -73,7 +74,7 @@ public class HeartReflex extends PassivePart{
         }
 
         if(multiArmCapability.getPlayer().level().isClientSide){
-            multiArmCapability.getPlayer().level().playLocalSound(teleportPos.x,teleportPos.y,teleportPos.z, SoundEvents.CHICKEN_DEATH, SoundSource.PLAYERS,1.0f,1.0f,false);
+            multiArmCapability.getPlayer().level().playLocalSound(teleportPos.x,teleportPos.y,teleportPos.z, BKSounds.HEART_REFLEX.get(), SoundSource.PLAYERS,1.0f,1.0f,false);
         }
         multiArmCapability.getPlayer().hurtMarked = false;
         multiArmCapability.getPlayer().setHealth(1.0F);
