@@ -28,6 +28,14 @@ public class BKEntityType {
             .register("boom_chicken", () -> EntityType.Builder.<BoomChicken>of(BoomChicken::new, MobCategory.MISC)
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "boom_chicken"));
 
+    public static final RegistryObject<EntityType<CoilChicken>> COIL_CHICKEN = ENTITY_TYPES
+            .register("coil_chicken", () -> EntityType.Builder.<BoomChicken>of(CoilChicken::new, MobCategory.MISC)
+                    .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "coil_chicken"));
+
+    public static final RegistryObject<EntityType<DroneChicken>> DRONE_CHICKEN = ENTITY_TYPES
+            .register("drone_chicken", () -> EntityType.Builder.<BoomChicken>of(DroneChicken::new, MobCategory.MISC)
+                    .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "drone_chicken"));
+
     public static final RegistryObject<EntityType<TeleportEntity>> TELEPORT = ENTITY_TYPES
             .register("teleport", () -> EntityType.Builder.<TeleportEntity>of(TeleportEntity::new, MobCategory.MISC)
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "teleport"));

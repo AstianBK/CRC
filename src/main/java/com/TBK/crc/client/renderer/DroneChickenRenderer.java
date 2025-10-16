@@ -3,16 +3,19 @@ package com.TBK.crc.client.renderer;
 import com.TBK.crc.CRC;
 import com.TBK.crc.client.model.BoomChickenModel;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
+import com.TBK.crc.client.model.DroneChickenModel;
 import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.CyborgRobotChicken;
+import com.TBK.crc.server.entity.DroneChicken;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class BoomChickenRenderer<T extends BoomChicken,M extends BoomChickenModel<T>> extends LivingEntityRenderer<T,M> {
-    public BoomChickenRenderer(EntityRendererProvider.Context p_174289_) {
-        super(p_174289_, (M) new BoomChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BoomChickenModel.LAYER_LOCATION)), 1.0F);
+public class DroneChickenRenderer<T extends DroneChicken,M extends DroneChickenModel<T>> extends LivingEntityRenderer<T,M> {
+
+    public DroneChickenRenderer(EntityRendererProvider.Context p_174289_) {
+        super(p_174289_, (M) new DroneChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(DroneChickenModel.LAYER_LOCATION)), 1.0F);
     }
 
     @Override
