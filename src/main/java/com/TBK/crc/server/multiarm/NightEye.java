@@ -6,6 +6,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 
 public class NightEye extends PassivePart{
@@ -23,6 +24,9 @@ public class NightEye extends PassivePart{
     public boolean hasEffect(MultiArmCapability multiArmCapability, MobEffect effect) {
         if(effect == MobEffects.NIGHT_VISION){
             Player player = multiArmCapability.getPlayer();
+            if(player.level().getBrightness(LightLayer.SKY,player.getOnPos())>0){
+                return false;
+            }
             for (BlockPos pos : BlockPos.betweenClosed(player.getOnPos().offset(10,6,10), player.getOnPos().offset(-10,-3,-10))){
                 if (player.level().getLightEmission(pos)>0){
                     return false;

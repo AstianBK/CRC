@@ -26,7 +26,7 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
     @Override
     protected void init() {
         super.init();
-        this.acceptButton = new Button.Builder(Component.literal("VAMOS A PERDER"),(s)->{
+        this.acceptButton = new Button.Builder(Component.translatable("crc.cyborg_table.bottom_implant"),(s)->{
             this.menu.refreshPlayer(menu.player);
             assert Minecraft.getInstance().player!=null;
             Minecraft.getInstance().player.closeContainer();

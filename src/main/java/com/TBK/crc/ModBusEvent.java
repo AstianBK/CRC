@@ -280,7 +280,7 @@ public class ModBusEvent {
         }
     }
     @SubscribeEvent
-    public void sleepTimeCheck(@NotNull SleepingLocationCheckEvent event) {
+    public void sleepLocationCheck(@NotNull SleepingLocationCheckEvent event) {
         if (event.getEntity().level().getBlockState(event.getSleepingLocation()).getBlock() instanceof CyborgTableBlock) {
             event.setResult(Event.Result.ALLOW);
         }
@@ -369,7 +369,7 @@ public class ModBusEvent {
                     passive.getSkillAbstract().onAttack(cap,event);
                 });
                 if(cap.getSelectSkill().name.equals("claws_arm") && player.getMainHandItem().isEmpty()){
-                    cap.skills.getForName("claws_arm").onAttack(cap,event);
+                    cap.getSelectSkill().onAttack(cap,event);
                 }
             }
         }

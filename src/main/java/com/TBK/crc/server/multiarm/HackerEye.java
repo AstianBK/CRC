@@ -32,7 +32,7 @@ public class HackerEye extends PassivePart{
 
         Level level = multiArmCapability.getPlayer().level();
         if(!level.isClientSide){
-            if(multiArmCapability.getPlayer().isShiftKeyDown()){
+            if(multiArmCapability.getPlayer().isShiftKeyDown() && multiArmCapability.getPlayer().onGround()){
                 if(time == 0){
                     this.refreshTarget(multiArmCapability.getPlayer(),level);
                 }

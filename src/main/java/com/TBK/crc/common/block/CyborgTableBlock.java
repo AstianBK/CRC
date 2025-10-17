@@ -44,10 +44,7 @@ public class CyborgTableBlock extends BedBlock {
     }
 
 
-    @Override
-    public void updateEntityAfterFallOn(BlockGetter pLevel, Entity pEntity) {
 
-    }
 
 
     @Override
