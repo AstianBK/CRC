@@ -226,7 +226,7 @@ public class CyberChickenFight{
 
 		data.put("Structure", this.getStructure().serialise());
 		data.putBoolean("prevChickenDefeat",this.prevCyberChickenDefeat);
-		if(!this.prevCyberChickenDefeat){
+		if(!this.prevCyberChickenDefeat && this.chickenUUID!=null){
 			data.putUUID("chickenUUID",this.chickenUUID);
 		}
 		return data;
