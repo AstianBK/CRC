@@ -213,7 +213,6 @@ public class CyberChickenFight{
 
 	}
 	private void spawnExitPortal(boolean p_64094_) {
-
 		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(this.origin).inflate(10.0F));
 		if (portals.isEmpty()){
 			PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),level);
@@ -224,7 +223,7 @@ public class CyberChickenFight{
 	public CompoundTag serialise() {
 		CompoundTag data = new CompoundTag();
 
-		data.put("Structure", this.getStructure().serialise());
+		data.put("Structure", this.structure.serialise());
 		data.putBoolean("prevChickenDefeat",this.prevCyberChickenDefeat);
 		if(!this.prevCyberChickenDefeat && this.chickenUUID!=null){
 			data.putUUID("chickenUUID",this.chickenUUID);

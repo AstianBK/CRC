@@ -24,6 +24,15 @@ public class CannonArm extends MultiArmSkillAbstract{
     }
 
     @Override
+    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+        this.charge = false;
+        this.chargeTime = 0;
+        this.stopAiming = 0;
+        multiArmCapability.stopAimingAnim = 0;
+        multiArmCapability.levelCharge = 0;
+    }
+
+    @Override
     public void tick(MultiArmCapability multiArmCapability) {
         super.tick(multiArmCapability);
 

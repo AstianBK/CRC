@@ -3,13 +3,16 @@ package com.TBK.crc.server.multiarm;
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ResidualEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class ClawsArm extends MultiArmSkillAbstract{
@@ -22,14 +25,23 @@ public class ClawsArm extends MultiArmSkillAbstract{
 
     @Override
     public boolean canActiveAbility(MultiArmCapability multiArmCapability) {
-        CRC.LOGGER.debug("Item");
+
         return !multiArmCapability.getPlayer().getCooldowns().isOnCooldown(multiArmCapability.implantStore.getArmForSkill(this).getItem());
+    }
+
+    @Override
+    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+        this.charge = false;
+        this.dash = false;
+        this.dashTime = 0;
     }
 
     @Override
     public void tick(MultiArmCapability multiArmCapability) {
         super.tick(multiArmCapability);
+
         Player player = multiArmCapability.getPlayer();
+
         if(this.charge){
             player.setDeltaMovement(player.getDeltaMovement().x*0.05F,player.getDeltaMovement().y,player.getDeltaMovement().z*0.05F);
         }
@@ -82,6 +94,8 @@ public class ClawsArm extends MultiArmSkillAbstract{
     public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
         event.setAmount(event.getAmount()+10.0F);
     }
+
+
 
     @Override
     public SoundEvent getStartSound() {

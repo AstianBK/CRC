@@ -124,7 +124,6 @@ public class ModBusEvent {
                 cap.implantStore.store.clearContent();
                 cap.dirty = true;
             }
-
         }
     }
 
@@ -187,6 +186,7 @@ public class ModBusEvent {
         p_115464_.popPose();
     }
 
+
     private static void addVertexPair(LivingEntity p_115462_,VertexConsumer p_174308_, Matrix4f p_254405_, float p_174310_, float p_174311_, float p_174312_, int p_174313_, int p_174314_, int p_174315_, int p_174316_, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
         float f = (float)p_174321_ / 24.0F;
         int i = (int)Mth.lerp(f, (float)p_174313_, (float)p_174314_);
@@ -207,6 +207,7 @@ public class ModBusEvent {
     protected static int getBlockLightLevelForEntity(Entity p_114496_, BlockPos p_114497_) {
         return p_114496_.isOnFire() ? 15 : p_114496_.level().getBrightness(LightLayer.BLOCK, p_114497_);
     }
+
 
     @SubscribeEvent
     public static void renderHand(RenderArmEvent event) {
@@ -259,6 +260,7 @@ public class ModBusEvent {
             }
         }
     }
+
     @SubscribeEvent
     public static void onTick(LivingEvent.LivingTickEvent event){
         if(event.getEntity() instanceof Player){
@@ -279,32 +281,6 @@ public class ModBusEvent {
             StructureData.get().getCyberChickenFight().tick();
         }
     }
-    @SubscribeEvent
-    public void sleepLocationCheck(@NotNull SleepingLocationCheckEvent event) {
-        if (event.getEntity().level().getBlockState(event.getSleepingLocation()).getBlock() instanceof CyborgTableBlock) {
-            event.setResult(Event.Result.ALLOW);
-        }
-    }
-    @SubscribeEvent
-    public void sleepTimeCheck(@NotNull SleepingTimeCheckEvent event) {
-        event.getSleepingLocation().ifPresent((blockPos -> {
-            if (event.getEntity().level().getBlockState(blockPos).getBlock() instanceof CyborgTableBlock) {
-                event.setResult(Event.Result.ALLOW);
-            }}));
-    }
-
-    @SubscribeEvent
-    public void sleepTimeFinish(@NotNull SleepFinishedTimeEvent event) {
-        if (event.getLevel() instanceof ServerLevel) {
-            boolean sleepingInCoffin = event.getLevel().players().stream().anyMatch(player -> {
-                Optional<BlockPos> pos = player.getSleepingPos();
-                return pos.isPresent() && event.getLevel().getBlockState(pos.get()).getBlock() instanceof CyborgTableBlock;
-            });
-            if (sleepingInCoffin) {
-                event.setTimeAddition(0);
-            }
-        }
-    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SubscribeEvent
@@ -318,7 +294,6 @@ public class ModBusEvent {
                 cap.init(player);
                 event.addCapability(new ResourceLocation(CRC.MODID, "multi_arm_cap"), prov);
             }
-            
         }
     }
 
@@ -345,6 +320,7 @@ public class ModBusEvent {
     @SubscribeEvent
     public static void useBlock(PlayerContainerEvent.Open event){
         if(!event.getEntity().level().isClientSide){
+
             if(event.getContainer() instanceof ChestMenu){
                 CRC.getServer().getPlayerList().getPlayers().forEach(e->{
                     Util.refreshHackingChest(e,e.level());
@@ -352,6 +328,7 @@ public class ModBusEvent {
             }
         }
     }
+
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event){
         if (event.getEntity() instanceof Player player){

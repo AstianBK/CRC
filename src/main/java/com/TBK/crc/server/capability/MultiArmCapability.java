@@ -52,12 +52,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     int posSelectMultiArmSkillAbstract=0;
     int castingTimer=0;
     int castingClientTimer=0;
-    public int clientPulsingTimer=0;
-    public int clientPulsingTimer0=0;
     int maxCastingClientTimer=0;
-    public boolean isTransform=false;
     public boolean hotbarActive = false;
-    public int cooldownReUse = 0;
     public int invokeTimer = 0;
     public int warningLevel = 0;
     public Entity catchEntity = null;
@@ -117,36 +113,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
     @Override
-    public int getCooldownSkill() {
-        return 0;
-    }
-
-    @Override
-    public int getCastingTimer() {
-        return this.castingTimer;
-    }
-    
-    @OnlyIn(Dist.CLIENT)
-    public int getCastingClientTimer() {
-        return this.castingClientTimer;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getMaxCastingClientTimer() {
-        return this.maxCastingClientTimer;
-    }
-
-    @Override
-    public int getStartTime() {
-        return 0;
-    }
-
-    @Override
-    public boolean lastUsingSkill() {
-        return false;
-    }
-
-    @Override
     public MultiArmSkillAbstract getLastUsingSkill() {
         return this.lastUsingMultiArmSkillAbstract;
     }
@@ -201,13 +167,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
             if(this.level.isClientSide){
                 this.timeShoot0 = this.timeShoot;
-                this.clientPulsingTimer0 = this.clientPulsingTimer;
-                if(this.player.tickCount%55 == 0){
-                    this.clientPulsingTimer = 30;
-                }
-                if(this.clientPulsingTimer>0){
-                    this.clientPulsingTimer--;
-                }
                 if(this.castingClientTimer>0){
                     this.castingClientTimer--;
                 }
@@ -220,10 +179,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 }
             }
         }
-    }
-
-    public float getPulsingAnim(float partialTick){
-        return Mth.lerp(partialTick,this.clientPulsingTimer0,this.clientPulsingTimer);
     }
     
     public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
@@ -329,10 +284,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
         power.stopAbility(this);
     }
 
-    @Override
-    public void handledPassive(Player player, MultiArmSkillAbstract power) {
-
-    }
 
     @Override
     public boolean canUseSkill(MultiArmSkillAbstract skillAbstract) {
@@ -349,21 +300,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
         return this.skills;
     }
 
-
-    @Override
-    public void syncSkill(Player player) {
-
-    }
-
-    @Override
-    public void upSkill() {
-
-    }
-
-    @Override
-    public void downSkill() {
-
-    }
 
     @Override
     public void startCasting(Player player) {

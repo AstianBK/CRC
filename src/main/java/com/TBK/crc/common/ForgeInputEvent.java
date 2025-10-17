@@ -6,6 +6,11 @@ import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketKeySync;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,13 +26,16 @@ public class ForgeInputEvent {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
         onInput(mc, event.getKey(), event.getAction());
+
     }
 
     @SubscribeEvent
     public static void onMouseClick(InputEvent.MouseButton event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
-        onInput(mc, event.getButton(), event.getAction());
+        if(onInput(mc, event.getButton(), event.getAction())){
+            event.setCanceled(false);
+        }
     }
     @SubscribeEvent
     public static void onMouseScrolling(InputEvent.MouseScrollingEvent event){

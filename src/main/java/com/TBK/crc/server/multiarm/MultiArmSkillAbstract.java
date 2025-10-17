@@ -47,7 +47,6 @@ public class MultiArmSkillAbstract {
         return true;
     }
     public void startAbility(MultiArmCapability multiArmCapability){
-
         if(multiArmCapability.getPlayer().level().isClientSide && getStartSound() != null){
             multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStartSound(), SoundSource.PLAYERS,10.0f,1.0f,false);
         }
@@ -106,5 +105,10 @@ public class MultiArmSkillAbstract {
 
     public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event){
 
+    }
+
+    public boolean canInteractionOnWorld(MultiArmCapability cap) {
+
+        return true;
     }
 }

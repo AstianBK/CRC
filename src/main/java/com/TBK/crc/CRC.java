@@ -2,19 +2,27 @@ package com.TBK.crc;
 
 import com.TBK.crc.client.renderer.*;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.block.CyborgTableBlock;
 import com.TBK.crc.common.registry.*;
 import com.TBK.crc.server.network.PacketHandler;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -22,9 +30,11 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -82,11 +92,41 @@ public class CRC
         BKContainers.CONTAINERS.register(modEventBus);
         PacketHandler.registerMessages();
         Util.initUpgrades();
+
+        MinecraftForge.EVENT_BUS.addListener(this::sleepLocationCheck);
+        MinecraftForge.EVENT_BUS.addListener(this::sleepTimeCheck);
+        MinecraftForge.EVENT_BUS.addListener(this::sleepTimeFinish);
+
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,()->()->{
             modEventBus.addListener(this::registerRenderers);
         });
+    }
+
+    public void sleepLocationCheck(@NotNull SleepingLocationCheckEvent event) {
+        if (event.getEntity().level().getBlockState(event.getSleepingLocation()).getBlock() instanceof CyborgTableBlock) {
+            event.setResult(Event.Result.ALLOW);
+        }
+    }
+    public void sleepTimeCheck(@NotNull SleepingTimeCheckEvent event) {
+        event.getSleepingLocation().ifPresent((blockPos -> {
+            if (event.getEntity().level().getBlockState(blockPos).getBlock() instanceof CyborgTableBlock) {
+                event.setResult(Event.Result.ALLOW);
+            }}));
+
+    }
+
+    public void sleepTimeFinish(@NotNull SleepFinishedTimeEvent event) {
+        if (event.getLevel() instanceof ServerLevel) {
+            boolean sleepingInCoffin = event.getLevel().players().stream().anyMatch(player -> {
+                Optional<BlockPos> pos = player.getSleepingPos();
+                return pos.isPresent() && event.getLevel().getBlockState(pos.get()).getBlock() instanceof CyborgTableBlock;
+            });
+            if (sleepingInCoffin) {
+                event.setTimeAddition(0);
+            }
+        }
     }
 
     public static MinecraftServer getServer() {

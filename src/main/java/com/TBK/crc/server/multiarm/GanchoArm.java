@@ -86,6 +86,19 @@ public class GanchoArm extends MultiArmSkillAbstract{
     }
 
     @Override
+    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+        hasGancho = true;
+        if(ganchoId!=-1){
+            Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
+            if(gancho instanceof GanchoEntity){
+                gancho.discard();
+
+            }
+            this.ganchoId = -1;
+        }
+    }
+
+    @Override
     public SoundEvent getStartSound() {
         return super.getStartSound();
     }
