@@ -8,6 +8,7 @@ import com.TBK.crc.common.item.CyberUpgradeItem;
 import com.TBK.crc.server.multiarm.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -60,6 +61,23 @@ public class BKItems {
     public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties().stacksTo(16)));
 
     //COSMETIC
+
+
+    //SPAWN-EGGS
+
+    public static final RegistryObject<Item> COIL_CHICKEN_SPAWN_EGG = ITEMS.register("coil_chicken_spawn_egg",
+            () -> new ForgeSpawnEggItem(BKEntityType.COIL_CHICKEN,0x29121a, 0xcf844a,
+                    new Item.Properties()));
+
+    public static final RegistryObject<Item> BOOM_CHICKEN_SPAWN_EGG = ITEMS.register("boom_chicken_spawn_egg",
+            () -> new ForgeSpawnEggItem(BKEntityType.BOOM_CHICKEN,0x29121a, 0xcf844a,
+                    new Item.Properties()));
+
+    public static final RegistryObject<Item> DRONE_CHICKEN_SPAWN_EGG = ITEMS.register("drone_chicken_spawn_egg",
+            () -> new ForgeSpawnEggItem(BKEntityType.DRONE_CHICKEN,0x29121a, 0xcf844a,
+                    new Item.Properties()));
+
+
 
 
 }

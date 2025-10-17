@@ -46,6 +46,11 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.CYBORG_BONE.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_CAPACITOR.get()));
 
+                a.accept(new ItemStack(BKItems.COIL_CHICKEN_SPAWN_EGG.get()));
+                a.accept(new ItemStack(BKItems.DRONE_CHICKEN_SPAWN_EGG.get()));
+                a.accept(new ItemStack(BKItems.BOOM_CHICKEN_SPAWN_EGG.get()));
+
+
             })
             .build());
 }
