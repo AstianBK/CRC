@@ -248,7 +248,7 @@ public class CyberChickenFight{
 		return false;
 	}
 	public void deserialise(CompoundTag data) {
-		
+
 		this.structure = new Structure(data.getCompound("Structure"));
 		if(!data.getBoolean("prevChickenDefeat") && data.contains("chickenUUID")){
 			this.chickenUUID = data.getUUID("chickenUUID");
