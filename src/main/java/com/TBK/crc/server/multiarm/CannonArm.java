@@ -28,6 +28,7 @@ public class CannonArm extends MultiArmSkillAbstract{
         super.tick(multiArmCapability);
 
         if(charge){
+            multiArmCapability.getPlayer().setDeltaMovement(multiArmCapability.getPlayer().getDeltaMovement().multiply(0.96F,1.0F,0.96F));
             this.chargeTime++;
             this.stopAiming = 20;
             if(this.chargeTime<71){
@@ -93,7 +94,6 @@ public class CannonArm extends MultiArmSkillAbstract{
 
         multiArmCapability.getPlayer().level().addFreshEntity(orb);
         this.chargeTime = 0;
-
     }
 
 

@@ -42,6 +42,9 @@ public class ClientEvent {
         event.registerLayerDefinition(RexChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(RexChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
         event.registerLayerDefinition(GanchoModel.LAYER_LOCATION, GanchoModel::createBodyLayer);
 
+        event.registerLayerDefinition(CoilChickenModel.LAYER_LOCATION, CoilChickenModel::createBodyLayer);
+        event.registerLayerDefinition(DroneChickenModel.LAYER_LOCATION, DroneChickenModel::createBodyLayer);
+
         event.registerLayerDefinition(TheFuturePortalModel.LAYER_LOCATION, TheFuturePortalModel::createBodyLayer);
         event.registerLayerDefinition(CyborgRobotChickenModel.LAYER_LOCATION, CyborgRobotChickenModel::createBodyLayer);
         event.registerLayerDefinition(MultiArmModel.LAYER_LOCATION, MultiArmModel::createBodyLayer);

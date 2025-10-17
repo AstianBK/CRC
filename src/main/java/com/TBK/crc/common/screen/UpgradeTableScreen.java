@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 
 public class UpgradeTableScreen extends AbstractContainerScreen<UpgradeTableMenu> {
 
-    private static final ResourceLocation CRAFTING_TABLE_LOCATION = new ResourceLocation(CRC.MODID, "textures/gui/cyborg_upgrade_table_gui.png");
     public UpgradeTableScreen(UpgradeTableMenu containerMenu, Inventory inventory, Component component) {
         super(containerMenu, inventory, component);
         this.imageWidth = 175;
@@ -32,7 +31,10 @@ public class UpgradeTableScreen extends AbstractContainerScreen<UpgradeTableMenu
     protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
-        p_283065_.blit(CRAFTING_TABLE_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+        float ageInTick = this.menu.player.tickCount + p_97788_;
+        int frame = (int) ((1.25F * ageInTick) % CRC.GUI_IMPLANT_STAGES.size());
+        ResourceLocation location = CRC.GUI_IMPLANT_LOCATIONS.get(frame);
+        p_283065_.blit(location, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         this.renderTooltip(p_283065_,p_97789_,p_97790_);
     }
 

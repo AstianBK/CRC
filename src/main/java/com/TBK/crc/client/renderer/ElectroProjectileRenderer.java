@@ -40,21 +40,16 @@ public class ElectroProjectileRenderer<T extends ElectroProjectile> extends Noop
     @Override
     public void render(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
         super.render(p_114485_, p_114486_, p_114487_, p_114488_, p_114489_, p_114490_);
-        if(p_114485_.getOwner() instanceof Player){
-            MultiArmCapability cap = MultiArmCapability.get((Player) p_114485_.getOwner());
-            if(cap!=null){
-                if(p_114485_.getTimeRecharge()<10){
-                    this.renderBullet(p_114485_,p_114488_,p_114489_,p_114487_,p_114490_);
-                }else {
-                    p_114488_.pushPose();
-                    p_114488_.mulPose(this.entityRenderDispatcher.cameraOrientation());
-                    p_114488_.mulPose(Axis.XP.rotationDegrees(90.0F));
-                    p_114488_.translate(0,1.0F,0);
-                    float porcentajeDeCasteo = (float) p_114485_.getTimeRecharge() / 30.0F;
-                    this.draw(p_114488_.last(),p_114485_,p_114489_,p_114490_,0.25f+1.25F*porcentajeDeCasteo,0);
-                    p_114488_.popPose();
-                }
-            }
+        if(p_114485_.getTimeRecharge()<10){
+            this.renderBullet(p_114485_,p_114488_,p_114489_,p_114487_,p_114490_);
+        }else {
+            p_114488_.pushPose();
+            p_114488_.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            p_114488_.mulPose(Axis.XP.rotationDegrees(90.0F));
+            p_114488_.translate(0,1.0F,0);
+            float porcentajeDeCasteo = (float) p_114485_.getTimeRecharge() / 30.0F;
+            this.draw(p_114488_.last(),p_114485_,p_114489_,p_114490_,0.25f+1.25F*porcentajeDeCasteo,0);
+            p_114488_.popPose();
         }
     }
     

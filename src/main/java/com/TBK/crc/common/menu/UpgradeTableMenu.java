@@ -23,6 +23,7 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
     protected final Level level;
     public int id;
     public ContainerData data;
+    public Player player;
     public UpgradeTableMenu(int i, Inventory inventory, FriendlyByteBuf buf) {
         this(i,inventory,new SimpleContainer(3),new SimpleContainerData(1));
     }
@@ -31,6 +32,7 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
         this.data=data;
         this.id=data.get(0);
         this.craftSlots = container;
+        this.player = p_39357_.player;
         this.addSlot(new Slot(container, 0, 76,35){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {

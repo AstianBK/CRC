@@ -2,6 +2,7 @@ package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.client.model.BoomChickenModel;
+import com.TBK.crc.client.model.CoilChickenModel;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
 import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.CoilChicken;

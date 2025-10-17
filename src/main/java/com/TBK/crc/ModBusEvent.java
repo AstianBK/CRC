@@ -4,6 +4,8 @@ import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.block.CyborgTableBlock;
+import com.TBK.crc.common.registry.BKDimension;
+import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
@@ -25,23 +27,30 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -54,7 +63,7 @@ public class ModBusEvent {
     private static final ResourceLocation TEXTURE = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm.png");
     private static final ResourceLocation GLOWING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_glowing.png");
 
-    private static final ResourceLocation[] PULSING = {
+    public static final ResourceLocation[] PULSING = {
             new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_0.png"),
             new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_1.png"),
             new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_2.png"),
@@ -263,6 +272,13 @@ public class ModBusEvent {
             ForgeInputEvent.cooldownUse--;
         }
     }
+
+    @SubscribeEvent
+    public static void onTick(TickEvent event){
+        if(event.phase == TickEvent.Phase.END && event.side== LogicalSide.SERVER && CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL)!=null){
+            StructureData.get().getCyberChickenFight().tick();
+        }
+    }
     @SubscribeEvent
     public void sleepTimeCheck(@NotNull SleepingLocationCheckEvent event) {
         if (event.getEntity().level().getBlockState(event.getSleepingLocation()).getBlock() instanceof CyborgTableBlock) {
@@ -317,8 +333,24 @@ public class ModBusEvent {
     }
 
     @SubscribeEvent
-    public static void onAiming(ComputeFovModifierEvent event){
+    public static void onCheckSpawn(MobSpawnEvent.SpawnPlacementCheck event) {
+        if(event.getLevel() instanceof ServerLevel serverLevel){
+            if (serverLevel.dimension() == BKDimension.THE_FUTURE_LEVEL) {
+                event.setResult(Event.Result.DENY);
+            }
+        }
 
+    }
+
+    @SubscribeEvent
+    public static void useBlock(PlayerContainerEvent.Open event){
+        if(!event.getEntity().level().isClientSide){
+            if(event.getContainer() instanceof ChestMenu){
+                CRC.getServer().getPlayerList().getPlayers().forEach(e->{
+                    Util.refreshHackingChest(e,e.level());
+                });
+            }
+        }
     }
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event){
@@ -334,8 +366,11 @@ public class ModBusEvent {
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null){
                 cap.passives.upgrades.forEach((i,passive)->{
-                    passive.getSkillAbstract().onAttack(cap,event.getEntity());
+                    passive.getSkillAbstract().onAttack(cap,event);
                 });
+                if(cap.skills.hasMultiArmSkillAbstract("claws_arm")){
+                    cap.skills.getForName("claws_arm").onAttack(cap,event);
+                }
             }
         }
     }

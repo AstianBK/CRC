@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class BoomChicken extends PathfinderMob {
+public class BoomChicken extends RobotChicken {
     private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(BoomChicken.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_LAUNCH = SynchedEntityData.defineId(BoomChicken.class, EntityDataSerializers.BOOLEAN);
     public AnimationState idle = new AnimationState();
@@ -226,6 +226,11 @@ public class BoomChicken extends PathfinderMob {
         }
 
         this.air.animateWhen(!this.onGround(),this.tickCount);
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity p_21372_) {
+        return false;
     }
 
     @Override

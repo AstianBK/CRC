@@ -1,6 +1,7 @@
 package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> {
 
-    private static final ResourceLocation CRAFTING_TABLE_LOCATION = new ResourceLocation(CRC.MODID, "textures/gui/cyborg_table_gui.png");
     public Button acceptButton;
     public CyborgTableScreen(CyborgTableMenu containerMenu, Inventory inventory, Component component) {
         super(containerMenu, inventory, component);
@@ -44,7 +44,10 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
     protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
-        p_283065_.blit(CRAFTING_TABLE_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+        float ageInTick = this.menu.player.tickCount + p_97788_;
+        int frame = (int) ((1.25F * ageInTick) % CRC.GUI_STAGES.size());
+        ResourceLocation location = CRC.GUI_LOCATIONS.get(frame);
+        p_283065_.blit(location, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         this.renderTooltip(p_283065_,p_97789_,p_97790_);
     }
 
@@ -54,6 +57,7 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
     public void render(GuiGraphics p_283479_, int p_283661_, int p_281248_, float p_281886_) {
         super.render(p_283479_, p_283661_, p_281248_, p_281886_);
         this.refreshButtons();
+
         this.acceptButton.render(p_283479_,p_283661_,p_281248_,p_281886_);
     }
 

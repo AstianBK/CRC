@@ -31,7 +31,7 @@ public class ElectroProjectile extends AbstractArrow {
     public ElectroProjectile(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
         super(p_36721_, p_36722_);
     }
-    public ElectroProjectile(Level p_36722_, Player player,int time) {
+    public ElectroProjectile(Level p_36722_,LivingEntity player,int time) {
         this(BKEntityType.ELECTRO.get(), p_36722_);
         this.setOwner(player);
         this.setTimeRecharge(time);
@@ -44,7 +44,7 @@ public class ElectroProjectile extends AbstractArrow {
         if (!this.level().isClientSide()) {
             HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
             if (result.getType() == HitResult.Type.MISS && this.isAlive()) {
-                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox(), this::canHitEntity);
+                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()), this::canHitEntity);
                 if (!intersecting.isEmpty())
                     this.onHit(new EntityHitResult(intersecting.get(0)));
             }
@@ -122,7 +122,7 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     public double getBaseDamage() {
-        return super.getBaseDamage() + 20 * getScale();
+        return super.getBaseDamage() + 4 * this.getTimeRecharge()/30.0F;
     }
 
 

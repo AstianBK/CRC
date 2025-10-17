@@ -106,6 +106,7 @@ public class GanchoArm extends MultiArmSkillAbstract{
             this.largoActual = 0.0F;
             this.atraction = false;
         }else {
+            multiArmCapability.getPlayer().fallDistance = 0.0F;
             Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
             if(gancho instanceof GanchoEntity ganchoEntity){
                 if(!ganchoEntity.isBack ){

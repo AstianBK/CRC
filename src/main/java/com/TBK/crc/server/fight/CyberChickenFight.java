@@ -1,51 +1,272 @@
 package com.TBK.crc.server.fight;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKDimension;
+import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.server.entity.PortalEntity;
+import com.TBK.crc.server.entity.RexChicken;
+import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.*;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Unit;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class CyberChickenFight{
 	private Structure structure;
+	private boolean prevCyberChickenDefeat = false;
+	private boolean cyberChickenDefeat = false;
+	private boolean needsStateScanning = true;
+	private int chickenId = -1;
+	private int ticksChickenSeen = 0;
+	private UUID chickenUUID = null;
+	private ServerLevel level;
+	private BlockPos portalLocation = null;
+	private final BlockPos origin;
+	private final Predicate<Entity> validPlayer;
 
-	public CyberChickenFight() {}
+	public ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(Component.translatable("entity.crc.rex_chicken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(true).setCreateWorldFog(false);
+	private int ticksSinceLastPlayerScan = 0;
+
+	public CyberChickenFight() {
+		this.level = CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL);
+		this.origin = new BlockPos(0,116,0);
+		this.validPlayer = EntitySelector.ENTITY_STILL_ALIVE.and(EntitySelector.withinDistance((double)origin.getX(), (double)(128 + origin.getY()), (double)origin.getZ(), 192.0D));
+
+	}
 	public CyberChickenFight(CompoundTag data) {
 		this.deserialise(data);
+		this.level = CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL);
+		this.origin = new BlockPos(0,140,0);
+		this.validPlayer = EntitySelector.ENTITY_STILL_ALIVE.and(EntitySelector.withinDistance((double)origin.getX(), (double)(128 + origin.getY()), (double)origin.getZ(), 192.0D));
+
+	}
+	public void setDragonKilled(RexChicken p_64086_) {
+		if (p_64086_.getUUID().equals(this.chickenUUID)) {
+			this.bossEvent.setProgress(0.0F);
+			this.bossEvent.setVisible(false);
+			this.spawnExitPortal(true);
+
+			this.prevCyberChickenDefeat = true;
+			this.cyberChickenDefeat = true;
+		}
+
+	}
+	public void tick(){
+		this.bossEvent.setVisible(!cyberChickenDefeat);
+		if (++this.ticksSinceLastPlayerScan >= 20) {
+			this.updatePlayers();
+			this.ticksSinceLastPlayerScan = 0;
+		}
+		if (!this.bossEvent.getPlayers().isEmpty()) {
+			this.level.getChunkSource().addRegionTicket(TicketType.DRAGON, new ChunkPos(0, 0), 9, Unit.INSTANCE);
+			boolean flag = this.isArenaLoaded();
+			if (this.needsStateScanning && flag) {
+				this.scanState();
+				this.needsStateScanning = false;
+			}
+
+
+			if (!this.cyberChickenDefeat) {
+				if ((this.chickenUUID == null || ++this.ticksChickenSeen >= 1200) && flag) {
+					this.findOrCreateChicken();
+					this.ticksChickenSeen = 0;
+				}
+
+			}
+		} else {
+			this.level.getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(0, 0), 9, Unit.INSTANCE);
+		}
 	}
 
+	private boolean isArenaLoaded() {
+		ChunkPos chunkpos = new ChunkPos(this.origin);
+
+		for(int i = -8 + chunkpos.x; i <= 8 + chunkpos.x; ++i) {
+			for(int j = 8 + chunkpos.z; j <= 8 + chunkpos.z; ++j) {
+				ChunkAccess chunkaccess = this.level.getChunk(i, j, ChunkStatus.FULL, false);
+				if (!(chunkaccess instanceof LevelChunk)) {
+					return false;
+				}
+
+				FullChunkStatus fullchunkstatus = ((LevelChunk)chunkaccess).getFullStatus();
+				if (!fullchunkstatus.isOrAfter(FullChunkStatus.BLOCK_TICKING)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+	private void findOrCreateChicken() {
+		List<? extends RexChicken> list = Util.getRexChickens(level);
+		if (list.isEmpty()) {
+			this.createNewRex();
+		} else {
+			this.chickenUUID = list.get(0).getUUID();
+		}
+
+	}
+
+	@javax.annotation.Nullable
+	private RexChicken createNewRex() {
+		this.level.getChunkAt(new BlockPos(this.origin.getX(), 128 + this.origin.getY(), this.origin.getZ()));
+		RexChicken rex = BKEntityType.REX_CHICKEN.get().create(this.level);
+		if (rex != null) {
+			rex.moveTo((double)this.origin.getX(), (double)(this.origin.getY()), (double)this.origin.getZ(), this.level.random.nextFloat() * 360.0F, 0.0F);
+			rex.setShieldAmount(50);
+			this.level.addFreshEntity(rex);
+			this.chickenUUID = rex.getUUID();
+		}
+
+		return rex;
+	}
+
+	private void updatePlayers() {
+		Set<ServerPlayer> set = Sets.newHashSet();
+
+		for(ServerPlayer serverplayer : this.level.getPlayers(this.validPlayer)) {
+			this.bossEvent.addPlayer(serverplayer);
+			set.add(serverplayer);
+		}
+
+		Set<ServerPlayer> set1 = Sets.newHashSet(this.bossEvent.getPlayers());
+		set1.removeAll(set);
+
+		for(ServerPlayer serverplayer1 : set1) {
+			this.bossEvent.removePlayer(serverplayer1);
+		}
+	}
+
+	public void updateDragon(RexChicken p_64097_) {
+		if (p_64097_.getUUID().equals(this.chickenUUID)) {
+			this.bossEvent.setProgress(p_64097_.getHealth() / p_64097_.getMaxHealth());
+			this.ticksChickenSeen = 0;
+			if (p_64097_.hasCustomName()) {
+				this.bossEvent.setName(p_64097_.getDisplayName());
+			}
+		}
+
+	}
+
+
+	private void scanState() {
+		//LOGGER.info("Scanning for legacy world dragon fight...");
+		boolean flag = this.hasActiveExitPortal();
+		if (flag) {
+			//LOGGER.info("Found that the dragon has been killed in this world already.");
+			this.prevCyberChickenDefeat = true;
+		} else {
+			//LOGGER.info("Found that the dragon has not yet been killed in this world.");
+			this.prevCyberChickenDefeat = false;
+
+		}
+
+		List<? extends RexChicken> list = Util.getRexChickens(level);
+		if (list.isEmpty()) {
+			this.cyberChickenDefeat = true;
+		} else {
+			RexChicken enderdragon = list.get(0);
+			this.chickenUUID = enderdragon.getUUID();
+			//LOGGER.info("Found that there's a dragon still alive ({})", (Object)enderdragon);
+			this.cyberChickenDefeat = false;
+			if (!flag) {
+				//LOGGER.info("But we didn't have a portal, let's remove it.");
+				enderdragon.discard();
+				this.chickenUUID = null;
+			}
+		}
+
+		if (!this.prevCyberChickenDefeat && this.cyberChickenDefeat) {
+			this.cyberChickenDefeat = false;
+		}
+
+	}
+	private void spawnExitPortal(boolean p_64094_) {
+
+		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(this.origin).inflate(10.0F));
+		if (portals.isEmpty()){
+			PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),level);
+			portal.setPos(this.origin.getCenter());
+			level.addFreshEntity(portal);
+		}
+	}
 	public CompoundTag serialise() {
 		CompoundTag data = new CompoundTag();
 
 		data.put("Structure", this.getStructure().serialise());
-
+		data.putBoolean("prevChickenDefeat",this.prevCyberChickenDefeat);
+		if(!this.prevCyberChickenDefeat){
+			data.putUUID("chickenUUID",this.chickenUUID);
+		}
 		return data;
 	}
 
+	private boolean hasActiveExitPortal() {
+		for(int i = -8; i <= 8; ++i) {
+			for(int j = -8; j <= 8; ++j) {
+				LevelChunk levelchunk = this.level.getChunk(i, j);
+
+				for(BlockEntity blockentity : levelchunk.getBlockEntities().values()) {
+					if (blockentity instanceof TheEndPortalBlockEntity) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 	public void deserialise(CompoundTag data) {
+		CRC.LOGGER.debug("data : "+data);
 		this.structure = new Structure(data.getCompound("Structure"));
+		if(!data.getBoolean("prevChickenDefeat") && data.contains("chickenUUID")){
+			this.chickenUUID = data.getUUID("chickenUUID");
+			this.prevCyberChickenDefeat = false;
+			this.cyberChickenDefeat = false;
+		}else {
+			this.prevCyberChickenDefeat = true;
+			this.cyberChickenDefeat = true;
+		}
 	}
 
 
 	public static ServerLevel getDimension() {
 		return CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL);
+	}
+
+	public static ServerLevel getDimensionReturn() {
+		return CRC.getServer().getLevel(Level.OVERWORLD);
 	}
 
 	public Structure getStructure() {
@@ -59,31 +280,29 @@ public class CyberChickenFight{
 
 	public void teleport(LivingEntity entity) {
 		Vec3 vec = getStructure().getCentre().getCenter();
-		entity.teleportTo(getDimension(), vec.x	,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
+		if(Util.isInFuture(entity)){
+			entity.teleportTo(getDimensionReturn(), vec.x,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
+		}else {
+			entity.teleportTo(getDimension(), vec.x	,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
+		}
 	}
 
 	public static class Structure {
-		private final ResourceLocation structure;
 		private boolean isPlaced;
 		private BlockPos centre;
-		public Structure(ResourceLocation structure, @Nullable BlockPos centre) {
-			this.structure = structure;
+		public Structure(@Nullable BlockPos centre) {
 			this.isPlaced = false;
 			this.centre = centre;
 		}
 		public Structure() {
-			this(getDefaultStructure(), new BlockPos(0, 143, 0)); // default island structures
+			this(new BlockPos(0, 143, 0));
 		}
 		public Structure(CompoundTag data) {
-			this.structure = new ResourceLocation(data.getString("Structure"));
-
 			this.deserialise(data);
 		}
 
 		public CompoundTag serialise() {
 			CompoundTag data = new CompoundTag();
-
-			data.putString("Structure", this.structure.toString());
 
 			data.putBoolean("isPlaced", this.isPlaced);
 			if (this.centre != null)
@@ -104,9 +323,7 @@ public class CyberChickenFight{
 			return this.isPlaced;
 		}
 
-		private static ResourceLocation getDefaultStructure() {
-			return new ResourceLocation(CRC.MODID, "temple");
-		}
+
 		private Optional<StructureTemplate> findStructure(ResourceLocation structure) {
 			return CRC.getServer().getStructureManager().get(structure);
 		}
@@ -121,16 +338,13 @@ public class CyberChickenFight{
 		}
 
 		private void place() {
-			this.place(getDimension(), true);
+			this.place(getDimension());
 		}
 
-		private void place(ServerLevel level, boolean inform) {
+		private void place(ServerLevel level) {
 			if(level==null)return;
-			if (inform && level!=null) {
-				for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) {
-					p.sendSystemMessage(Component.literal("Please wait while the structures is placed..."));
-				}
-
+			for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) {
+				p.sendSystemMessage(Component.literal("Please wait while the structures is placed..."));
 			}
 
 			long start = System.currentTimeMillis();
@@ -144,19 +358,16 @@ public class CyberChickenFight{
 			this.placeComponent(start,level,-42,111,38,new ResourceLocation(CRC.MODID, "arena_derecha0"), settings);
 			this.placeComponent(start,level,-42,111,0,new ResourceLocation(CRC.MODID, "arena_derecha1"), settings);
 			this.placeComponent(start,level,-42,111,-42,new ResourceLocation(CRC.MODID, "arena_derecha2"), settings);
-			this.placeComponent(start,level,31,111,-43,new ResourceLocation(CRC.MODID, "arena_izquierda0"), settings);
+			this.placeComponent(start,level,31,111,-42,new ResourceLocation(CRC.MODID, "arena_izquierda0"), settings);
 			this.placeComponent(start,level,31,111,0,new ResourceLocation(CRC.MODID, "arena_izquierda1"), settings);
 			this.placeComponent(start,level,31,111,38,new ResourceLocation(CRC.MODID, "arena_izquierda2"), settings);
 			this.placeComponent(start,level,0,111,38,new ResourceLocation(CRC.MODID, "arena_medio0"), settings);
 			this.placeComponent(start,level,0,111,0,new ResourceLocation(CRC.MODID, "arena_medio1"), settings);
-			this.placeComponent(start,level,0,111,-43,new ResourceLocation(CRC.MODID, "arena_medio2"), settings);
+			this.placeComponent(start,level,0,111,-42,new ResourceLocation(CRC.MODID, "arena_medio2"), settings);
 
-
-			//placeColumn(level);
 
 
 			this.isPlaced = true;
-
 		}
 
 		public void placeComponent(long start,ServerLevel level,int addX,int height,int addZ,ResourceLocation location,StructurePlaceSettings settings){
@@ -187,7 +398,7 @@ public class CyberChickenFight{
 
 			if (this.centre != null) return this.centre;
 
-			this.centre = new BlockPos(0, 112, 0);
+			this.centre = new BlockPos(0, 114, 0);
 
 			CRC.LOGGER.info("Placed " + this +"ms");
 			return this.centre;
@@ -196,7 +407,6 @@ public class CyberChickenFight{
 		@Override
 		public String toString() {
 			return "RealmStructure{" +
-					"structures=" + structure+
 					", isPlaced=" + isPlaced +
 					", centre=" + centre +
 					'}';

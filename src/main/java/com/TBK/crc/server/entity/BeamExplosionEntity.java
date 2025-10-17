@@ -1,6 +1,7 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.registry.BKParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,9 +49,6 @@ public class BeamExplosionEntity extends Entity {
             this.restoreCracking--;
         }
         if(this.level().isClientSide){
-            //PacketHandler.sendToServer(new PacketKeySync(4));
-
-            //this.level().playLocalSound(this.getX(),this.getY(),this.getZ(),CVNSounds.RAY_STOMP.get(), SoundSource.NEUTRAL,2.0F,1.0F,false);
             if(this.restoreCracking>0){
 
                 if (this.restoreCracking%5==0){
@@ -60,10 +58,10 @@ public class BeamExplosionEntity extends Entity {
                     }
                 }
                 if (this.restoreCracking==1){
-                    BlockPos end = this.getOnPos();
-                    for (int i = 0 ; i<9 ; i++){
-                        this.level().addParticle(ParticleTypes.EXPLOSION,end.getX()+this.random.nextInt(-2,2),end.getY()+this.random.nextInt(0,2),end.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
+                    for (int i = 0 ; i<3 ; i++){
+                        this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
                     }
+                    this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,false);
                 }
             }
         }else {

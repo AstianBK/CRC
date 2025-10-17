@@ -1,25 +1,25 @@
 package com.TBK.crc.server;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.registry.BKDimension;
 import com.TBK.crc.server.fight.CyberChickenFight;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
 public class StructureData extends SavedData {
-	private CyberChickenFight realmManager;
+	private CyberChickenFight fightManager;
 	public CyberChickenFight getCyberChickenFight() {
-		if (this.realmManager == null) {
-			this.realmManager = new CyberChickenFight();
+		if (this.fightManager == null) {
+			this.fightManager = new CyberChickenFight();
 		}
 
-		return this.realmManager;
+		return this.fightManager;
 	}
 
 	public static StructureData get() {
-		DimensionDataStorage manager = CRC.getServer().getLevel(Level.OVERWORLD).getDataStorage();
+		DimensionDataStorage manager = CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL).getDataStorage();
 
 		StructureData state = manager.computeIfAbsent(
 				StructureData::load,
@@ -39,7 +39,7 @@ public class StructureData extends SavedData {
 
 	public static StructureData load(CompoundTag data) {
 		StructureData created = new StructureData();
-		created.realmManager = new CyberChickenFight(data);
+		created.fightManager = new CyberChickenFight(data);
 		return created;
 	}
 

@@ -1,6 +1,7 @@
 package com.TBK.crc.client.layer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.ModBusEvent;
 import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
@@ -64,9 +65,10 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
                 multiarm.selectArm((Player)p_117352_,cap.getSelectSkill().name,cap.getSelectSkill(),p_117352_.tickCount+Minecraft.getInstance().getPartialTick());
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucent(TEXTURE)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.eyes(GLOWING)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
-                this.onlyDrawSelectedParts();
-                multiarm.renderToBuffer(p_117349_,p_117350_.getBuffer(RenderType.entityTranslucentEmissive(PULSING)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,cap.getPulsingAnim(p_117356_)/30.0F);
-                this.resetDrawForAllParts();
+                if(cap.levelCharge>0){
+                    ResourceLocation texture = ModBusEvent.PULSING[cap.levelCharge];
+                    multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucentEmissive(texture)), p_117351_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
                 p_117349_.popPose();
             }
         }

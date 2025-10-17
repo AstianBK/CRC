@@ -7,6 +7,7 @@ import com.TBK.crc.server.network.messager.PacketHackerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -33,30 +34,45 @@ public class HackerEye extends PassivePart{
         if(!level.isClientSide){
             if(multiArmCapability.getPlayer().isShiftKeyDown()){
                 if(time == 0){
-                    BlockPos origin = multiArmCapability.getPlayer().getOnPos();
-                    List<BlockPos> list = new ArrayList<>();
-                    for (BlockPos pos : BlockPos.betweenClosed(origin.offset(20,5,20),origin.offset(-20,-1,-20))){
-                        BlockEntity entity = level.getBlockEntity(pos);
-                        if(entity instanceof ChestBlockEntity chest && chest.lootTable!=null){
-                            list.add(pos.immutable());
-                        }
-                    }
-                    hackingBlock = list;
-                    CRC.LOGGER.debug("Localizado :"+hackingBlock);
-                    PacketHandler.sendToPlayer(new PacketHackerBlock(multiArmCapability.getPlayer().getId(),hackingBlock), (ServerPlayer) multiArmCapability.getPlayer());
+                    this.refreshTarget(multiArmCapability.getPlayer(),level);
                 }
                 time++;
             }else {
+                if(!this.hackingBlock.isEmpty()){
+                    clearTargets(multiArmCapability.getPlayer(),level);
+                }
                 time=0;
             }
-
         }
+    }
+    @Override
+    public float[] getWindowsColor(MultiArmCapability multiArmCapability) {
+        return multiArmCapability.getPlayer().isShiftKeyDown() ? new float[]{0.0F,0.0F,1.0F,0.5F} : super.getWindowsColor(multiArmCapability);
+    }
+    public void refreshTarget (Player player,Level level){
+        BlockPos origin = player.getOnPos();
+        List<BlockPos> list = new ArrayList<>();
+        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(20,5,20),origin.offset(-20,-1,-20))){
+            BlockEntity entity = level.getBlockEntity(pos);
+            if(entity instanceof ChestBlockEntity chest && chest.lootTable!=null){
+                list.add(pos.immutable());
+            }
+        }
+        hackingBlock = list;
+        PacketHandler.sendToPlayer(new PacketHackerBlock(player.getId(),hackingBlock), (ServerPlayer) player);
+
+    }
+
+    public void clearTargets(Player player,Level level){
+        hackingBlock = new ArrayList<>();
+        PacketHandler.sendToPlayer(new PacketHackerBlock(player.getId(),hackingBlock), (ServerPlayer) player);
     }
 
     @Override
     public boolean canActive(MultiArmCapability multiArmCapability) {
         return true;
     }
+
 
     @Override
     public boolean handlerPassive(MultiArmCapability multiArmCapability, Entity source) {

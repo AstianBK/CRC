@@ -83,6 +83,10 @@ public class ImplantStore{
     public ItemStack getImplantForSkill(MultiArmSkillAbstract skill){
         return getItems().stream().filter(e->e.getItem() instanceof CyberImplantItem item && (item.skill.name.equals(skill.name) || CyberImplantItem.getUpgrade(item,e.getOrCreateTag()).contains(skill))).findFirst().orElse(null);
     }
+
+    public ItemStack getArmForSkill(MultiArmSkillAbstract skill){
+        return getImplant(0).getItem() instanceof CyberImplantItem implantItem && CyberImplantItem.getUpgrade(implantItem,getImplant(0).getOrCreateTag()).stream().anyMatch(e->e.name.equals(skill.name)) ? getImplant(0) : null;
+    }
     public void setStoreForList(List<ItemStack> list){
         this.store.clearContent();
         for (int i = 0 ; i<list.size() ; i++){

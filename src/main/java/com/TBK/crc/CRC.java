@@ -49,6 +49,25 @@ public class CRC
     }).collect(Collectors.toList());
     public static final List<RenderType> DESTROY_TYPES = BREAKING_LOCATIONS.stream().map(RenderType::crumbling).collect(Collectors.toList());
 
+    public static final List<ResourceLocation> GUI_STAGES = IntStream.range(0, 155).mapToObj((p_119253_) -> {
+        return new ResourceLocation(MODID,"gui/cyborg_table/cyborg_table_gui_" + p_119253_);
+    }).collect(Collectors.toList());
+    public static final List<ResourceLocation> GUI_LOCATIONS = GUI_STAGES.stream().map((p_119371_) -> {
+        return new ResourceLocation(MODID,"textures/" + p_119371_.getPath() + ".png");
+    }).collect(Collectors.toList());
+    public static final List<ResourceLocation> GUI_IMPLANT_STAGES = IntStream.range(0, 73).mapToObj((p_119253_) -> {
+        return new ResourceLocation(MODID,"gui/upgrade_table/cyborg_upgrade_table_gui_" + p_119253_);
+    }).collect(Collectors.toList());
+    public static final List<ResourceLocation> GUI_IMPLANT_LOCATIONS = GUI_IMPLANT_STAGES.stream().map((p_119371_) -> {
+        return new ResourceLocation(MODID,"textures/" + p_119371_.getPath() + ".png");
+    }).collect(Collectors.toList());
+
+    public static final List<ResourceLocation> NIGHT_VISION_STAGES = IntStream.range(0, 95).mapToObj((p_119253_) -> {
+        return new ResourceLocation(MODID,"gui/window_effect/night_eye_overlay_" + p_119253_);
+    }).collect(Collectors.toList());
+    public static final List<ResourceLocation> NIGHT_VISION_LOCATIONS = NIGHT_VISION_STAGES.stream().map((p_119371_) -> {
+        return new ResourceLocation(MODID,"textures/" + p_119371_.getPath() + ".png");
+    }).collect(Collectors.toList());
     public CRC()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -73,6 +92,7 @@ public class CRC
     public static MinecraftServer getServer() {
         return ServerLifecycleHooks.getCurrentServer();
     }
+
     @OnlyIn(Dist.CLIENT)
     public void registerRenderers(FMLCommonSetupEvent event){
         EntityRenderers.register(BKEntityType.TELEPORT.get(), TeleportRenderer::new);
@@ -85,6 +105,8 @@ public class CRC
         EntityRenderers.register(BKEntityType.RESIDUAL.get(), ResidualRenderer::new);
 
         EntityRenderers.register(BKEntityType.BOOM_CHICKEN.get(), BoomChickenRenderer::new);
+        EntityRenderers.register(BKEntityType.COIL_CHICKEN.get(), CoilChickenRenderer::new);
+        EntityRenderers.register(BKEntityType.DRONE_CHICKEN.get(), DroneChickenRenderer::new);
 
         EntityRenderers.register(BKEntityType.CYBORG_ROBOT_CHICKEN.get(), CyborgRobotChickenRenderer::new);
 

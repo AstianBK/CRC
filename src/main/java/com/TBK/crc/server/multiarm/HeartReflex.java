@@ -24,9 +24,7 @@ public class HeartReflex extends PassivePart{
     @Override
     public void tick(MultiArmCapability multiArmCapability) {
         //super.tick(multiArmCapability);
-
     }
-
 
 
 
@@ -39,6 +37,7 @@ public class HeartReflex extends PassivePart{
 
     @Override
     public boolean handlerPassive(MultiArmCapability multiArmCapability, Entity source) {
+        startCooldown(multiArmCapability);
         Player player = multiArmCapability.getPlayer();
         Vec3 position = player.position();
         Vec3 delta = player.getDeltaMovement().multiply(1.0f,0.0f,1.0f);

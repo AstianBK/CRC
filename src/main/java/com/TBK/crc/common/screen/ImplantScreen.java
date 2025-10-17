@@ -15,7 +15,7 @@ public class ImplantScreen extends AbstractContainerScreen<ImplantMenu> {
     public ImplantScreen(ImplantMenu containerMenu, Inventory inventory, Component component) {
         super(containerMenu, inventory, component);
         this.imageWidth = 175;
-        this.imageHeight = 246;
+        this.imageHeight = 160;
     }
 
     @Override
@@ -27,6 +27,7 @@ public class ImplantScreen extends AbstractContainerScreen<ImplantMenu> {
     protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
+
         p_283065_.blit(LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         this.renderTooltip(p_283065_,p_97789_,p_97790_);
     }

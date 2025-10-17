@@ -70,7 +70,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
     public EntityType<?>[] types = new EntityType[]{
-            BKEntityType.CYBORG_ROBOT_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get()
+            BKEntityType.DRONE_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get(),BKEntityType.COIL_CHICKEN.get()
     };
     public boolean dirty = false;
     public SkillPose pose = SkillPose.NONE;
@@ -161,7 +161,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
                 for (int i = 0 ; i < this.warningLevel ; i++){
-                    TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,2)],findRandomSurfaceNear(this.player,10,level.random),player);
+                    TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,3)],findRandomSurfaceNear(this.player,10,level.random),player);
                     this.level.addFreshEntity(tp);
                 }
                 this.invokeTimer = 100;

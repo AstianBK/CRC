@@ -29,7 +29,8 @@
 
   "upgrades.claws_arm": "Upgrade: Electric Claws",
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
-  "upgrades.gancho_arm": "Upgrade: Harpoon"
+  "upgrades.gancho_arm": "Upgrade: Harpoon",
+  "entity.crc.rex_chicken": "Cyber Chicken"
 }
 
 

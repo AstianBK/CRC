@@ -8,20 +8,22 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class ClawsArm extends MultiArmSkillAbstract{
     public boolean dash = false;
     public boolean charge = false;
     public int dashTime = 0;
     public ClawsArm() {
-        super("claws_arm", 100, false, true);
+        super("claws_arm", 300, false, true);
     }
 
     @Override
     public boolean canActiveAbility(MultiArmCapability multiArmCapability) {
-        //CRC.LOGGER.debug("Item"+multiArmCapability.implantStore.getImplantForSkill(this).getItem() + " en Cooldown :"+!multiArmCapability.getPlayer().getCooldowns().isOnCooldown(multiArmCapability.implantStore.getImplantForSkill(this).getItem()));
-        return !multiArmCapability.getPlayer().getCooldowns().isOnCooldown(multiArmCapability.implantStore.getImplantForSkill(this).getItem());
+        CRC.LOGGER.debug("Item");
+        return !multiArmCapability.getPlayer().getCooldowns().isOnCooldown(multiArmCapability.implantStore.getArmForSkill(this).getItem());
     }
 
     @Override
@@ -32,6 +34,7 @@ public class ClawsArm extends MultiArmSkillAbstract{
             player.setDeltaMovement(player.getDeltaMovement().x*0.05F,player.getDeltaMovement().y,player.getDeltaMovement().z*0.05F);
         }
         if(this.dash){
+            player.fallDistance = 0.0F;
             player.setDeltaMovement(player.getDeltaMovement().multiply(1.0F,0.89F,1.0F));
             for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F), e->e!=player)){
                 living.invulnerableTime = 0;
@@ -57,16 +60,29 @@ public class ClawsArm extends MultiArmSkillAbstract{
         }
     }
 
-
+    public void startCooldown(MultiArmCapability multiArmCapability){
+        ItemStack stack = multiArmCapability.implantStore.getArmForSkill(this);
+        if(stack!=null){
+            multiArmCapability.getPlayer().getCooldowns().addCooldown(stack.getItem(),this.cd);
+        }
+    }
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         super.startAbility(multiArmCapability);
-
-        if(!this.charge){
-            multiArmCapability.pose = MultiArmCapability.SkillPose.CHARGE_CLAWS;
-            this.charge = true;
+        if(canActiveAbility(multiArmCapability)){
+            this.startCooldown(multiArmCapability);
+            if(!this.charge){
+                multiArmCapability.pose = MultiArmCapability.SkillPose.CHARGE_CLAWS;
+                this.charge = true;
+            }
         }
     }
+
+    @Override
+    public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
+        event.setAmount(event.getAmount()+10.0F);
+    }
+
     @Override
     public SoundEvent getStartSound() {
         return super.getStartSound();
@@ -81,7 +97,8 @@ public class ClawsArm extends MultiArmSkillAbstract{
         super.stopAbility(multiArmCapability);
         if(this.charge){
             Player player = multiArmCapability.getPlayer();
-            Vec3 view = player.getViewVector(1.0F).multiply(1.0F,player.onGround() ? 0.0F : 1.0F,1.0F);
+            Vec3 view = player.getViewVector(1.0F);
+            view = view.multiply(1.0F,player.onGround() || view.y>0.0F  ? 0.0F : 1.0F,1.0F);
             player.setDeltaMovement(view.scale(4.0F));
             player.hasImpulse = true;
             this.charge = false;

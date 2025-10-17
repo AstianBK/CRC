@@ -37,14 +37,17 @@ public class MultiArmSkillAbstract {
         this.isCasting = buf.readBoolean();
     }
 
+    public void startCooldown(MultiArmCapability multiArmCapability){
+        ItemStack stack = multiArmCapability.implantStore.getImplantForSkill(this);
+        if(stack!=null){
+            multiArmCapability.getPlayer().getCooldowns().addCooldown(stack.getItem(),this.cd);
+        }
+    }
     public boolean canActiveAbility(MultiArmCapability multiArmCapability){
         return true;
     }
     public void startAbility(MultiArmCapability multiArmCapability){
-        /*ItemStack stack = multiArmCapability.implantStore.getImplantForSkill(this);
-        if(stack!=null){
-            multiArmCapability.getPlayer().getCooldowns().addCooldown(stack.getItem(),this.cd);
-        }*/
+
         if(multiArmCapability.getPlayer().level().isClientSide && getStartSound() != null){
             multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStartSound(), SoundSource.PLAYERS,10.0f,1.0f,false);
         }
@@ -85,6 +88,10 @@ public class MultiArmSkillAbstract {
     public boolean hasEffect(MultiArmCapability multiArmCapability, MobEffect effect){
         return false;
     }
+
+    public float[] getWindowsColor(MultiArmCapability multiArmCapability){
+        return new float[]{0.0F,0.0F,0.0F,0.0F};
+    }
     public boolean canEffect(MultiArmCapability multiArmCapability, MobEffect effect){
         return true;
     }
@@ -93,7 +100,7 @@ public class MultiArmSkillAbstract {
 
     }
 
-    public void onAttack(MultiArmCapability multiArmCapability, LivingEntity target){
+    public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event){
 
     }
 
