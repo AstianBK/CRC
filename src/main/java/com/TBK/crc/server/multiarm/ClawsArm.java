@@ -17,7 +17,7 @@ public class ClawsArm extends MultiArmSkillAbstract{
     public boolean charge = false;
     public int dashTime = 0;
     public ClawsArm() {
-        super("claws_arm", 300, false, true);
+        super("claws_arm", 175, false, true);
     }
 
     @Override
