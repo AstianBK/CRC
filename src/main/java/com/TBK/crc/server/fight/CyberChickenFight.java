@@ -62,7 +62,7 @@ public class CyberChickenFight{
 		this.level = CRC.getServer().getLevel(BKDimension.THE_FUTURE_LEVEL);
 		this.origin = new BlockPos(0,116,0);
 		this.validPlayer = EntitySelector.ENTITY_STILL_ALIVE.and(EntitySelector.withinDistance((double)origin.getX(), (double)(128 + origin.getY()), (double)origin.getZ(), 192.0D));
-
+		this.structure = new Structure();
 	}
 	public CyberChickenFight(CompoundTag data) {
 		this.deserialise(data);
@@ -248,7 +248,7 @@ public class CyberChickenFight{
 		return false;
 	}
 	public void deserialise(CompoundTag data) {
-		CRC.LOGGER.debug("data : "+data);
+		
 		this.structure = new Structure(data.getCompound("Structure"));
 		if(!data.getBoolean("prevChickenDefeat") && data.contains("chickenUUID")){
 			this.chickenUUID = data.getUUID("chickenUUID");
