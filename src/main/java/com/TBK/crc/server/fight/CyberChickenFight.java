@@ -212,6 +212,7 @@ public class CyberChickenFight{
 		}
 
 	}
+
 	private void spawnExitPortal(boolean p_64094_) {
 		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(this.origin).inflate(10.0F));
 		if (portals.isEmpty()){

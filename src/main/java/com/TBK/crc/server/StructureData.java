@@ -39,7 +39,7 @@ public class StructureData extends SavedData {
 
 	public static StructureData load(CompoundTag data) {
 		StructureData created = new StructureData();
-		created.fightManager = new CyberChickenFight(data);
+		created.fightManager = new CyberChickenFight(data.getCompound("CyberChickenFight"));
 		return created;
 	}
 

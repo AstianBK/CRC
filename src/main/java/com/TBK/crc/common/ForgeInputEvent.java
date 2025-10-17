@@ -34,9 +34,10 @@ public class ForgeInputEvent {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
         if(onInput(mc, event.getButton(), event.getAction())){
-            event.setCanceled(false);
+            event.setCanceled(true);
         }
     }
+
     @SubscribeEvent
     public static void onMouseScrolling(InputEvent.MouseScrollingEvent event){
         Minecraft mc = Minecraft.getInstance();

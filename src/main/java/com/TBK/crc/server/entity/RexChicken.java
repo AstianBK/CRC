@@ -35,10 +35,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +61,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public AnimationState stunned = new AnimationState();
     public AnimationState recovery = new AnimationState();
     public Vec3 chargeDirection = Vec3.ZERO;
+    public BlockPos lastBlockBeam = null;
     public BlockPos lastBlockPosBeamExplosion = null;
     public float rotHeadY = 0.0F;
     public float rotHeadY0 = 0.0F;
@@ -154,8 +152,8 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     }
     public Vec3 getBeamDirection(){
         Vec3 direction;
-        if(this.lastBlockPosBeamExplosion!=null){
-            direction = this.lastBlockPosBeamExplosion.getCenter().subtract(this.getHeadPos(1.0F));
+        if(this.lastBlockBeam!=null){
+            direction = this.lastBlockBeam.getCenter().subtract(this.getHeadPos(1.0F));
         }else{
             direction = viewHeadY().scale(100.0F);
         }
@@ -440,13 +438,16 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             for (EntityHitResult hit : hits){
                 if(hit.getEntity() instanceof LivingEntity entity){
                     if(entity.hurt(this.damageSources().generic(),4.0F)){
-                        entity.invulnerableTime = 0;
                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,3,10));
-                        entity.invulnerableTime = 0;
                     }
                 }
             }
         }
+
+        if(blockEnd.getType() == HitResult.Type.MISS){
+            this.lastBlockBeam = blockEnd.getBlockPos();
+        }
+
         if(!level().getBlockState(blockEnd.getBlockPos()).isAir() && (this.lastBlockPosBeamExplosion == null || Mth.sqrt((float) blockEnd.getBlockPos().distToCenterSqr(this.lastBlockPosBeamExplosion.getCenter())) > 2.0F)){
             BlockPos end = blockEnd.getBlockPos();
             this.lastBlockPosBeamExplosion = end;
@@ -673,11 +674,17 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             return false;
         }
         if(this.stunnedTick>0){
+            this.setHealth(this.getHealth()-25.0F);
+            this.regenerationShieldTimer=0;
+            this.setShieldAmount(50);
+            this.stunnedTick = 0;
+            if(!this.level().isClientSide){
+                this.recoveryTimer=21;
+                this.level().broadcastEntityEvent(this,(byte) 17);
+            }
             return false;
         }
-        this.setHealth(this.getHealth()-1.0F);
-        this.regenerationShieldTimer=0;
-        this.setShieldAmount(50);
+
         return true;
     }
 
