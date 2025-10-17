@@ -368,7 +368,7 @@ public class ModBusEvent {
                 cap.passives.upgrades.forEach((i,passive)->{
                     passive.getSkillAbstract().onAttack(cap,event);
                 });
-                if(cap.skills.hasMultiArmSkillAbstract("claws_arm")){
+                if(cap.getSelectSkill().name.equals("claws_arm") && player.getMainHandItem().isEmpty()){
                     cap.skills.getForName("claws_arm").onAttack(cap,event);
                 }
             }
