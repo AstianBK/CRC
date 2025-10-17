@@ -64,6 +64,7 @@ public class PacketKeySync implements Packet<PacketListener>{
             }
             case 0x12->{
                 MultiArmSkillAbstract skill = cap.getSelectSkill();
+                cap.stopCasting(player);
                 skill.swapArm(cap, cap.getSkillForHotBar(this.action));
                 cap.setPosSelectMultiArmSkillAbstract(this.action);
                 cap.getSelectSkill().swapArm(cap,skill);

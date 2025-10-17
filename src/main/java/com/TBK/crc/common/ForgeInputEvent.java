@@ -66,19 +66,21 @@ public class ForgeInputEvent {
                 PacketHandler.sendToServer(new PacketKeySync(0x12,selectActual,-1));
             }
 
+            if (mc.screen == null && (key==1) && cooldownUse<=0 && cap.canUseSkill(cap.getSelectSkill())) {
+                PacketHandler.sendToServer(new PacketKeySync(0x52,action,-1));
+                cooldownUse = 10;
+                return true;
+            }else if(mc.screen == null && CRCKeybinds.bottomImplantStore.consumeClick()){
+                PacketHandler.sendToServer(new PacketKeySync(key,action,-1));
+            }
+
         }
         /*if(){
             CRC.LOGGER.debug("relese"+cooldownUse);
             cooldownUse = 0;
             CRC.LOGGER.debug("relese despues"+cooldownUse);
         }*/
-        if (mc.screen == null && (key==1) && cooldownUse<=0) {
-            PacketHandler.sendToServer(new PacketKeySync(0x52,action,-1));
-            cooldownUse = 10;
-            return true;
-        }else if(mc.screen == null && CRCKeybinds.bottomImplantStore.consumeClick()){
-            PacketHandler.sendToServer(new PacketKeySync(key,action,-1));
-        }
+
 
         return false;
     }

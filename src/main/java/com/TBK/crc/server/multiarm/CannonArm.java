@@ -29,6 +29,7 @@ public class CannonArm extends MultiArmSkillAbstract{
         this.chargeTime = 0;
         this.stopAiming = 0;
         multiArmCapability.stopAimingAnim = 0;
+        multiArmCapability.stopAimingAnim0 = 0;
         multiArmCapability.levelCharge = 0;
     }
 

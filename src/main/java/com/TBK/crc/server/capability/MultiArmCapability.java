@@ -287,7 +287,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public boolean canUseSkill(MultiArmSkillAbstract skillAbstract) {
-        return this.player.getMainHandItem().isEmpty();
+        return this.player.getMainHandItem().isEmpty() && !skillAbstract.name.equals("none");
     }
 
     @Override
