@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberComponentItem;
 import com.TBK.crc.common.item.CyberImplantItem;
+import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.common.item.CyberUpgradeItem;
 import com.TBK.crc.server.multiarm.*;
 import net.minecraft.world.item.Item;
@@ -62,6 +63,14 @@ public class BKItems {
 
     //COSMETIC
 
+    public static final RegistryObject<Item> UPGRADE_SKIN_JETSTREAM = ITEMS.register("upgrade_skin_jetstream",
+            ()-> new CyberSkinItem(new Item.Properties(),"jetstream"));
+
+    public static final RegistryObject<Item> UPGRADE_SKIN_MILITARY = ITEMS.register("upgrade_skin_military",
+            ()-> new CyberSkinItem(new Item.Properties(),"military"));
+
+    public static final RegistryObject<Item> UPGRADE_SKIN_BASE = ITEMS.register("upgrade_skin_base",
+            ()-> new CyberSkinItem(new Item.Properties(),"base"));
 
     //SPAWN-EGGS
 

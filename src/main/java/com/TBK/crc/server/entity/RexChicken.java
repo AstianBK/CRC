@@ -178,116 +178,143 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     @Override
     public void tick() {
         super.tick();
-        this.rotHeadY0 = this.rotHeadY;
-        this.rotHeadX0 = this.rotHeadX;
-        float yawRad = (float)Math.toRadians(this.getYRot());
-        float sin = (float)Math.sin(yawRad);
-        float cos = (float)Math.cos(yawRad);
+        if(this.isDeath()){
+            this.setDeltaMovement(0,this.getDeltaMovement().y,0);
+        }else {
+            this.rotHeadY0 = this.rotHeadY;
+            this.rotHeadX0 = this.rotHeadX;
+            float yawRad = (float)Math.toRadians(this.getYRot());
+            float sin = (float)Math.sin(yawRad);
+            float cos = (float)Math.cos(yawRad);
 
-        double tower1X =  ( (-5) * cos) + ( 7* sin);
-        double tower1Y =  ( (-5) * sin) - ( 7* cos);
+            double tower1X =  ( (-5) * cos) + ( 7* sin);
+            double tower1Y =  ( (-5) * sin) - ( 7* cos);
 
-        // torre 2: atrás izquierda
-        double tower2X =  ( (5) * cos) + ( 7* sin);
-        double tower2Y =  ( (5) * sin) - ( 7* cos);
-        Vec3[] pos = new Vec3[this.parts.length];
-        for (int j = 0 ; j<this.parts.length ; j++){
-            pos[j]=new Vec3(this.parts[j].getX(), this.parts[j].getY(), this.parts[j].getZ());
-        }
+            // torre 2: atrás izquierda
+            double tower2X =  ( (5) * cos) + ( 7* sin);
+            double tower2Y =  ( (5) * sin) - ( 7* cos);
+            Vec3[] pos = new Vec3[this.parts.length];
+            for (int j = 0 ; j<this.parts.length ; j++){
+                pos[j]=new Vec3(this.parts[j].getX(), this.parts[j].getY(), this.parts[j].getZ());
+            }
 
-        this.tickPart(this.head, sin,7,-cos);
-        this.tickPart(this.towerMissile1, tower1X,8,tower1Y);
-        this.tickPart(this.towerMissile2, tower2X,8,tower2Y);
+            this.tickPart(this.head, sin,7,-cos);
+            this.tickPart(this.towerMissile1, tower1X,8,tower1Y);
+            this.tickPart(this.towerMissile2, tower2X,8,tower2Y);
 
-        for (int k = 0 ; k<this.parts.length ; k++){
-            this.parts[k].xo = pos[k].x;
-            this.parts[k].yo = pos[k].y;
-            this.parts[k].zo = pos[k].z;
-            this.parts[k].xOld = pos[k].x;
-            this.parts[k].yOld = pos[k].y;
-            this.parts[k].zOld = pos[k].z;
-        }
-        if(this.restTime > 0){
+            for (int k = 0 ; k<this.parts.length ; k++){
+                this.parts[k].xo = pos[k].x;
+                this.parts[k].yo = pos[k].y;
+                this.parts[k].zo = pos[k].z;
+                this.parts[k].xOld = pos[k].x;
+                this.parts[k].yOld = pos[k].y;
+                this.parts[k].zOld = pos[k].z;
+            }
+            if(this.restTime > 0){
+                this.restTime--;
+            }
 
-        }
+            this.tickHead();
+            if(this.prepareLaser>0){
+                this.getNavigation().stop();
+                this.prepareLaser--;
+                if(this.getTarget()!=null){
+                    Vec3 vec32 = this.getTarget().getEyePosition().subtract(this.getHeadPos());
+                    double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
+                    double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
+                    this.yHeadRot=(float)f6;
+                    this.setYHeadRot((float) f6);
+                    this.yBodyRot= (float) (f6);
+                    this.setYRot((float) f6);
+                    this.setXRot((float) f5);
+                    this.setRot(this.getYRot(),this.getXRot());
+                    if(this.isLaserSemiCir()){
+                        this.rotHeadX = (float) f5;
 
-        this.tickHead();
-        if(this.prepareLaser>0){
-            this.getNavigation().stop();
-            this.prepareLaser--;
-            if(this.getTarget()!=null){
-                Vec3 vec32 = this.getTarget().getEyePosition().subtract(this.getHeadPos());
-                double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
-                double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
-                this.yHeadRot=(float)f6;
-                this.setYHeadRot((float) f6);
-                this.yBodyRot= (float) (f6);
-                this.setYRot((float) f6);
-                this.setXRot((float) f5);
-                this.setRot(this.getYRot(),this.getXRot());
-                if(this.isLaserSemiCir()){
-                    this.rotHeadX = (float) f5;
+                        this.rotHeadY = -60;
+                    }else {
+                        this.rotHeadX = 45;
 
-                    this.rotHeadY = -60;
+                        this.rotHeadY = (float) f6-this.getYRot();
+                    }
+                }
+                if(this.prepareLaser<=0 && !this.level().isClientSide){
+                    this.setLaser(true);
+                    this.level().broadcastEntityEvent(this,(byte) 18);
+                }
+            }
+            if(this.recoveryTimer>0){
+                this.recoveryTimer--;
+                this.getNavigation().stop();
+                if(this.recoveryTimer<=0){
+                    if(!this.level().isClientSide){
+                        this.level().broadcastEntityEvent(this,(byte) 16);
+                    }
+                }
+            }
+            if(this.stunnedTick>0){
+                this.stunnedTick--;
+                this.getNavigation().stop();
+                if(this.stunnedTick>140){
+                    this.setDeltaMovement(this.chargeDirection.multiply(-1,1,-1));
+                    this.chargeDirection=this.chargeDirection.scale(0.8);
                 }else {
-                    this.rotHeadX = 45;
-
-                    this.rotHeadY = (float) f6-this.getYRot();
+                    if(this.isPowered()){
+                        this.stunnedTick=0;
+                    }
+                    this.setDeltaMovement(0,this.getDeltaMovement().y,0);
+                }
+                if(this.stunnedTick<=0){
+                    if(!this.level().isClientSide){
+                        this.recoveryTimer=21;
+                        this.level().broadcastEntityEvent(this,(byte) 17);
+                    }
+                }
+            }else if(this.regenerationShieldTimer>0){
+                this.regenerationShieldTimer--;
+                if(this.regenerationShieldTimer<=0){
+                    if(!this.level().isClientSide){
+                        this.level().broadcastEntityEvent(this,(byte) 32);
+                        this.setShieldAmount(50);
+                    }
                 }
             }
-            if(this.prepareLaser<=0 && !this.level().isClientSide){
-                this.setLaser(true);
-                this.level().broadcastEntityEvent(this,(byte) 18);
+            if(this.cooldownLaser>0){
+                this.cooldownLaser--;
             }
-        }
-        if(this.recoveryTimer>0){
-            this.recoveryTimer--;
-            this.getNavigation().stop();
-            if(this.recoveryTimer<=0){
-                if(!this.level().isClientSide){
-                    this.level().broadcastEntityEvent(this,(byte) 16);
-                }
+            if(this.cooldownCharge>0){
+                this.cooldownCharge--;
             }
-        }
-        if(this.stunnedTick>0){
-            this.stunnedTick--;
-            this.getNavigation().stop();
-            if(this.stunnedTick>140){
-                this.setDeltaMovement(this.chargeDirection.multiply(-1,1,-1));
-                this.chargeDirection=this.chargeDirection.scale(0.8);
-            }else {
-                if(this.isPowered()){
-                    this.stunnedTick=0;
-                }
+            if(this.prepareChargeTimer>0){
+                this.getNavigation().stop();
                 this.setDeltaMovement(Vec3.ZERO);
-            }
-            if(this.stunnedTick<=0){
-                if(!this.level().isClientSide){
-                    this.recoveryTimer=21;
-                    this.level().broadcastEntityEvent(this,(byte) 17);
+                this.prepareChargeTimer--;
+                if(this.getTarget()!=null){
+                    this.chargeDirection = this.getTarget().position().subtract(this.position()).normalize().scale(1.0F);
+                    if(!this.level().isClientSide){
+                        Vec3 vec32 = this.chargeDirection;
+                        double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
+                        double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
+                        this.yHeadRot=(float)f6;
+                        this.setYHeadRot((float) f6);
+                        this.yBodyRot=(float) (f6);
+                        this.setYRot((float) f6);
+                        this.setXRot((float) f5);
+                        this.setRot(this.getYRot(),this.getXRot());
+                    }
+                }
+                if(this.prepareChargeTimer<=0){
+                    if(this.getTarget()!=null){
+                        this.setCharging(true);
+                        if (this.level().isClientSide){
+                            this.charge.start(this.tickCount);
+                        }
+                    }
                 }
             }
-        }else if(this.regenerationShieldTimer>0){
-            this.regenerationShieldTimer--;
-            if(this.regenerationShieldTimer<=0){
-                if(!this.level().isClientSide){
-                    this.level().broadcastEntityEvent(this,(byte) 32);
-                    this.setShieldAmount(50);
-                }
-            }
-        }
-        if(this.cooldownLaser>0){
-            this.cooldownLaser--;
-        }
-        if(this.cooldownCharge>0){
-            this.cooldownCharge--;
-        }
-        if(this.prepareChargeTimer>0){
-            this.getNavigation().stop();
-            this.setDeltaMovement(Vec3.ZERO);
-            this.prepareChargeTimer--;
-            if(this.getTarget()!=null){
-                this.chargeDirection = this.getTarget().position().subtract(this.position()).normalize().scale(1.0F);
+
+            if(this.isCharging()){
+                this.chargeTimer++;
                 if(!this.level().isClientSide){
                     Vec3 vec32 = this.chargeDirection;
                     double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
@@ -298,105 +325,83 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                     this.setYRot((float) f6);
                     this.setXRot((float) f5);
                     this.setRot(this.getYRot(),this.getXRot());
-                }
-            }
-            if(this.prepareChargeTimer<=0){
-                if(this.getTarget()!=null){
-                    this.setCharging(true);
-                    if (this.level().isClientSide){
-                        this.charge.start(this.tickCount);
-                    }
-                }
-            }
-        }
 
-        if(this.isCharging()){
-            this.chargeTimer++;
-            if(!this.level().isClientSide){
-                Vec3 vec32 = this.chargeDirection;
-                double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
-                double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
-                this.yHeadRot=(float)f6;
-                this.setYHeadRot((float) f6);
-                this.yBodyRot=(float) (f6);
-                this.setYRot((float) f6);
-                this.setXRot((float) f5);
-                this.setRot(this.getYRot(),this.getXRot());
-
-            }
-
-            this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(3.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(e->{
-                this.doHurtTarget(e);
-                e.push(this);
-            });
-            if(this.chargeTimer>40){
-                this.setCharging(false);
-                if(this.level().isClientSide){
-                    this.charge.stop();
-                }else {
-                    if(this.level().random.nextBoolean()){
-                        this.restTime = (int) (100 + 500*this.level().random.nextFloat());
-                    }
-                }
-                this.chargeTimer = 0;
-                this.cooldownCharge = 200;
-
-            }
-            if (!this.level().isClientSide && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
-                boolean flag = false;
-                AABB aabb = this.getBoundingBox().inflate(1D);
-
-                for(BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
-                    BlockState blockstate = this.level().getBlockState(blockpos);
-                    Block block = blockstate.getBlock();
-                    if (blockstate.is(Blocks.SEA_LANTERN) || blockstate.is(Blocks.POLISHED_DEEPSLATE) || blockstate.is(Blocks.REDSTONE_LAMP)) {
-                        flag = this.level().destroyBlock(blockpos, true, this) || flag;
-                    }
                 }
 
-                if (!flag){
-                    if(this.horizontalCollision){
-                        this.stunnedTick=150;
-                        this.setCharging(false);
-                        if(!this.level().isClientSide && !this.isPowered()){
-                            this.level().broadcastEntityEvent(this,(byte) 12);
+                this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(3.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(e->{
+                    this.doHurtTarget(e);
+                    e.push(this);
+                });
+                if(this.chargeTimer>40){
+                    this.setCharging(false);
+                    if(this.level().isClientSide){
+                        this.charge.stop();
+                    }else {
+                        if(this.level().random.nextBoolean()){
+                            this.restTime = (int) (100 + 500*this.level().random.nextFloat());
                         }
-                        this.chargeTimer = 0;
-                        this.cooldownCharge = 200;
+                    }
+                    this.chargeTimer = 0;
+                    this.cooldownCharge = 200;
+
+                }
+                if (!this.level().isClientSide && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
+                    boolean flag = false;
+                    AABB aabb = this.getBoundingBox().inflate(1D);
+
+                    for(BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
+                        BlockState blockstate = this.level().getBlockState(blockpos);
+                        Block block = blockstate.getBlock();
+                        if (blockstate.is(Blocks.SEA_LANTERN) || blockstate.is(Blocks.POLISHED_DEEPSLATE) || blockstate.is(Blocks.REDSTONE_LAMP)) {
+                            flag = this.level().destroyBlock(blockpos, true, this) || flag;
+                        }
+                    }
+
+                    if (!flag){
+                        if(this.horizontalCollision){
+                            this.stunnedTick=150;
+                            this.setCharging(false);
+                            if(!this.level().isClientSide && !this.isPowered()){
+                                this.level().broadcastEntityEvent(this,(byte) 12);
+                            }
+                            this.chargeTimer = 0;
+                            this.cooldownCharge = 200;
+                        }
                     }
                 }
+
+            }
+            if(this.isAttacking()){
+                this.attackTimer--;
+                if(this.attackTimer<=5 ){
+                    this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(10.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(this::doHurtTarget);
+                    this.setAttacking(false);
+                }
+            }
+            if(this.level().isClientSide){
+                this.setupAnimationStates();
             }
 
-        }
-        if(this.isAttacking()){
-            this.attackTimer--;
-            if(this.attackTimer<=5 ){
-                this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(10.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(this::doHurtTarget);
-                this.setAttacking(false);
+            while(this.rotHeadX - this.rotHeadX0 < -180.0F) {
+                this.rotHeadX0 -= 360.0F;
+            }
+
+            while(this.rotHeadX - this.rotHeadX0 >= 180.0F) {
+                this.rotHeadX0 += 360.0F;
+            }
+            while(this.rotHeadY - this.rotHeadY0 < -180.0F) {
+                this.rotHeadY0 -= 360.0F;
+            }
+
+            while(this.rotHeadY - this.rotHeadY0 >= 180.0F) {
+                this.rotHeadY0 += 360.0F;
+            }
+
+            if(this.fight!=null){
+                this.fight.updateDragon(this);
             }
         }
-        if(this.level().isClientSide){
-            this.setupAnimationStates();
-        }
 
-        while(this.rotHeadX - this.rotHeadX0 < -180.0F) {
-            this.rotHeadX0 -= 360.0F;
-        }
-
-        while(this.rotHeadX - this.rotHeadX0 >= 180.0F) {
-            this.rotHeadX0 += 360.0F;
-        }
-        while(this.rotHeadY - this.rotHeadY0 < -180.0F) {
-            this.rotHeadY0 -= 360.0F;
-        }
-
-        while(this.rotHeadY - this.rotHeadY0 >= 180.0F) {
-            this.rotHeadY0 += 360.0F;
-        }
-
-        if(this.fight!=null){
-            this.fight.updateDragon(this);
-        }
     }
 
 
@@ -473,6 +478,12 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     private boolean isRage() {
         return this.getHealth()<=this.getMaxHealth()*0.5F;
+    }
+
+    @Override
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
+
     }
 
     public void applyLaserEffect(Vec3 view){
@@ -779,7 +790,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         @Override
         public boolean canUse() {
-            return super.canUse() && RexChicken.this.restTime>0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
+            return super.canUse() && RexChicken.this.restTime<=0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
         }
 
         @Override

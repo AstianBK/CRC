@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.core.jmx.Server;
 
@@ -30,7 +32,25 @@ import java.util.function.Supplier;
 
 public class Util {
     public static Map<String, Supplier<MultiArmSkillAbstract>> upgrades= new HashMap<>();
+    public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
+        Level level = entity.level();
+        BlockPos origin = entity.blockPosition();
 
+        for (int i = 0; i < 20; i++) {
+            int dx = random.nextInt(-radius, radius + 1);
+            int dz = random.nextInt(-radius, radius + 1);
+
+            BlockPos pos = origin.offset(dx, 0, dz);
+
+            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
+            BlockPos surfacePos = new BlockPos(pos.getX(), surfaceY, pos.getZ());
+
+            if (level.isEmptyBlock(surfacePos) && level.isEmptyBlock(surfacePos.above())) {
+                return surfacePos;
+            }
+        }
+        return origin;
+    }
     public static Map<Integer,MultiArmSkillAbstractInstance> getMapEmpty(){
         Map<Integer, MultiArmSkillAbstractInstance> map = new HashMap<>();
         map.put(0,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));

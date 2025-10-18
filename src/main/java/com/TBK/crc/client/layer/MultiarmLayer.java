@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.ModBusEvent;
 import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -59,7 +60,11 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
                     renderItem(p_117349_,p_117350_,p_117351_,p_117352_);
                     p_117349_.popPose();
                 }
-                multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucent(TEXTURE)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
+                ResourceLocation location = CyberSkinItem.getTextures(cap.implantStore.getImplant(0).getOrCreateTag());
+                if(location==null){
+                    location = TEXTURE;
+                }
+                multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucent(location)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.eyes(GLOWING)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 if(cap.levelCharge>0){
                     ResourceLocation texture = ModBusEvent.PULSING[cap.levelCharge];
@@ -85,7 +90,7 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
         } else {
             if (!p_270379_.isEmpty()) {
                 p_270124_.pushPose();
-                this.getParentModel().translateToHand(p_270324_, p_270124_);
+                this.translateToHand(p_270124_);
                 p_270124_.mulPose(Axis.XP.rotationDegrees(-90.0F));
                 p_270124_.mulPose(Axis.YP.rotationDegrees(180.0F));
                 boolean flag = p_270324_ == HumanoidArm.LEFT;
@@ -97,6 +102,9 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
 
     }
 
+    public void translateToHand(PoseStack p_102855_) {
+        this.multiarm.root().translateAndRotate(p_102855_);
+    }
     private void renderArmWithSpyglass(LivingEntity p_174518_, ItemStack p_174519_, HumanoidArm p_174520_, PoseStack p_174521_, MultiBufferSource p_174522_, int p_174523_) {
         p_174521_.pushPose();
         ModelPart modelpart = this.getParentModel().getHead();

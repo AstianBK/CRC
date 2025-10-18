@@ -4,6 +4,7 @@ import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.block.CyborgTableBlock;
+import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.common.registry.BKDimension;
 import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.capability.CRCCapability;
@@ -218,7 +219,12 @@ public class ModBusEvent {
             float partialTicks=Minecraft.getInstance().getPartialTick();
             MultiArmModel<Player> modelLeft=new MultiArmModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(MultiArmModel.LAYER_LOCATION));
 
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE);
+            ResourceLocation location = CyberSkinItem.getTextures(cap.implantStore.getImplant(0).getOrCreateTag());
+            if(location==null){
+                location = TEXTURE;
+            }
+
+            RenderType renderType = RenderType.entityTranslucent(location);
 
             modelLeft.setPoseArmInGuiForPose(cap,poseStack,partialTicks);
             modelLeft.selectArm(event.getPlayer(),cap.getSelectSkill().name,cap.getSelectSkill(),event.getPlayer().tickCount+partialTicks);

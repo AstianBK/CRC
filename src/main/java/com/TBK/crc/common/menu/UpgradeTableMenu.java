@@ -3,6 +3,7 @@ package com.TBK.crc.common.menu;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.item.CyberComponentItem;
 import com.TBK.crc.common.item.CyberImplantItem;
+import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.common.item.CyberUpgradeItem;
 import com.TBK.crc.common.registry.BKContainers;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +11,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -36,7 +38,7 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, 0, 76,35){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
-                return p_40231_.getItem() instanceof CyberUpgradeItem;
+                return p_40231_.getItem() instanceof CyberUpgradeItem || p_40231_.getItem() instanceof CyberSkinItem;
             }
         });
         this.addSlot(new Slot(container, 1, 27,35){
@@ -74,13 +76,17 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
             @Override
             public void slotChanged(AbstractContainerMenu menu, int i, ItemStack itemStack) {
                 if(level.isClientSide)return;
-                if(!menu.getSlot(0).getItem().isEmpty() && !menu.getSlot(1).getItem().isEmpty()){
-                    ItemStack base = menu.getSlot(1).getItem().copy();
-                    ItemStack upgrade = menu.getSlot(0).getItem().copy();
+                ItemStack base = menu.getSlot(1).getItem().copy();
+                ItemStack upgrade = menu.getSlot(0).getItem().copy();
+
+                if(!upgrade.isEmpty() && !base.isEmpty()){
                     if(upgrade.getItem() instanceof CyberUpgradeItem upgradeItem){
                         if(CyberImplantItem.canAddUpgrade(base.getOrCreateTag(),upgradeItem.getSkill())){
                             CyberImplantItem.addUpgrade(base.getOrCreateTag(),upgradeItem.getSkill());
                         }
+                    }
+                    if(upgrade.getItem() instanceof CyberSkinItem skinItem){
+                        CyberSkinItem.addSkin(base.getOrCreateTag(),skinItem);
                     }
                     UpgradeTableMenu.this.craftSlots.setItem(2,base);
                 }else {

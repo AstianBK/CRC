@@ -147,14 +147,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
                 for (int i = 0 ; i < this.warningLevel+1 ; i++){
-                    TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,3)],findRandomSurfaceNear(this.player,10,level.random),player);
+                    TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,3)],Util.findRandomSurfaceNear(this.player,10,level.random),player,false);
                     this.level.addFreshEntity(tp);
                 }
                 this.invokeTimer = 100;
                 this.warningLevel = Math.min(this.warningLevel+1,2);
                 if(!this.level.isClientSide){
                     CompoundTag nbt = new CompoundTag();
-                    nbt.putInt("warningLevel",this.warningLevel);
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(nbt,false), (ServerPlayer) player);
                 }
             }else {
@@ -206,25 +205,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
     }
     
-    public static BlockPos findRandomSurfaceNear(Entity entity, int radius, RandomSource random) {
-        Level level = entity.level();
-        BlockPos origin = entity.blockPosition();
 
-        for (int i = 0; i < 20; i++) {
-            int dx = random.nextInt(-radius, radius + 1);
-            int dz = random.nextInt(-radius, radius + 1);
-
-            BlockPos pos = origin.offset(dx, 0, dz);
-
-            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
-            BlockPos surfacePos = new BlockPos(pos.getX(), surfaceY, pos.getZ());
-
-            if (level.isEmptyBlock(surfacePos) && level.isEmptyBlock(surfacePos.above())) {
-                return surfacePos;
-            }
-        }
-        return origin;
-    }
 
     public static boolean hasEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
@@ -256,6 +237,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void clearAbilityStore(){
         MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
         setSetHotbar(map);
+
         this.dirty = true;
     }
 

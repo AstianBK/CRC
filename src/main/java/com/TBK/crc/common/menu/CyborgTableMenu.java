@@ -160,6 +160,9 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 getSlot(i).setChanged();
                 CyberTableSlot slot = (CyberTableSlot) getSlot(i);
                 ItemStack itemstack1 = slot.getItem();
+                if(itemstack1.isEmpty() && slot.isDirty()){
+                    this.refreshSlot(i,p_38940_);
+                }
                 if(!itemstack1.isEmpty() && slot.isDirty()){
                     if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
                         p_38940_.getInventory().placeItemBackInInventory(itemstack1);

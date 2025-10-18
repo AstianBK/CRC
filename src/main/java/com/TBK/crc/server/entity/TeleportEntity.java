@@ -11,13 +11,14 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 public class TeleportEntity extends Entity {
-    public int teleportTimerOld = 0;
-    public int teleportTimer = 0;
-    public int generationTimer = 0;
-    public int generationTimerOld = 0;
+    public int teleportTimerOld;
+    public int teleportTimer;
+    public int generationTimer;
+    public int generationTimerOld;
     public EntityType<?> type;
     public BlockPos blockTeleport;
     public LivingEntity target = null;
+    public boolean shield = false;
     public TeleportEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
         this.type = BKEntityType.CYBORG_ROBOT_CHICKEN.get();
@@ -28,7 +29,7 @@ public class TeleportEntity extends Entity {
         generationTimerOld = 50;
     }
 
-    public TeleportEntity(Level p_19871_,EntityType<?> entity,BlockPos pos,LivingEntity target) {
+    public TeleportEntity(Level p_19871_,EntityType<?> entity,BlockPos pos,LivingEntity target,boolean shield) {
         super(BKEntityType.TELEPORT.get(), p_19871_);
         this.target = target;
         this.type = entity;
@@ -38,6 +39,7 @@ public class TeleportEntity extends Entity {
         generationTimer = 50;
         generationTimerOld = 50;
         this.teleportTo(pos.getX(),pos.getY(),pos.getZ());
+        this.shield = shield;
     }
 
     @Override
@@ -70,6 +72,9 @@ public class TeleportEntity extends Entity {
         if(!this.level().isClientSide){
             Entity entity = this.type.create(this.level());
             if(entity==null)return;
+            if(entity instanceof RobotChicken){
+                ((RobotChicken) entity).setShield(this.shield);
+            }
             if(this.blockTeleport!=null){
                 entity.teleportTo(this.blockTeleport.getX(),this.blockTeleport.getY()+1.0F,this.blockTeleport.getZ());
             }else {

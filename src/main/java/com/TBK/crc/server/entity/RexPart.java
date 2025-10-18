@@ -1,6 +1,8 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
+import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketActionRex;
 import net.minecraft.core.BlockPos;
@@ -108,14 +110,12 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
         p_31028_.putBoolean("isBreaking",this.isBreaking());
     }
 
-    @Override
-    public InteractionResult interactAt(Player p_19980_, Vec3 p_19981_, InteractionHand p_19982_) {
-        return super.interactAt(p_19980_, p_19981_, p_19982_);
-    }
 
     public boolean isPickable() {
         return true;
     }
+
+
 
 
     public boolean hurt(DamageSource p_31020_, float p_31021_) {
@@ -133,11 +133,22 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
                 if(!this.level().isClientSide){
                     this.parentMob.recoveryTimer=21;
                     this.parentMob.level().broadcastEntityEvent(this,(byte) 17);
+                    this.callReinforcement(p_31020_.getEntity());
                 }
             }
         }
         return !this.parentMob.isPowered();
     }
+
+    public void callReinforcement(Entity entity){
+        if (entity instanceof LivingEntity target){
+            for (int i = 0 ; i<3 ; i++){
+                TeleportEntity teleport = new TeleportEntity(this.level(), BKEntityType.DRONE_CHICKEN.get(), Util.findRandomSurfaceNear(entity,3,this.random),target,true);
+                this.level().addFreshEntity(teleport);
+            }
+        }
+    }
+
 
     public boolean is(Entity p_31031_) {
         return this == p_31031_ || this.parentMob.is(p_31031_);

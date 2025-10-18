@@ -63,10 +63,10 @@ public class MultiArmOverlay implements IGuiOverlay {
                 }
                 graphics.pose().pushPose();
                 if(cap.warningLevel>0){
-                    int i = width / 2 - 140;
+                    int i = width / 2 ;
                     int j1 =  i;
                     int k1 = height ;
-                    ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+cap.warningLevel));
+                    ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
                     graphics.blit(location, j1, k1 , 0,0,18, 18, 18, 18);
 
                 }
