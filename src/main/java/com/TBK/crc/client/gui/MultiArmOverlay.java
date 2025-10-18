@@ -61,6 +61,16 @@ public class MultiArmOverlay implements IGuiOverlay {
                     RenderSystem.enableDepthTest();
                     RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
                 }
+                graphics.pose().pushPose();
+                if(cap.warningLevel>0){
+                    int i = width / 2 - 140;
+                    int j1 =  i;
+                    int k1 = height ;
+                    ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+cap.warningLevel));
+                    graphics.blit(location, j1, k1 , 0,0,18, 18, 18, 18);
+
+                }
+                graphics.pose().popPose();
                 graphics.pose().popPose();
 
                 if(Util.hasMultiArm(cap)){

@@ -94,7 +94,7 @@ public class BeamExplosionEntity extends Entity {
                                 if (d13 != 0.0D) {
                                     double d14 = (double)getSeenPercent(vec3, entity);
                                     double d10 = (1.0D - d12) * d14;
-                                    entity.hurt(this.damageSources().explosion(null,null), (float)((int)((d10 * d10 + d10) / 2.0D * 20.0D * (double)f2 + 1.0D)));
+                                    entity.hurt(this.damageSources().explosion(null,null), (float)((int)((d10 * d10 + d10) / 2.0D * 20.0D * (double)f2 + 4.0D)));
                                 }
                             }
                         }

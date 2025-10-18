@@ -134,7 +134,6 @@ public class CyberChickenFight{
 		} else {
 			this.chickenUUID = list.get(0).getUUID();
 		}
-
 	}
 
 	@javax.annotation.Nullable
@@ -180,29 +179,14 @@ public class CyberChickenFight{
 
 
 	private void scanState() {
-		CRC.LOGGER.info("Scanning for legacy world dragon fight...");
-		boolean flag = this.hasActiveExitPortal();
-		if (flag) {
-			CRC.LOGGER.info("Found that the dragon has been killed in this world already.");
-			this.prevCyberChickenDefeat = true;
-		} else {
-			CRC.LOGGER.info("Found that the dragon has not yet been killed in this world.");
-			this.prevCyberChickenDefeat = false;
-		}
-
 		List<? extends RexChicken> list = Util.getRexChickens(level);
 		if (list.isEmpty()) {
 			this.cyberChickenDefeat = true;
 		} else {
 			RexChicken enderdragon = list.get(0);
 			this.chickenUUID = enderdragon.getUUID();
-			CRC.LOGGER.info("Found that there's a dragon still alive ({})", (Object)enderdragon);
+
 			this.cyberChickenDefeat = false;
-			if (!flag) {
-				CRC.LOGGER.info("But we didn't have a portal, let's remove it.");
-				enderdragon.discard();
-				this.chickenUUID = null;
-			}
 		}
 
 		if (!this.prevCyberChickenDefeat && this.cyberChickenDefeat) {
@@ -231,13 +215,16 @@ public class CyberChickenFight{
 	}
 
 	private boolean hasActiveExitPortal() {
-		return true;
+
+		return false;
 	}
 	public void deserialise(CompoundTag data) {
 
 		this.structure = new Structure(data.getCompound("Structure"));
-		if(!data.getBoolean("prevChickenDefeat") && data.contains("chickenUUID")){
-			this.chickenUUID = data.getUUID("chickenUUID");
+		if(!data.getBoolean("prevChickenDefeat")){
+			if (data.contains("chickenUUID")){
+				this.chickenUUID = data.getUUID("chickenUUID");
+			}
 			this.prevCyberChickenDefeat = false;
 			this.cyberChickenDefeat = false;
 		}else {

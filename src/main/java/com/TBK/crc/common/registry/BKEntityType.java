@@ -15,7 +15,7 @@ public class BKEntityType {
 
     public static final RegistryObject<EntityType<RexChicken>> REX_CHICKEN = ENTITY_TYPES
             .register("rex_chicken", () -> EntityType.Builder.<RexChicken>of(RexChicken::new, MobCategory.MISC)
-                    .fireImmune().sized(2F, 2F).build(CRC.MODID+ "rex_chicken"));
+                    .fireImmune().sized(6F, 6F).build(CRC.MODID+ "rex_chicken"));
 
     public static final RegistryObject<EntityType<PortalEntity>> PORTAL = ENTITY_TYPES
             .register("portal", () -> EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)

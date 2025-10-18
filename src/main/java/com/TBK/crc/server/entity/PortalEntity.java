@@ -1,17 +1,28 @@
 package com.TBK.crc.server.entity;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.registry.BKParticles;
+import com.TBK.crc.common.screen.PortalScreen;
 import com.TBK.crc.server.StructureData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -25,14 +36,7 @@ public class PortalEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide()) {
-            HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canTeleportEntity);
-            if (result.getType() == HitResult.Type.MISS && this.isAlive()) {
-                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox(), this::canTeleportEntity);
-                if (!intersecting.isEmpty())
-                    this.onTeleport(new EntityHitResult(intersecting.get(0)));
-            }
-        }else {
+        if (this.level().isClientSide()) {
             if(this.tickCount % (15 + this.random.nextInt(0,5)) == 0){
                 for(int i = 0; i < 4; ++i) {
 
@@ -56,16 +60,33 @@ public class PortalEntity extends Entity {
         }
     }
 
-    private void onTeleport(EntityHitResult entityHitResult) {
-        if(entityHitResult.getEntity() instanceof LivingEntity living){
+
+    @Override
+    public InteractionResult interactAt(Player p_19980_, Vec3 p_19981_, InteractionHand p_19982_) {
+        if(!this.level().isClientSide){
+            this.level().broadcastEntityEvent(this,(byte) 4);
+        }
+        return super.interactAt(p_19980_, p_19981_, p_19982_);
+    }
+    public boolean isPickable() {
+        return true;
+    }
+
+    public static void onTeleport(Entity entity) {
+        if(entity instanceof LivingEntity living){
             StructureData.get().getCyberChickenFight().teleport(living);
         }
     }
 
 
-    private boolean canTeleportEntity(Entity entity) {
-        return entity!=this;
+    @Override
+    public void handleEntityEvent(byte p_19882_) {
+        if(p_19882_ == 4){
+            Minecraft.getInstance().setScreen(new PortalScreen( Component.nullToEmpty("")));
+        }
+        super.handleEntityEvent(p_19882_);
     }
+
 
     @Override
     protected void defineSynchedData() {

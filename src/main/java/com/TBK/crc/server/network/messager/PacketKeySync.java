@@ -1,5 +1,6 @@
 package com.TBK.crc.server.network.messager;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.ImplantMenu;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
@@ -13,6 +14,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.util.function.Supplier;
+
 
 public class PacketKeySync implements Packet<PacketListener>{
     private final int key;
@@ -51,14 +53,14 @@ public class PacketKeySync implements Packet<PacketListener>{
 
     private void handlerAnim(Supplier<NetworkEvent.Context> contextSupplier) {
         ServerPlayer player=contextSupplier.get().getSender();
-        MultiArmCapability cap =MultiArmCapability.get(player);
+        MultiArmCapability cap = MultiArmCapability.get(player);
         assert cap != null;
         switch (this.key){
             case 0x52->{
                 if(this.action==0){
                     cap.stopCasting(player);
                 }
-                if(this.action==1){
+                if(this.action==1 && cap.cooldownUse<=0){
                     cap.startCasting(player);
                 }
             }

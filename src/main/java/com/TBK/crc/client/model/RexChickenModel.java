@@ -562,9 +562,12 @@ public class RexChickenModel<T extends RexChicken> extends HierarchicalModel<T> 
 		this.animate(entity.attack,RexChickenAnim.stomp,ageInTicks,1.0F);
 		this.animate(entity.charge,RexChickenAnim.charge,ageInTicks,1.0F);
 		this.animate(entity.prepareCharge,RexChickenAnim.startcharge,ageInTicks,1.0F);
+		this.animate(entity.death,RexChickenAnim.deathstart,ageInTicks,1.0F);
+		this.animate(entity.idleDeath,RexChickenAnim.deathidle,ageInTicks,1.0F);
 		int i = 0;
 		this.ChickLauncher.getAllParts().forEach(ModelPart::resetPose);
 		this.ChickLauncher2.getAllParts().forEach(ModelPart::resetPose);
+
 		for(RexPart<?> part :entity.towers){
 			int index = i;
 			this.animate(part.towerShoot,towerAnim[index],ageInTicks,1.0F);

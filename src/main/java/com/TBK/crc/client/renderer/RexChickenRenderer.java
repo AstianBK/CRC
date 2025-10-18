@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -31,6 +32,11 @@ public class RexChickenRenderer<T extends RexChicken,M extends RexChickenModel<T
     }
 
     @Override
+    public boolean shouldRender(T p_114491_, Frustum p_114492_, double p_114493_, double p_114494_, double p_114495_) {
+        return true;
+    }
+
+    @Override
     public void render(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
         super.render(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
         if(p_115308_.isLaser()){
@@ -44,7 +50,7 @@ public class RexChickenRenderer<T extends RexChicken,M extends RexChickenModel<T
         float shakeByX = (float) Math.sin(ageInTicks * 4F) * 0.075F;
         float shakeByY = (float) Math.sin(ageInTicks * 4F + 1.2F) * 0.075F;
         float shakeByZ = (float) Math.sin(ageInTicks * 4F + 2.4F) * 0.075F;
-        Vec3 beamOrigin = jellyfish.getHeadPos(pPartialTicks);
+        Vec3 beamOrigin = jellyfish.getHeadPos();
         Vec3 rawBeamPosition = jellyfish.getBeamDirection();
         float length = (float) rawBeamPosition.length();
         Vec3 vec3 = rawBeamPosition.normalize();

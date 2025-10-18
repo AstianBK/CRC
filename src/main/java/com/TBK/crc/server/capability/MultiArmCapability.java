@@ -47,6 +47,7 @@ import java.util.Map;
 public class MultiArmCapability implements IMultiArmPlayer {
     public MultiArmSkillAbstract lastUsingMultiArmSkillAbstract=MultiArmSkillAbstract.NONE;
     public boolean chickenEnemy = false;
+    public int cooldownUse;
     Player player;
     Level level;
     int posSelectMultiArmSkillAbstract=0;
@@ -122,16 +123,40 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.lastUsingMultiArmSkillAbstract=power;
     }
 
+    public void syncNewPlayer(ServerPlayer player,MultiArmCapability cap,boolean wasDeath){
+        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.serializeNBT(),wasDeath),player);
+    }
+    public void copyNbt(CompoundTag tag){
+        this.deserializeNBT(tag);
+    }
+    public void syncWarningLevel(CompoundTag tag){
+        this.warningLevel = tag.getInt("warningLevel");
+    }
+    public void copyFrom(MultiArmCapability cap){
+        this.skills = cap.skills;
+        this.passives = cap.passives;
+        this.implantStore = cap.implantStore;
+        this.setPosSelectMultiArmSkillAbstract(cap.getPosSelectMultiArmSkillAbstract());
+        this.dirty = true;
+    }
     @Override
     public void tick(Player player) {
+        if(this.cooldownUse>0){
+            this.cooldownUse--;
+        }
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
-                for (int i = 0 ; i < this.warningLevel ; i++){
+                for (int i = 0 ; i < this.warningLevel+1 ; i++){
                     TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,3)],findRandomSurfaceNear(this.player,10,level.random),player);
                     this.level.addFreshEntity(tp);
                 }
                 this.invokeTimer = 100;
-                this.warningLevel = Math.min(this.warningLevel+1,5);
+                this.warningLevel = Math.min(this.warningLevel+1,2);
+                if(!this.level.isClientSide){
+                    CompoundTag nbt = new CompoundTag();
+                    nbt.putInt("warningLevel",this.warningLevel);
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(nbt,false), (ServerPlayer) player);
+                }
             }else {
                 this.invokeTimer--;
             }

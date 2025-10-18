@@ -141,6 +141,7 @@ public class GanchoArm extends MultiArmSkillAbstract{
                     multiArmCapability.getPlayer().level().addFreshEntity(gancho1);
                 }
             }
+            hasGancho = true;
             multiArmCapability.catchEntity=null;
         }
     }

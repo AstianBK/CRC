@@ -34,6 +34,8 @@ public class CoilChicken extends RobotChicken {
     private static final EntityDataAccessor<Boolean> IS_LAUNCH = SynchedEntityData.defineId(CoilChicken.class, EntityDataSerializers.BOOLEAN);
     public AnimationState idle = new AnimationState();
     public AnimationState stand = new AnimationState();
+    public AnimationState attack = new AnimationState();
+
     public int idleAnimationTimeout = 0;
 
     public int standTimer = 0;

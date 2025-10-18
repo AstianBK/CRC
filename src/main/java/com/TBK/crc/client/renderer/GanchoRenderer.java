@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -32,6 +33,11 @@ public class GanchoRenderer<T extends GanchoEntity> extends NoopRenderer<T> {
     public GanchoRenderer(EntityRendererProvider.Context p_174326_) {
         super(p_174326_);
         this.model = new GanchoModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(GanchoModel.LAYER_LOCATION));
+    }
+
+    @Override
+    public boolean shouldRender(T p_114491_, Frustum p_114492_, double p_114493_, double p_114494_, double p_114495_) {
+        return true;
     }
 
     @Override

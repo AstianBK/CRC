@@ -4,6 +4,7 @@ import com.TBK.crc.client.renderer.*;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.block.CyborgTableBlock;
 import com.TBK.crc.common.registry.*;
+import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.RenderType;
@@ -91,6 +92,7 @@ public class CRC
         BKCreativeModeTab.TABS.register(modEventBus);
         BKContainers.CONTAINERS.register(modEventBus);
         PacketHandler.registerMessages();
+        modEventBus.addListener(CRCCapability::registerCapabilities);
         Util.initUpgrades();
 
         MinecraftForge.EVENT_BUS.addListener(this::sleepLocationCheck);

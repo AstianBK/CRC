@@ -37,17 +37,23 @@ public class ClientEvent {
     }
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(BoomChickenModel.LAYER_LOCATION, BoomChickenModel::createBodyLayer);
+        event.registerLayerDefinition(BoomChickenModel.LAYER_LOCATION, Suppliers.ofInstance(BoomChickenModel.createBodyLayer(CubeDeformation.NONE)));
+        event.registerLayerDefinition(BoomChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(BoomChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
+
         event.registerLayerDefinition(RexChickenModel.LAYER_LOCATION, Suppliers.ofInstance(RexChickenModel.createBodyLayer(CubeDeformation.NONE)) );
         event.registerLayerDefinition(RexChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(RexChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
-        event.registerLayerDefinition(GanchoModel.LAYER_LOCATION, GanchoModel::createBodyLayer);
 
-        event.registerLayerDefinition(CoilChickenModel.LAYER_LOCATION, CoilChickenModel::createBodyLayer);
-        event.registerLayerDefinition(DroneChickenModel.LAYER_LOCATION, DroneChickenModel::createBodyLayer);
+        event.registerLayerDefinition(CoilChickenModel.LAYER_LOCATION, Suppliers.ofInstance(CoilChickenModel.createBodyLayer(CubeDeformation.NONE)));
+        event.registerLayerDefinition(CoilChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(CoilChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
+
+        event.registerLayerDefinition(DroneChickenModel.LAYER_LOCATION, Suppliers.ofInstance(DroneChickenModel.createBodyLayer(CubeDeformation.NONE)));
+        event.registerLayerDefinition(DroneChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(DroneChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
 
         event.registerLayerDefinition(TheFuturePortalModel.LAYER_LOCATION, TheFuturePortalModel::createBodyLayer);
         event.registerLayerDefinition(CyborgRobotChickenModel.LAYER_LOCATION, CyborgRobotChickenModel::createBodyLayer);
         event.registerLayerDefinition(MultiArmModel.LAYER_LOCATION, MultiArmModel::createBodyLayer);
+        event.registerLayerDefinition(GanchoModel.LAYER_LOCATION, GanchoModel::createBodyLayer);
+
     }
 
 
@@ -55,7 +61,7 @@ public class ClientEvent {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.AddLayers event){
         event.getSkins().forEach(s -> {
-            event.getSkin(s).addLayer(new MultiarmLayer(event.getSkin(s)));
+            event.getSkin(s).addLayer(new MultiarmLayer(event.getSkin(s),event.getContext().getItemInHandRenderer()));
             //event.getSkin(s).addLayer(new PassiveLayer(event.getSkin(s)));
             //event.getSkin(s).addLayer(new GanchoLayer(event.getSkin(s)));
             //event.getSkin(s).addLayer(new LivingProtectionLayer(event.getSkin(s)));

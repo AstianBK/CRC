@@ -1,6 +1,7 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.layer.RobotChickenShieldLayer;
 import com.TBK.crc.client.model.BoomChickenModel;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
 import com.TBK.crc.client.model.DroneChickenModel;
@@ -16,6 +17,8 @@ public class DroneChickenRenderer<T extends DroneChicken,M extends DroneChickenM
 
     public DroneChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new DroneChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(DroneChickenModel.LAYER_LOCATION)), 1.0F);
+        this.addLayer(new RobotChickenShieldLayer(this,new DroneChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(DroneChickenModel.ARMOR_LOCATION))));
+
     }
 
     @Override

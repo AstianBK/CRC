@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeInputEvent {
     public static int selectActual = -1;
     public static int selectInitial = -1;
-    public static int cooldownUse = 0;
     @SubscribeEvent
     public static void onKeyPress(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();
@@ -66,9 +65,9 @@ public class ForgeInputEvent {
                 PacketHandler.sendToServer(new PacketKeySync(0x12,selectActual,-1));
             }
 
-            if (mc.screen == null && (key==1) && cooldownUse<=0 && cap.canUseSkill(cap.getSelectSkill())) {
+            if (mc.screen == null && (key==1) && cap.canUseSkill(cap.getSelectSkill())) {
                 PacketHandler.sendToServer(new PacketKeySync(0x52,action,-1));
-                cooldownUse = 10;
+
                 return true;
             }else if(mc.screen == null && CRCKeybinds.bottomImplantStore.consumeClick()){
                 PacketHandler.sendToServer(new PacketKeySync(key,action,-1));

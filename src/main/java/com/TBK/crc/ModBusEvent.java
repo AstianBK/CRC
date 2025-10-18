@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,10 +43,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -270,9 +268,27 @@ public class ModBusEvent {
                 cap.tick((Player) event.getEntity());
             }
         }
-        if(ForgeInputEvent.cooldownUse>0){
-            ForgeInputEvent.cooldownUse--;
+
+    }
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        if(event.getEntity().level().isClientSide)return;
+        if (!event.isWasDeath()) return;
+
+        Player oldPlayer = event.getOriginal();
+        Player newPlayer = event.getEntity();
+
+        oldPlayer.reviveCaps();
+
+        MultiArmCapability oldCap = CRCCapability.getEntityCap(oldPlayer, MultiArmCapability.class);
+        if(oldCap!=null){
+            MultiArmCapability cap = CRCCapability.getEntityCap(newPlayer, MultiArmCapability.class);
+            cap.init(newPlayer);
+            cap.copyFrom(oldCap);
+
+            cap.syncNewPlayer((ServerPlayer) newPlayer,oldCap,true);
         }
+        oldPlayer.invalidateCaps();
     }
 
     @SubscribeEvent

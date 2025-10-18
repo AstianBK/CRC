@@ -60,7 +60,7 @@ public class ElectroProjectileRenderer<T extends ElectroProjectile> extends Noop
 
         poseStack.mulPose(Axis.XP.rotationDegrees(45.0F));
         poseStack.scale(0.05625F, 0.05625F, 0.05625F);
-        poseStack.translate(-4.0F, 1.0F, 0.0F);
+        poseStack.translate(-4.0F, 1.5F, 0.0F);
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.eyes(TEXTURE_BULLET));
         PoseStack.Pose posestack$pose = poseStack.last();
         Matrix4f matrix4f = posestack$pose.pose();

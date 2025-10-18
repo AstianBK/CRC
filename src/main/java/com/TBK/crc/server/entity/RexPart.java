@@ -120,9 +120,20 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
 
     public boolean hurt(DamageSource p_31020_, float p_31021_) {
         if(!this.parentMob.isPowered()){
-            this.hits--;
-            if(this.hits<=0){
-                this.destroy();
+            if(this.isTower){
+                this.hits--;
+                if(this.hits<=0){
+                    this.destroy();
+                }
+            }else if(this.parentMob.stunnedTick>0){
+                this.parentMob.setHealth(this.parentMob.getHealth()-20.0F);
+                this.parentMob.regenerationShieldTimer=0;
+                this.parentMob.setShieldAmount(50);
+                this.parentMob.stunnedTick = 0;
+                if(!this.level().isClientSide){
+                    this.parentMob.recoveryTimer=21;
+                    this.parentMob.level().broadcastEntityEvent(this,(byte) 17);
+                }
             }
         }
         return !this.parentMob.isPowered();
@@ -148,7 +159,6 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
 
     public void startShoot(){
         if(!this.level().isClientSide){
-            CRC.LOGGER.debug("start");
             this.prepareShootTimer = 21;
             PacketHandler.sendToAllTracking(new PacketActionRex(this.parentMob.getId(),this.getId(),8),this.parentMob);
         }

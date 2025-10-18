@@ -4,6 +4,7 @@ package com.TBK.crc.client.model;// Made with Blockbench 5.0.1
 
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.animacion.ChickenCoilAnim;
 import com.TBK.crc.server.entity.CoilChicken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 public class CoilChickenModel<T extends CoilChicken> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "chicken_coil"), "main");
+	public static final ModelLayerLocation ARMOR_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "chicken_coil_armor"), "main");
+
 	private final ModelPart truemain;
 	private final ModelPart main;
 	private final ModelPart head2;
@@ -42,7 +45,7 @@ public class CoilChickenModel<T extends CoilChicken> extends HierarchicalModel<T
 		this.right_wing = this.main.getChild("right_wing");
 	}
 
-	public static LayerDefinition createBodyLayer() {
+	public static LayerDefinition createBodyLayer(CubeDeformation deformation) {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -52,24 +55,24 @@ public class CoilChickenModel<T extends CoilChicken> extends HierarchicalModel<T
 
 		PartDefinition head2 = main.addOrReplaceChild("head2", CubeListBuilder.create(), PartPose.offset(0.0F, -11.475F, -3.0F));
 
-		PartDefinition head = head2.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 17).addBox(-2.0F, -2.5F, -1.0F, 4.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
-		.texOffs(12, 17).addBox(-0.5F, -3.675F, -0.95F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.5F, -1.0F));
+		PartDefinition head = head2.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 17).addBox(-2.0F, -2.5F, -1.0F, 4.0F, 5.0F, 2.0F, deformation)
+		.texOffs(12, 17).addBox(-0.5F, -3.675F, -0.95F, 1.0F, 4.0F, 3.0F, deformation), PartPose.offset(0.0F, -2.5F, -1.0F));
 
-		PartDefinition bill = head2.addOrReplaceChild("bill", CubeListBuilder.create().texOffs(12, 0).addBox(-1.5F, 1.0F, -3.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, -1.0F));
+		PartDefinition bill = head2.addOrReplaceChild("bill", CubeListBuilder.create().texOffs(12, 0).addBox(-1.5F, 1.0F, -3.0F, 3.0F, 2.0F, 2.0F, deformation), PartPose.offset(0.0F, -4.0F, -1.0F));
 
-		PartDefinition chin = head2.addOrReplaceChild("chin", CubeListBuilder.create().texOffs(14, 4).addBox(-0.5F, 3.0F, -1.5F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, -1.0F));
+		PartDefinition chin = head2.addOrReplaceChild("chin", CubeListBuilder.create().texOffs(14, 4).addBox(-0.5F, 3.0F, -1.5F, 1.0F, 2.0F, 2.0F, deformation), PartPose.offset(0.0F, -4.0F, -1.0F));
 
-		PartDefinition body = main.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 7).addBox(-2.5F, -3.0F, 0.0F, 5.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -9.475F, 0.0F, 1.5708F, 0.0F, 0.0F));
+		PartDefinition body = main.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 7).addBox(-2.5F, -3.0F, 0.0F, 5.0F, 6.0F, 4.0F, deformation), PartPose.offsetAndRotation(0.0F, -9.475F, 0.0F, 1.5708F, 0.0F, 0.0F));
 
-		PartDefinition head_r1 = body.addOrReplaceChild("head_r1", CubeListBuilder.create().texOffs(14, 20).mirror().addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-1.475F, -0.375F, 4.8F, -1.5708F, -0.2618F, 0.0F));
+		PartDefinition head_r1 = body.addOrReplaceChild("head_r1", CubeListBuilder.create().texOffs(14, 20).mirror().addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, deformation).mirror(false), PartPose.offsetAndRotation(-1.475F, -0.375F, 4.8F, -1.5708F, -0.2618F, 0.0F));
 
-		PartDefinition head_r2 = body.addOrReplaceChild("head_r2", CubeListBuilder.create().texOffs(14, 20).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.475F, -0.375F, 4.8F, -1.5708F, 0.2618F, 0.0F));
+		PartDefinition head_r2 = body.addOrReplaceChild("head_r2", CubeListBuilder.create().texOffs(14, 20).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, deformation), PartPose.offsetAndRotation(1.475F, -0.375F, 4.8F, -1.5708F, 0.2618F, 0.0F));
 
 		PartDefinition coil = main.addOrReplaceChild("coil", CubeListBuilder.create().texOffs(27, 6).addBox(-3.0F, -3.0F, -0.25F, 6.0F, 6.0F, 11.0F, new CubeDeformation(-0.75F)), PartPose.offsetAndRotation(0.0F, 0.5F, 0.0F, 1.5708F, 0.0F, 0.0F));
 
-		PartDefinition left_wing = main.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(18, 9).mirror().addBox(0.0F, -1.5F, 0.0F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(2.5F, -11.975F, -3.0F));
+		PartDefinition left_wing = main.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(18, 9).mirror().addBox(0.0F, -1.5F, 0.0F, 1.0F, 3.0F, 5.0F, deformation).mirror(false), PartPose.offset(2.5F, -11.975F, -3.0F));
 
-		PartDefinition right_wing = main.addOrReplaceChild("right_wing", CubeListBuilder.create().texOffs(18, 9).addBox(-1.0F, -1.5F, 0.0F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.5F, -11.975F, -3.0F));
+		PartDefinition right_wing = main.addOrReplaceChild("right_wing", CubeListBuilder.create().texOffs(18, 9).addBox(-1.0F, -1.5F, 0.0F, 1.0F, 3.0F, 5.0F, deformation), PartPose.offset(-2.5F, -11.975F, -3.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 32);
 	}
@@ -77,6 +80,9 @@ public class CoilChickenModel<T extends CoilChicken> extends HierarchicalModel<T
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
+		this.animateWalk(ChickenCoilAnim.move,limbSwing,limbSwingAmount,1.0F,2.0F);
+		this.animate(entity.attack,ChickenCoilAnim.attack,ageInTicks,1.0F);
+		this.animate(entity.idle,ChickenCoilAnim.idle,ageInTicks,1.0F);
 	}
 
 	@Override

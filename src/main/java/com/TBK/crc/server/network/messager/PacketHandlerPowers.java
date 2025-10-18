@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.entity.PortalEntity;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
 import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
 import com.TBK.crc.server.multiarm.PassivePart;
@@ -64,6 +65,10 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                                 cap.dirty = true;
                             }
                         }
+                        case 6 ->{
+                            PortalEntity.onTeleport(player);
+                        }
+
                     }
                 }
             }

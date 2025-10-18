@@ -49,6 +49,10 @@ public class PacketHandler {
 
         channel.registerMessage(index++, PacketSyncImplant.class,  PacketSyncImplant::write,
                 PacketSyncImplant::new,  PacketSyncImplant::handle);
+
+        channel.registerMessage(index++, PacketSyncPlayerData.class,  PacketSyncPlayerData::write,
+                PacketSyncPlayerData::new,  PacketSyncPlayerData::handle);
+
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
