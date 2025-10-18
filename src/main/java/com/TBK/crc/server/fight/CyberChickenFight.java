@@ -51,7 +51,6 @@ public class CyberChickenFight{
 	private int ticksChickenSeen = 0;
 	private UUID chickenUUID = null;
 	private ServerLevel level;
-	private BlockPos portalLocation = null;
 	private final BlockPos origin;
 	private final Predicate<Entity> validPlayer;
 
@@ -181,15 +180,14 @@ public class CyberChickenFight{
 
 
 	private void scanState() {
-		//LOGGER.info("Scanning for legacy world dragon fight...");
+		CRC.LOGGER.info("Scanning for legacy world dragon fight...");
 		boolean flag = this.hasActiveExitPortal();
 		if (flag) {
-			//LOGGER.info("Found that the dragon has been killed in this world already.");
+			CRC.LOGGER.info("Found that the dragon has been killed in this world already.");
 			this.prevCyberChickenDefeat = true;
 		} else {
-			//LOGGER.info("Found that the dragon has not yet been killed in this world.");
+			CRC.LOGGER.info("Found that the dragon has not yet been killed in this world.");
 			this.prevCyberChickenDefeat = false;
-
 		}
 
 		List<? extends RexChicken> list = Util.getRexChickens(level);
@@ -198,10 +196,10 @@ public class CyberChickenFight{
 		} else {
 			RexChicken enderdragon = list.get(0);
 			this.chickenUUID = enderdragon.getUUID();
-			//LOGGER.info("Found that there's a dragon still alive ({})", (Object)enderdragon);
+			CRC.LOGGER.info("Found that there's a dragon still alive ({})", (Object)enderdragon);
 			this.cyberChickenDefeat = false;
 			if (!flag) {
-				//LOGGER.info("But we didn't have a portal, let's remove it.");
+				CRC.LOGGER.info("But we didn't have a portal, let's remove it.");
 				enderdragon.discard();
 				this.chickenUUID = null;
 			}
@@ -233,19 +231,7 @@ public class CyberChickenFight{
 	}
 
 	private boolean hasActiveExitPortal() {
-		for(int i = -8; i <= 8; ++i) {
-			for(int j = -8; j <= 8; ++j) {
-				LevelChunk levelchunk = this.level.getChunk(i, j);
-
-				for(BlockEntity blockentity : levelchunk.getBlockEntities().values()) {
-					if (blockentity instanceof TheEndPortalBlockEntity) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
+		return true;
 	}
 	public void deserialise(CompoundTag data) {
 
