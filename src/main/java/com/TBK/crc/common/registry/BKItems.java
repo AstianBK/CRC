@@ -24,8 +24,6 @@ public class BKItems {
 
 
 
-
-
     //CYBER-IMPLANT
 
     public static final RegistryObject<Item> CYBORG_ARM = ITEMS.register("cyborg_arm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM, Upgrade.NONE));
@@ -54,9 +52,11 @@ public class BKItems {
 
     public static final RegistryObject<Item> UPGRADE_LEGS_KNEES_SPIKED= ITEMS.register("upgrade_legs_knees_spiked",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new KneesSpiked(),"knees_spiked"));
 
+
     //REGULAR-ITEM
     public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties().stacksTo(16)));
+
 
     //COSMETIC
 
