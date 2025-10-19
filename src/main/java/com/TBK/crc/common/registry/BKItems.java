@@ -69,8 +69,8 @@ public class BKItems {
     public static final RegistryObject<Item> UPGRADE_SKIN_MILITARY = ITEMS.register("upgrade_skin_military",
             ()-> new CyberSkinItem(new Item.Properties(),"military"));
 
-    public static final RegistryObject<Item> UPGRADE_SKIN_BASE = ITEMS.register("upgrade_skin_base",
-            ()-> new CyberSkinItem(new Item.Properties(),"base"));
+    public static final RegistryObject<Item> UPGRADE_SKIN_CYBORG = ITEMS.register("upgrade_skin_cyborg",
+            ()-> new CyberSkinItem(new Item.Properties(),"cyborg"));
 
     //SPAWN-EGGS
 
