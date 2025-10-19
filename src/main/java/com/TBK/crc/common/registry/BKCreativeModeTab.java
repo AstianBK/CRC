@@ -12,7 +12,7 @@ public class BKCreativeModeTab {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CRC.MODID);
 
     public static final RegistryObject<CreativeModeTab> CRC_TAB = TABS.register("bk_items",()-> CreativeModeTab.builder()
-            .icon(()->new ItemStack(BKItems.CYBORG_ARM.get()))
+            .icon(()->new ItemStack(BKItems.CYBORG_THORACIC_CAGE.get()))
             .title(Component.translatable("itemGroup.crcTab"))
             .displayItems((s,a)-> {
                 a.accept(new ItemStack(BKBlocks.CYBORG_TABLE.get()));
