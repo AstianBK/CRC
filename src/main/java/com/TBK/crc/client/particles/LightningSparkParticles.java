@@ -59,7 +59,7 @@ public class LightningSparkParticles extends TextureSheetParticle {
         }
 
         public Particle createParticle(SimpleParticleType type, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            LightningTrailParticles bk_particles=new LightningTrailParticles(world,x,y,z,xSpeed,ySpeed,zSpeed,this.spriteSet);
+            LightningSparkParticles bk_particles=new LightningSparkParticles(world,x,y,z,xSpeed,ySpeed,zSpeed,this.spriteSet);
             bk_particles.pickSprite(this.spriteSet);
             return bk_particles;
         }
