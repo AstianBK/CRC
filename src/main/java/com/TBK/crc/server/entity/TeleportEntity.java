@@ -86,12 +86,6 @@ public class TeleportEntity extends Entity {
                 ((Mob) entity).setTarget(this.target);
             }
             this.level().addFreshEntity(entity);
-            if(this.target instanceof Player player && entity instanceof BoomChicken){
-                MultiArmCapability cap = MultiArmCapability.get(player);
-                if (cap!=null){
-                    cap.chickens.add((BoomChicken) entity);
-                }
-            }
         }
     }
 

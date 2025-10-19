@@ -1,10 +1,7 @@
 package com.TBK.crc.common.menu;
 
 import com.TBK.crc.CRC;
-import com.TBK.crc.common.item.CyberComponentItem;
-import com.TBK.crc.common.item.CyberImplantItem;
-import com.TBK.crc.common.item.CyberSkinItem;
-import com.TBK.crc.common.item.CyberUpgradeItem;
+import com.TBK.crc.common.item.*;
 import com.TBK.crc.common.registry.BKContainers;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
@@ -38,7 +35,7 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, 0, 76,35){
             @Override
             public boolean mayPlace(ItemStack p_40231_) {
-                return p_40231_.getItem() instanceof CyberUpgradeItem || p_40231_.getItem() instanceof CyberSkinItem;
+                return p_40231_.getItem() instanceof CyberUpgradeItem || p_40231_.getItem() instanceof CyberSkinItem || p_40231_.getItem() instanceof CyberRefinementItem;
             }
         });
         this.addSlot(new Slot(container, 1, 27,35){
@@ -78,17 +75,29 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
                 if(level.isClientSide)return;
                 ItemStack base = menu.getSlot(1).getItem().copy();
                 ItemStack upgrade = menu.getSlot(0).getItem().copy();
-
+                boolean canUpgrade = false;
                 if(!upgrade.isEmpty() && !base.isEmpty()){
                     if(upgrade.getItem() instanceof CyberUpgradeItem upgradeItem){
                         if(CyberImplantItem.canAddUpgrade(base.getOrCreateTag(),upgradeItem.getSkill())){
                             CyberImplantItem.addUpgrade(base.getOrCreateTag(),upgradeItem.getSkill());
+                            canUpgrade = true;
+                        }
+                    }
+                    if (upgrade.getItem() instanceof CyberRefinementItem refinementItem && base.getItem() instanceof CyberImplantItem implantItem){
+                        if(CyberImplantItem.canAddRefinement(base.getOrCreateTag(),refinementItem,implantItem.skill)){
+                            CyberImplantItem.addRefinement(base.getOrCreateTag(),refinementItem.getName());
+                            canUpgrade = true;
                         }
                     }
                     if(upgrade.getItem() instanceof CyberSkinItem skinItem){
                         CyberSkinItem.addSkin(base.getOrCreateTag(),skinItem);
+                        canUpgrade = true;
                     }
-                    UpgradeTableMenu.this.craftSlots.setItem(2,base);
+                    if(canUpgrade){
+                        UpgradeTableMenu.this.craftSlots.setItem(2,base);
+                    }else {
+                        UpgradeTableMenu.this.craftSlots.setItem(2,ItemStack.EMPTY);
+                    }
                 }else {
                     UpgradeTableMenu.this.craftSlots.setItem(2,ItemStack.EMPTY);
                 }
