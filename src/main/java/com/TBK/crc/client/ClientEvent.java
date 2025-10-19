@@ -5,6 +5,7 @@ import com.TBK.crc.client.gui.MultiArmOverlay;
 import com.TBK.crc.client.layer.MultiarmLayer;
 import com.TBK.crc.client.model.*;
 import com.TBK.crc.client.particles.ElectroExplosionParticles;
+import com.TBK.crc.client.particles.LightningSparkParticles;
 import com.TBK.crc.client.particles.LightningTrailParticles;
 import com.TBK.crc.common.registry.BKContainers;
 import com.TBK.crc.common.registry.BKParticles;
@@ -77,6 +78,9 @@ public class ClientEvent {
         }
         if(BKParticles.ELECTRO_EXPLOSION_PARTICLES.isPresent()){
             event.registerSpriteSet(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(), ElectroExplosionParticles.Factory::new);
+        }
+        if(BKParticles.LIGHTNING_SPARK_PARTICLES.isPresent()){
+            event.registerSpriteSet(BKParticles.LIGHTNING_SPARK_PARTICLES.get(), LightningSparkParticles.Factory::new);
         }
     }
 

@@ -15,6 +15,9 @@ public class BKParticles {
     public static final RegistryObject<SimpleParticleType> LIGHTNING_TRAIL_PARTICLES =
             PARTICLE_TYPES.register("lightning_trail", () -> new SimpleParticleType(true));
 
+    public static final RegistryObject<SimpleParticleType> LIGHTNING_SPARK_PARTICLES =
+            PARTICLE_TYPES.register("lightning_spark", () -> new SimpleParticleType(true));
+
     public static final RegistryObject<SimpleParticleType> ELECTRO_EXPLOSION_PARTICLES =
             PARTICLE_TYPES.register("electro_explosion", () -> new SimpleParticleType(true));
 
