@@ -71,6 +71,7 @@ public class MultiArmOverlay implements IGuiOverlay {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     if(cap.timeLevelWarning>0){
+                        CRC.LOGGER.debug("render");
                         graphics.pose().scale(1.5F - 0.5F*percent,1.5F - 0.5F*percent,1.5F - 0.5F*percent);
                         graphics.setColor(1.0F, 1.0F, 1.0F, percent);
                     }

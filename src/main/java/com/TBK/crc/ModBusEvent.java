@@ -113,10 +113,9 @@ public class ModBusEvent {
                 if (cap!=null){
                     cap.chickenEnemy = false;
                     cap.warningLevel = 0;
-                    CompoundTag tag = new CompoundTag();
-                    tag.putInt("warningLevel",0);
-                    tag.putInt("wave",0);
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(tag,false), (ServerPlayer) event.getEntity());
+                    cap.wave = 0;
+                    cap.timeLevelWarning = 0;
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
                 }
             }
         }
@@ -242,13 +241,13 @@ public class ModBusEvent {
         if(entity instanceof Chicken){
             if(event.getSource().getEntity() instanceof Player player){
                 MultiArmCapability cap = MultiArmCapability.get(player);
-                if(cap!=null){
+                if(cap!=null && !cap.chickenEnemy){
                     cap.chickenEnemy=true;
                     cap.timeLevelWarning = 20;
                     cap.timeLevelWarning0 = 20;
-                    CompoundTag tag = new CompoundTag();
-                    tag.putInt("timeLevelWarning",20);
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(tag,false), (ServerPlayer) player);
+                    cap.wave = 0;
+                    cap.warningLevel = 1;
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
                 }
             }
         }

@@ -22,9 +22,9 @@ public class ClawsArm extends Upgrade {
         super("claws_arm", 175, false, true);
     }
 
+
     @Override
     public boolean canActiveAbility(MultiArmCapability multiArmCapability) {
-
         return !multiArmCapability.getPlayer().getCooldowns().isOnCooldown(multiArmCapability.implantStore.getArmForSkill(this).getItem());
     }
 
@@ -92,6 +92,7 @@ public class ClawsArm extends Upgrade {
             }
         }
     }
+
 
     @Override
     public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event) {

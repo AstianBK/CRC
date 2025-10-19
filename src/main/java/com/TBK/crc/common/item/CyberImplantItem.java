@@ -139,23 +139,7 @@ public class CyberImplantItem extends ItemCyborg{
         return upgrades;
     }
     public static boolean equalsUpgrades(ItemStack stack, ItemStack stack1, boolean isArm){
-        if (isArm){
-            List<Upgrade> list = getUpgrade(stack.getOrCreateTag());
-            List<Upgrade> list1 = getUpgrade(stack1.getOrCreateTag());
-            if(list1.size() == list.size()){
-                for (int i = 0 ; i < list.size() ; i++){
-                    String upgrade = list.get(i).name;
-                    String upgrade1 = list1.get(i).name;
-                    if(!upgrade1.equals(upgrade)){
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }else {
-            return false;
-        }
-
+        return stack.equals(stack1);
     }
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
