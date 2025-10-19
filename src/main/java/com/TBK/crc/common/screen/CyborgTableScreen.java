@@ -2,6 +2,7 @@ package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.network.PacketHandler;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 
 public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> {
@@ -70,8 +72,12 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
 
     private boolean isDirty() {
         for (int i = 0 ; i<6 ; i++){
-            if(this.menu.craftSlots.getItem(i).getItem()!=this.menu.getPlayerStore().store.getItem(i).getItem()){
+            ItemStack craft = this.menu.craftSlots.getItem(i);
+            ItemStack store = this.menu.getPlayerStore().store.getItem(i);
+            if(craft.getItem()!=store.getItem()){
                 return true;
+            }else if(craft.getItem() == store.getItem()){
+                return CyberImplantItem.equalsUpgrades(craft,store,i==0);
             }
         }
         return false;

@@ -44,11 +44,9 @@ public class PacketAddImplant implements Packet<PacketListener> {
                     if(implant.typePart == UpgradeableParts.ARM){
                         for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
                             cap.addNewAbility(upgrade);
-                            CRC.LOGGER.debug("Se agrego una abilidad nueva");
                         }
                     }else {
                         for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
-                            CRC.LOGGER.debug("Se agrego una pasiva nueva");
                             cap.addNewPassive(upgrade,index);
                         }
                     }

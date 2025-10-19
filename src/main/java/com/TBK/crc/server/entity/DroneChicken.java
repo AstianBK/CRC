@@ -47,7 +47,7 @@ public class DroneChicken extends RobotChicken {
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6.0F, 1.0D, 1.2D));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6.0F, 1.0D, 1.2D));
 
-        this.goalSelector.addGoal(2,new DroneAttack(this,0.75F,6.0F,3,7));
+        this.goalSelector.addGoal(2,new DroneAttack(this,0.75F,15.0F,3,7));
         this.goalSelector.addGoal(4,new DroneFlyGoal(this,0.20F,4,10));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -105,7 +105,7 @@ public class DroneChicken extends RobotChicken {
 
     private void setupAnimationStates() {
         if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = 10;
+            this.idleAnimationTimeout = 20;
             this.idle.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
@@ -116,14 +116,7 @@ public class DroneChicken extends RobotChicken {
 
     @Override
     public void handleEntityEvent(byte p_21375_) {
-        if(p_21375_ == 4){
-            this.idle.stop();
-            this.air.stop();
-            this.idleAnimationTimeout = 18;
-            this.stand.start(this.tickCount);
-            this.standTimer = 18;
-            //this.setIsLaunch(false);
-        }else if(p_21375_ == 8){
+        if(p_21375_ == 8){
             for (int i = 0 ; i<3 ; i++){
                 this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
             }
@@ -155,6 +148,7 @@ public class DroneChicken extends RobotChicken {
         public boolean meleeAttack=false;
         public boolean rot=false;
 
+        public int timerForMinAltitude = 0;
         public DroneAttack(DroneChicken drone, double speed, double circleRadius, int minAltitude, int maxAltitude) {
             this.drone = drone;
             this.speed = speed;
@@ -202,22 +196,19 @@ public class DroneChicken extends RobotChicken {
             if (target != null) {
                 double distanceToTarget = this.drone.distanceToSqr(target.getX(), target.getY(), target.getZ());
                 this.circlingAngle += this.rot ? 0.05F : -0.05F;
-
+                this.meleeAttack = this.drone.getHealth()<this.drone.getMaxHealth()*0.1F;
                 Vec3 direction;
                 if (!this.meleeAttack) {
                     double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
                     double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
-                    double heightOffset = this.minAltitude + 2.0D;
+                    double heightOffset = this.calculateHeightOffset(target);
                     this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
 
-                    // Dirección deseada hacia la posición de círculo
                     direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(this.speed);
 
-                    // Movimiento actual
                     Vec3 currentMotion = this.drone.getDeltaMovement();
 
-                    // Interpolación (lerp): mezcla entre movimiento actual y el nuevo, suaviza el cambio
-                    double smoothFactor = 0.1D; // cuanto más bajo, más suave (0.05-0.2 suele ir bien)
+                    double smoothFactor = 0.1D;
                     Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
 
                     this.drone.setDeltaMovement(smoothedMotion);

@@ -57,7 +57,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public Upgrades skills = new Upgrades(Util.getMapArmEmpty());
     public Upgrades passives = new Upgrades(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
-    public Set<BoomChicken> chickens = new HashSet<>();
     public boolean dirty = false;
     public SkillPose pose = SkillPose.NONE;
     public static MultiArmCapability get(Player player){
@@ -90,7 +89,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimLevelWarning(float partialTick){
-        return Mth.lerp(partialTick,this.timeLevelWarning,this.timeLevelWarning0) / 20.0F;
+        return 1.0F - Mth.lerp(partialTick,this.timeLevelWarning,this.timeLevelWarning0) / 20.0F;
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimShoot(float partialTick){
@@ -129,6 +128,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void syncWarningLevel(CompoundTag tag){
         this.warningLevel = tag.getInt("warningLevel");
         this.wave = tag.getInt("wave");
+        this.timeLevelWarning = tag.getInt("timeLevelWarning");
+        this.timeLevelWarning0 = tag.getInt("timeLevelWarning");
     }
     public void copyFrom(MultiArmCapability cap){
         this.skills = cap.skills;
@@ -142,16 +143,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(this.cooldownUse>0){
             this.cooldownUse--;
         }
-        if(!this.chickens.isEmpty()){
-            CRC.LOGGER.debug("Lista no vacia.");
-            this.chickens.forEach(e->{
-                CRC.LOGGER.debug("Entity :"+e);
-            });
-        }
+
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
                 for (EntityTypeWaves wave : EntityTypeWaves.values()){
-                    int length =   wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
+                    int length = wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
                     for (int i = 0 ; i < length ;i++){
                         TeleportEntity tp = new TeleportEntity(level,wave.type, Util.findCaveSurfaceNearHeight(this.player,10,level.random),player,false);
                         this.level.addFreshEntity(tp);
@@ -169,6 +165,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                     CompoundTag nbt = new CompoundTag();
                     nbt.putInt("warningLevel",this.warningLevel);
                     nbt.putInt("wave",this.wave);
+                    nbt.putInt("timeLevelWarning",this.timeLevelWarning);
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(nbt,false), (ServerPlayer) player);
                 }
             }else {

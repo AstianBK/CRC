@@ -115,6 +115,7 @@ public class ModBusEvent {
                     cap.warningLevel = 0;
                     CompoundTag tag = new CompoundTag();
                     tag.putInt("warningLevel",0);
+                    tag.putInt("wave",0);
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(tag,false), (ServerPlayer) event.getEntity());
                 }
             }
@@ -245,6 +246,9 @@ public class ModBusEvent {
                     cap.chickenEnemy=true;
                     cap.timeLevelWarning = 20;
                     cap.timeLevelWarning0 = 20;
+                    CompoundTag tag = new CompoundTag();
+                    tag.putInt("timeLevelWarning",20);
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(tag,false), (ServerPlayer) player);
                 }
             }
         }

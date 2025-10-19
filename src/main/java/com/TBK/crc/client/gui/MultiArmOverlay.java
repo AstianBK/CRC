@@ -70,12 +70,12 @@ public class MultiArmOverlay implements IGuiOverlay {
                     RenderSystem.depthMask(false);
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
-                    if(percent>0){
+                    if(cap.timeLevelWarning>0){
                         graphics.pose().scale(1.5F - 0.5F*percent,1.5F - 0.5F*percent,1.5F - 0.5F*percent);
                         graphics.setColor(1.0F, 1.0F, 1.0F, percent);
                     }
                     ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
-                    graphics.blit(location, (int) (j1 + CRC.z), (int) (k1 -74 + CRC.z), 0,0,18, 18, 18, 18);
+                    graphics.blit(location, (int) (j1 + CRC.x), (int) (k1 + CRC.z), 0,0,18, 18, 18, 18);
                     RenderSystem.disableBlend();
                     RenderSystem.depthMask(true);
                     RenderSystem.enableDepthTest();

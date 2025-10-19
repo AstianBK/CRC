@@ -159,18 +159,6 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 }
                 this.setCarried(ItemStack.EMPTY);
             }
-            for (int i = 0 ; i < 6 ; i++){
-                getSlot(i).setChanged();
-                CyberTableSlot slot = (CyberTableSlot) getSlot(i);
-                ItemStack itemstack1 = slot.getItem();
-                if(!itemstack1.isEmpty() && slot.isDirty()){
-                    if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
-                        p_38940_.getInventory().placeItemBackInInventory(itemstack1);
-                    } else {
-                        p_38940_.drop(itemstack1, false);
-                    }
-                }
-            }
         }
 
         this.slotCarried = -1;

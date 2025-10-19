@@ -2,10 +2,7 @@ package com.TBK.crc.common.registry;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
-import com.TBK.crc.common.item.CyberComponentItem;
-import com.TBK.crc.common.item.CyberImplantItem;
-import com.TBK.crc.common.item.CyberSkinItem;
-import com.TBK.crc.common.item.CyberUpgradeItem;
+import com.TBK.crc.common.item.*;
 import com.TBK.crc.server.upgrade.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -44,18 +41,18 @@ public class BKItems {
 
     //CYBER-UPGRADE
 
-    public static final RegistryObject<Item> UPGRADE_ARM_CANNON = ITEMS.register("upgrade_arm_cannon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new CannonArm(),0));
-    public static final RegistryObject<Item> UPGRADE_ARM_GANCHO = ITEMS.register("upgrade_arm_harpoon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new GanchoArm(),0));
-    public static final RegistryObject<Item> UPGRADE_ARM_CLAWS = ITEMS.register("upgrade_arm_claws",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new ClawsArm(),0));
-    public static final RegistryObject<Item> UPGRADE_SYSTEM_HEART= ITEMS.register("upgrade_system_heart",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.SYSTEMS,new HeartReflex(),0));
+    public static final RegistryObject<Item> UPGRADE_ARM_CANNON = ITEMS.register("upgrade_arm_cannon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new CannonArm(),null));
+    public static final RegistryObject<Item> UPGRADE_ARM_GANCHO = ITEMS.register("upgrade_arm_harpoon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new GanchoArm(),null));
+    public static final RegistryObject<Item> UPGRADE_ARM_CLAWS = ITEMS.register("upgrade_arm_claws",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new ClawsArm(),null));
+    public static final RegistryObject<Item> UPGRADE_SYSTEM_HEART= ITEMS.register("upgrade_system_heart",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new HeartReflex(),"heart_reflex"));
 
-    public static final RegistryObject<Item> UPGRADE_SYSTEM_THORACIC_CAGE= ITEMS.register("upgrade_system_thoracic_cage",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.SYSTEMS,new ContraAttack(),0));
+    public static final RegistryObject<Item> UPGRADE_SYSTEM_THORACIC_CAGE= ITEMS.register("upgrade_system_thoracic_cage",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new ContraAttack(),"counter_attack"));
 
-    public static final RegistryObject<Item> UPGRADE_LEGS_COIL_FEET= ITEMS.register("upgrade_legs_coil_feet",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new CoilFeet(),0));
+    public static final RegistryObject<Item> UPGRADE_LEGS_COIL_FEET= ITEMS.register("upgrade_legs_coil_feet",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new CoilFeet(),"coil_feet"));
 
-    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES= ITEMS.register("upgrade_legs_knees",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new KneesHard(),0));
+    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES= ITEMS.register("upgrade_legs_knees",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new KneesHard(),"knees_hard"));
 
-    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES_SPIKED= ITEMS.register("upgrade_legs_knees_spiked",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.LEGS,new KneesSpiked(),0));
+    public static final RegistryObject<Item> UPGRADE_LEGS_KNEES_SPIKED= ITEMS.register("upgrade_legs_knees_spiked",()->new CyberRefinementItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),new KneesSpiked(),"knees_spiked"));
 
     //REGULAR-ITEM
     public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().stacksTo(1)));
