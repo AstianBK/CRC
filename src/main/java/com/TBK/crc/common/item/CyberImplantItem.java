@@ -147,10 +147,9 @@ public class CyberImplantItem extends ItemCyborg{
                     String upgrade = list.get(i).name;
                     String upgrade1 = list1.get(i).name;
                     if(!upgrade1.equals(upgrade)){
-                        return false;
+                        return true;
                     }
                 }
-                return true;
             }
             return false;
         }else {
