@@ -40,6 +40,7 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES_SPIKED.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_JETSTREAM.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_MILITARY.get()));
+                a.accept(new ItemStack(BKItems.UPGRADE_SKIN_CYBORG.get()));
 
 
                 a.accept(new ItemStack(BKItems.TANTALUM_INGOT.get()));
