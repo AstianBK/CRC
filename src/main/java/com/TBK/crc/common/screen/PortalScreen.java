@@ -29,13 +29,12 @@ public class PortalScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        CRC.LOGGER.debug("Se inicio el puto portal");
         this.acceptButton = new Button.Builder(Component.translatable("crc.portal.bottom_accept"),(s)->{
             PacketHandler.sendToServer(new PacketHandlerPowers(6,null,null));
-        }).bounds(this.width / 2 - 100, this.height / 4 + 72 , 100, 20).build();
+        }).bounds(this.width / 2 - 100, this.height / 4 + 72 , 200, 20).build();
         this.cancelButton = new Button.Builder(Component.translatable("crc.portal.bottom_cancel"),(s)->{
             this.onClose();
-        }).bounds(this.width / 2 - 100, this.height / 4 + 96 , 100, 20).build();
+        }).bounds(this.width / 2 - 100, this.height / 4 + 96 , 200, 20).build();
         this.addRenderableWidget(this.acceptButton);
 
         this.addRenderableWidget(this.cancelButton);

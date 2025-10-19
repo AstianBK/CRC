@@ -1,18 +1,12 @@
 package com.TBK.crc.server.multiarm;
 
-import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroProjectile;
-import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CannonArm extends MultiArmSkillAbstract{
 
@@ -38,7 +32,8 @@ public class CannonArm extends MultiArmSkillAbstract{
         super.tick(multiArmCapability);
 
         if(charge){
-            multiArmCapability.getPlayer().setDeltaMovement(multiArmCapability.getPlayer().getDeltaMovement().multiply(0.96F,1.0F,0.96F));
+            Player player = multiArmCapability.getPlayer();
+            player.setDeltaMovement(player.getDeltaMovement().multiply(0.05F,1.0F,0.05F));
             this.chargeTime++;
             this.stopAiming = 20;
             if(this.chargeTime<71){
@@ -48,6 +43,9 @@ public class CannonArm extends MultiArmSkillAbstract{
                 if(multiArmCapability.levelCharge==0 && this.chargeTime>10){
                     multiArmCapability.levelCharge=1;
                 }
+            }
+            if(player.level().isClientSide){
+                Util.spawnChargedParticle(getPos(player.getEyePosition(),player));
             }
         }else {
             if(this.stopAiming > 0 ){

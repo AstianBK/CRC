@@ -25,57 +25,7 @@ public class GanchoArm extends MultiArmSkillAbstract{
         Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
         if (gancho instanceof GanchoEntity ganchoEntity) {
             Player player = multiArmCapability.getPlayer();
-            Vec3 playerPos = player.position();
-            Vec3 ganchoPos = ganchoEntity.position();
-            Vec3 toGancho = ganchoPos.subtract(playerPos);
-            double distance = toGancho.length();
-
-            if (largoActual <= 0) {
-                largoActual = MAX_RANGE;
-            }
             if (ganchoEntity.hit) {
-
-                Vec3 direction = toGancho.normalize();
-                Vec3 velocity = player.getDeltaMovement();
-
-                // === CONFIGURACIONES ===
-                double damping = 0.96;         // fricción del aire
-                double gravityReduction = 0.04; // para un balanceo más suave
-                double tensionForce = 0.25;     // fuerza de la cuerda al tensarse
-                double shortenSpeed = 0.55;     // qué tan rápido se acorta con shift
-                double minLength = 1.0;         // distancia mínima al gancho
-
-                // === ACORTAR CUERDA CON SHIFT ===
-                if (player.isShiftKeyDown()) {
-                    if(!this.atraction){
-                        largoActual = (float) Math.min(distance,MAX_RANGE);
-                        CRC.LOGGER.debug("Largo actual :"+largoActual);
-                        this.atraction = true;
-                    }
-                    largoActual = (float) Math.max(minLength, largoActual - shortenSpeed);
-                }
-
-                // === FÍSICA DEL BALANCEO ===
-                velocity = velocity.scale(damping);
-                velocity = velocity.add(0, gravityReduction, 0);
-
-                // === SI SUPERA EL LARGO DE LA CUERDA ===
-                if (distance > largoActual) {
-                    double excess = distance - largoActual;
-
-                    // Aplica una fuerza de tensión proporcional a cuánto se pasó
-                    Vec3 tension = direction.scale(excess * tensionForce);
-
-                    // Evita que el jugador siga alejándose
-                    double awaySpeed = velocity.dot(direction);
-                    if (awaySpeed < 0) {
-                        velocity = velocity.subtract(direction.scale(awaySpeed));
-                    }
-
-                    velocity = velocity.add(tension);
-                }
-
-                player.setDeltaMovement(velocity);
 
             } else {
                 if (!ganchoEntity.isBack && gancho.distanceTo(player) > MAX_RANGE) {
@@ -141,7 +91,6 @@ public class GanchoArm extends MultiArmSkillAbstract{
                     multiArmCapability.getPlayer().level().addFreshEntity(gancho1);
                 }
             }
-            hasGancho = true;
             multiArmCapability.catchEntity=null;
         }
     }

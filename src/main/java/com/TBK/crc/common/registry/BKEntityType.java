@@ -14,7 +14,7 @@ public class BKEntityType {
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, CRC.MODID);
 
     public static final RegistryObject<EntityType<RexChicken>> REX_CHICKEN = ENTITY_TYPES
-            .register("rex_chicken", () -> EntityType.Builder.<RexChicken>of(RexChicken::new, MobCategory.MISC)
+            .register("rex_chicken", () -> EntityType.Builder.<RexChicken>of(RexChicken::new, MobCategory.MISC).clientTrackingRange(10)
                     .fireImmune().sized(6F, 6F).build(CRC.MODID+ "rex_chicken"));
 
     public static final RegistryObject<EntityType<PortalEntity>> PORTAL = ENTITY_TYPES

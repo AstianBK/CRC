@@ -7,16 +7,16 @@ import com.TBK.crc.server.fight.CyberChickenFight;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketActionRex;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,12 +28,11 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.entity.PartEntity;
@@ -114,19 +113,21 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         for (int i = 0; i < this.parts.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
             this.parts[i].setId(p_20235_ + i + 1);
     }
+
     public static AttributeSupplier setAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 100.0D)
-                .add(Attributes.FOLLOW_RANGE, 45.D)
+                .add(Attributes.FOLLOW_RANGE, 100.D)
                 .add(Attributes.MOVEMENT_SPEED, 0.15d)
                 .add(Attributes.ATTACK_DAMAGE,12.0D)
                 .build();
-
     }
+
 
     public Entity getPartForId(int id){
         return Arrays.stream(this.parts).filter(e->e.getId()==id).findFirst().orElse(null);
     }
+
     @Override
     protected void registerGoals() {
         super.registerGoals();
@@ -134,7 +135,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         this.goalSelector.addGoal(3,new AttackGoal(this,1.1D,false));
         this.goalSelector.addGoal(2, new ChargedGoal(this, 2.5D));
         this.targetSelector.addGoal(2,new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4,new NearestAttackableTargetGoal<>(this,LivingEntity.class,false));
+        this.targetSelector.addGoal(4,new NearestAttackableTargetGoal<>(this,Player.class,false));
     }
 
     protected void updateWalkAnimation(float p_268362_) {
@@ -187,18 +188,22 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             float sin = (float)Math.sin(yawRad);
             float cos = (float)Math.cos(yawRad);
 
-            double tower1X =  ( (-5) * cos) + ( 7* sin);
-            double tower1Y =  ( (-5) * sin) - ( 7* cos);
+            double tower1X =  ( (-5) * cos) + ( 4 * sin);
+            double tower1Y =  ( (-5) * sin) - ( 4 * cos);
 
             // torre 2: atrás izquierda
-            double tower2X =  ( (5) * cos) + ( 7* sin);
-            double tower2Y =  ( (5) * sin) - ( 7* cos);
+            double tower2X =  ( (5) * cos) + ( 4* sin);
+            double tower2Y =  ( (5) * sin) - ( 4* cos);
+
+            double headX =  0;
+            double headY = this.stunnedTick>0 ? 3 : 7;
+            double headZ =   - ( -3 * cos);
             Vec3[] pos = new Vec3[this.parts.length];
             for (int j = 0 ; j<this.parts.length ; j++){
                 pos[j]=new Vec3(this.parts[j].getX(), this.parts[j].getY(), this.parts[j].getZ());
             }
 
-            this.tickPart(this.head, sin,7,-cos);
+            this.tickPart(this.head, headX,headY, headZ);
             this.tickPart(this.towerMissile1, tower1X,8,tower1Y);
             this.tickPart(this.towerMissile2, tower2X,8,tower2Y);
 
@@ -351,7 +356,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
                     for(BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
                         BlockState blockstate = this.level().getBlockState(blockpos);
-                        Block block = blockstate.getBlock();
                         if (blockstate.is(Blocks.SEA_LANTERN) || blockstate.is(Blocks.POLISHED_DEEPSLATE) || blockstate.is(Blocks.REDSTONE_LAMP)) {
                             flag = this.level().destroyBlock(blockpos, true, this) || flag;
                         }
@@ -483,7 +487,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
-
     }
 
     public void applyLaserEffect(Vec3 view){
@@ -553,6 +556,11 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         if(flag){
             this.speedLaserModifier = 0;
         }
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player p_21472_, InteractionHand p_21473_) {
+        return super.mobInteract(p_21472_, p_21473_);
     }
 
     @Override
@@ -790,7 +798,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         @Override
         public boolean canUse() {
-            return super.canUse() && RexChicken.this.restTime<=0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
+            return super.canUse() && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
         }
 
         @Override
@@ -800,26 +808,29 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         @Override
         protected void checkAndPerformAttack(LivingEntity p_25557_, double p_25558_) {
-            double d0 = this.getAttackReachSqr(p_25557_);
-            if (p_25558_ <= d0 && this.getTicksUntilNextAttack()<=0 && RexChicken.this.attackTimer<=0) {
-                this.resetAttackCooldown();
-                this.mob.getNavigation().stop();
-            }else {
-                if(!this.mob.level().isClientSide){
-                    if(RexChicken.this.cooldownLaser<=0 && RexChicken.this.cooldownCharge<=0){
-                        if (p_25558_>64.0F){
+            if(RexChicken.this.restTime<=0){
+                double d0 = this.getAttackReachSqr(p_25557_);
+                if (p_25558_ <= d0 && this.getTicksUntilNextAttack()<=0 && RexChicken.this.attackTimer<=0) {
+                    this.resetAttackCooldown();
+                    this.mob.getNavigation().stop();
+                }else {
+                    if(!this.mob.level().isClientSide){
+                        if(RexChicken.this.cooldownLaser<=0 && RexChicken.this.cooldownCharge<=0){
+                            if (p_25558_>64.0F){
+                                ((RexChicken)this.mob).initLaser();
+                            }else {
+                                RexChicken.this.initCharge();
+                            }
+                        }else if(RexChicken.this.cooldownLaser<=0){
                             ((RexChicken)this.mob).initLaser();
-                        }else {
+                        }else if(RexChicken.this.cooldownCharge<=0){
                             RexChicken.this.initCharge();
                         }
-                    }else if(RexChicken.this.cooldownLaser<=0){
-                        ((RexChicken)this.mob).initLaser();
-                    }else if(RexChicken.this.cooldownCharge<=0){
-                        RexChicken.this.initCharge();
                     }
-                }
 
+                }
             }
+
         }
 
 

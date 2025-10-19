@@ -6,6 +6,7 @@ import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class ContraAttack extends PassivePart{
@@ -34,11 +35,15 @@ public class ContraAttack extends PassivePart{
             this.damageActually = damage;
         }else {
             Entity sourceEntity = source.getEntity();
+            Player player = multiArmCapability.getPlayer();
             if(sourceEntity instanceof LivingEntity living){
-                living.invulnerableTime = 0;
-                living.hurt(living.damageSources().generic(),20.0F);
-                if(!multiArmCapability.getPlayer().level().isClientSide){
-                    PacketHandler.sendToAllTracking(new PacketHandlerPowers(6,living,multiArmCapability.getPlayer()), living);
+                for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(4),e->e!=player)){
+                    entity.invulnerableTime = 0;
+                    entity.hurt(living.damageSources().generic(),20.0F);
+                }
+
+                if(!player.level().isClientSide){
+                    PacketHandler.sendToAllTracking(new PacketHandlerPowers(6,player,player), living);
                 }
                 this.damageActually = 0.0F;
                 this.contraAttack = false;

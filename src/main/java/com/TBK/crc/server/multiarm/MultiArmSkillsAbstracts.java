@@ -23,7 +23,7 @@ public class MultiArmSkillsAbstracts {
     }
 
     public MultiArmSkillsAbstracts(CompoundTag tag){
-        Map<Integer,MultiArmSkillAbstractInstance> map = Util.getMapEmpty();
+        Map<Integer,MultiArmSkillAbstractInstance> map = new HashMap<>();
         if(tag.contains("skills")){
             ListTag listTag = tag.getList("skills",10);
             for(int i = 0 ; i<listTag.size() ; i++){

@@ -8,9 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CyberSkinItem extends ItemCyborg{
     public ResourceLocation location;
+    public String name;
     public CyberSkinItem(Properties p_41383_,String name) {
         super(p_41383_, UpgradeableParts.ARM,0);
         location = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_"+name+".png");
+        this.name = name;
     }
 
     public static ResourceLocation getTextures(CompoundTag tag){
@@ -21,6 +23,10 @@ public class CyberSkinItem extends ItemCyborg{
     }
 
     public static void addSkin(CompoundTag tag,CyberSkinItem skin){
-        tag.putString("skin",skin.location.toString());
+        if(skin.name.equals("none")){
+            tag.remove("skin");
+        }else{
+            tag.putString("skin",skin.location.toString());
+        }
     }
 }

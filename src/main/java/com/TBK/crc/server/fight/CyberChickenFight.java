@@ -14,7 +14,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.*;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
@@ -23,16 +22,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
-import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.AABB;
@@ -134,6 +126,7 @@ public class CyberChickenFight{
 		} else {
 			this.chickenUUID = list.get(0).getUUID();
 		}
+
 	}
 
 	@javax.annotation.Nullable
@@ -180,11 +173,13 @@ public class CyberChickenFight{
 
 	private void scanState() {
 		List<? extends RexChicken> list = Util.getRexChickens(level);
+
+		this.prevCyberChickenDefeat = this.hasPortalActive();
 		if (list.isEmpty()) {
 			this.cyberChickenDefeat = true;
 		} else {
-			RexChicken enderdragon = list.get(0);
-			this.chickenUUID = enderdragon.getUUID();
+			RexChicken rex = list.get(0);
+			this.chickenUUID = rex.getUUID();
 
 			this.cyberChickenDefeat = false;
 		}
@@ -192,14 +187,19 @@ public class CyberChickenFight{
 		if (!this.prevCyberChickenDefeat && this.cyberChickenDefeat) {
 			this.cyberChickenDefeat = false;
 		}
-
 	}
 
+
+	public boolean hasPortalActive(){
+		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(10.0F));
+
+		return !portals.isEmpty();
+	}
 	private void spawnExitPortal(boolean p_64094_) {
-		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(this.origin).inflate(10.0F));
+		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(10.0F));
 		if (portals.isEmpty()){
 			PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),level);
-			portal.setPos(this.origin.getCenter());
+			portal.setPos(new BlockPos(0,114,0).getCenter());
 			level.addFreshEntity(portal);
 		}
 	}
@@ -214,10 +214,6 @@ public class CyberChickenFight{
 		return data;
 	}
 
-	private boolean hasActiveExitPortal() {
-
-		return false;
-	}
 	public void deserialise(CompoundTag data) {
 
 		this.structure = new Structure(data.getCompound("Structure"));

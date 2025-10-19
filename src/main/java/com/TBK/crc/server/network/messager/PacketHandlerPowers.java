@@ -98,7 +98,7 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                     }
                 }
                 case 6->{
-                    Minecraft.getInstance().particleEngine.createTrackingEmitter(this.newEntity, BKParticles.LIGHTNING_TRAIL_PARTICLES.get());
+                    Minecraft.getInstance().particleEngine.createTrackingEmitter(this.newEntity, BKParticles.LIGHTNING_TRAIL_PARTICLES.get(),5);
                 }
             }
         }

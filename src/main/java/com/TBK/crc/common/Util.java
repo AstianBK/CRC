@@ -2,32 +2,30 @@ package com.TBK.crc.common;
 
 import com.TBK.crc.common.registry.BKDimension;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroExplosionEntity;
 import com.TBK.crc.server.entity.RexChicken;
 import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
 import com.TBK.crc.server.multiarm.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
 
 public class Util {
@@ -59,6 +57,31 @@ public class Util {
         map.put(3,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
         map.put(4,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
         map.put(5,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+        return map;
+    }
+
+    public static void spawnChargedParticle(Vec3 entity){
+        Random random = new Random();
+        Minecraft mc=Minecraft.getInstance();
+        if(mc.level!=null){
+            for (int i = 0 ; i<5 ; i++){
+                double box = 0.75F;
+                double d0=random.nextDouble(-box, box);
+                double d1=random.nextDouble(0.0d, 0.75F);
+                double d2=random.nextDouble(-box, box);
+                double xp = entity.x + d0;
+                double yp = entity.y + d1;
+                double zp = entity.z + d2;
+                Particle blood= mc.particleEngine.createParticle(BKParticles.LIGHTNING_TRAIL_PARTICLES.get(),xp,yp,zp,-d0*0.1F,-d1*0.1F,-d2*0.1F);
+            }
+        }
+    }
+    public static Map<Integer,MultiArmSkillAbstractInstance> getMapArmEmpty(){
+        Map<Integer, MultiArmSkillAbstractInstance> map = new HashMap<>();
+        map.put(0,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+        map.put(1,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+        map.put(2,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+        map.put(3,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
         return map;
     }
     public static boolean hasMultiArm(MultiArmCapability cap){

@@ -63,7 +63,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public int stopAimingAnim = 0;
     public int stopAimingAnim0 = 0;
     public int levelCharge = 0;
-    public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(Util.getMapEmpty());
+    public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(Util.getMapArmEmpty());
     public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
     public EntityType<?>[] types = new EntityType[]{

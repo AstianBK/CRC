@@ -99,7 +99,19 @@ public class GanchoEntity extends AbstractArrow {
 
     @Override
     protected boolean tryPickup(Player p_150121_) {
-        this.discard();
+        if(this.isBack){
+            if(this.getOwner() instanceof Player player){
+                MultiArmCapability cap = MultiArmCapability.get(player);
+                if(cap!=null){
+                    MultiArmSkillAbstract skill = cap.getHotBarSkill().getForName("gancho_arm");
+                    if(skill instanceof GanchoArm arm){
+                        arm.hasGancho=true;
+                        this.level().broadcastEntityEvent(this,(byte) 4);
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 

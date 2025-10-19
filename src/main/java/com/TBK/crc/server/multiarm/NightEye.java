@@ -24,7 +24,7 @@ public class NightEye extends PassivePart{
     public boolean hasEffect(MultiArmCapability multiArmCapability, MobEffect effect) {
         if(effect == MobEffects.NIGHT_VISION){
             Player player = multiArmCapability.getPlayer();
-            if(player.level().getBrightness(LightLayer.SKY,player.getOnPos())>0){
+            if(player.level().getBrightness(LightLayer.SKY,player.getOnPos().above())>0){
                 return false;
             }
             for (BlockPos pos : BlockPos.betweenClosed(player.getOnPos().offset(10,6,10), player.getOnPos().offset(-10,-3,-10))){

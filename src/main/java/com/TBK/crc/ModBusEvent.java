@@ -149,7 +149,7 @@ public class ModBusEvent {
     private static void renderLeash(LivingEntity p_115462_, float p_115463_, PoseStack p_115464_, MultiBufferSource p_115465_, LivingEntity p_115466_,int packedLight) {
         p_115464_.pushPose();
 
-        Vec3 vec3 = p_115466_.getRopeHoldPosition(p_115463_).add(0,1,0);
+        Vec3 vec3 = p_115466_.getRopeHoldPosition(p_115463_);
         double d0 = (double)(Mth.lerp(p_115463_, p_115462_.getYRot(), p_115462_.yRotO) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
         Vec3 vec31 = new Vec3(0.0D, p_115462_.getBbHeight()/2.0D, 0.0D);
         double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;

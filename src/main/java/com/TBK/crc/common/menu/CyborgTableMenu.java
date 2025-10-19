@@ -1,5 +1,6 @@
 package com.TBK.crc.common.menu;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.registry.BKContainers;
@@ -146,6 +147,8 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                     cap.dirty = true;
                 }
             }
+        }else {
+            this.refreshPlayer(p_38940_);
         }
         if (p_38940_ instanceof ServerPlayer){
             if (!itemstack.isEmpty()) {
@@ -160,9 +163,6 @@ public class CyborgTableMenu extends AbstractContainerMenu {
                 getSlot(i).setChanged();
                 CyberTableSlot slot = (CyberTableSlot) getSlot(i);
                 ItemStack itemstack1 = slot.getItem();
-                if(itemstack1.isEmpty() && slot.isDirty()){
-                    this.refreshSlot(i,p_38940_);
-                }
                 if(!itemstack1.isEmpty() && slot.isDirty()){
                     if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
                         p_38940_.getInventory().placeItemBackInInventory(itemstack1);

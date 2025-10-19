@@ -46,7 +46,7 @@ public class ElectroProjectileRenderer<T extends ElectroProjectile> extends Noop
             p_114488_.pushPose();
             p_114488_.mulPose(this.entityRenderDispatcher.cameraOrientation());
             p_114488_.mulPose(Axis.XP.rotationDegrees(90.0F));
-            p_114488_.translate(0,1.0F,0);
+            p_114488_.translate(0,CRC.y,0);
             float porcentajeDeCasteo = (float) p_114485_.getTimeRecharge() / 30.0F;
             this.draw(p_114488_.last(),p_114485_,p_114489_,p_114490_,0.25f+1.25F*porcentajeDeCasteo,0);
             p_114488_.popPose();
