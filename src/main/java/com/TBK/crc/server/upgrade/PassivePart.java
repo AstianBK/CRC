@@ -10,7 +10,7 @@ public abstract class PassivePart extends Upgrade {
 
     public boolean activable;
     public PassivePart(String name,boolean activable) {
-        super(name, 200, false, false);
+        super(name, 2400, false, false);
         this.activable = activable;
     }
 
