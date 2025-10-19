@@ -65,7 +65,8 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> CYBORG_TABLE_IMPLANT =
             registerSoundEvent("cyborg_table_implant");
 
-
+    public static final RegistryObject<SoundEvent> UPGRADE_TABLE_USE =
+            registerSoundEvent("upgrade_table_use");
 
     public static RegistryObject<SoundEvent> registerSoundEvent(String name){
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(CRC.MODID, name)));

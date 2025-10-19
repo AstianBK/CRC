@@ -116,6 +116,11 @@ public class ClawsArm extends Upgrade {
         return BKSounds.MULTIARM_CLAW_DASH.get();
     }
     @Override
+    public float getVolumeStopAbility() {
+        return 5.0f;
+    }
+
+    @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {
         super.stopAbility(multiArmCapability);
         if(this.charge){

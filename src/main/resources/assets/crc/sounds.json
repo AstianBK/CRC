@@ -88,5 +88,11 @@
     "sounds": [
       "crc:cyborg_table_implant"
     ]
+  },
+  "upgrade_table_use": {
+    "subtitle": "sounds.crc.upgrade_table_use",
+    "sounds": [
+      "crc:upgrade_table_use"
+    ]
   }
 }
