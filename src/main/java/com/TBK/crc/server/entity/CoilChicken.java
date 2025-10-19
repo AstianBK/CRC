@@ -75,7 +75,7 @@ public class CoilChicken extends RobotChicken {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
                 .add(Attributes.FOLLOW_RANGE, 45.D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3d)
+                .add(Attributes.MOVEMENT_SPEED, 0.28d)
                 .add(Attributes.ATTACK_DAMAGE, 3.0d)
                 .build();
     }
