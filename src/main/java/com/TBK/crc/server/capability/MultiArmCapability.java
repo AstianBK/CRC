@@ -1,10 +1,8 @@
 package com.TBK.crc.server.capability;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
 import com.TBK.crc.common.registry.BKEntityType;
-import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.TeleportEntity;
 import com.TBK.crc.server.manager.*;
 import com.TBK.crc.server.upgrade.*;
@@ -120,7 +118,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
     public void syncNewPlayer(ServerPlayer player,MultiArmCapability cap,boolean wasDeath){
-        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.serializeNBT(),wasDeath),player);
+        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.serializeNBT(),wasDeath,player.getId()),player);
     }
     public void copyNbt(CompoundTag tag){
         this.deserializeNBT(tag);
@@ -137,6 +135,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.implantStore = cap.implantStore;
         this.setPosSelectUpgrade(cap.getPosSelectUpgrade());
         this.dirty = true;
+    }
+    public CompoundTag saveChickenEnemyData(){
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("warningLevel",this.warningLevel);
+        tag.putInt("wave",this.wave);
+        tag.putInt("timeLevelWarning",this.timeLevelWarning);
+        return tag;
     }
     @Override
     public void tick(Player player) {
@@ -162,11 +167,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.wave = Math.min(this.wave,6);
 
                 if(!this.level.isClientSide){
-                    CompoundTag nbt = new CompoundTag();
-                    nbt.putInt("warningLevel",this.warningLevel);
-                    nbt.putInt("wave",this.wave);
-                    nbt.putInt("timeLevelWarning",this.timeLevelWarning);
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(nbt,false), (ServerPlayer) player);
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
                 }
             }else {
                 this.invokeTimer--;

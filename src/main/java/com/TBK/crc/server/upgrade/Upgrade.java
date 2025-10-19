@@ -67,10 +67,10 @@ public class Upgrade {
         }
     }
 
-    private float getVolumenStopAbility() {
+    public float getVolumenStopAbility() {
         return 5.0f;
     }
-    private float getVolumenStartAbility() {
+    public float getVolumenStartAbility() {
         return 5.0f;
     }
 
