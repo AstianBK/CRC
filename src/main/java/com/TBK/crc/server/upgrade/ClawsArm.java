@@ -116,7 +116,7 @@ public class ClawsArm extends Upgrade {
     }
     @Override
     public float getVolumeStopAbility() {
-        return 5.0f;
+        return 15.0f;
     }
 
     @Override
