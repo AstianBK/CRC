@@ -51,7 +51,7 @@ public class Upgrade {
     }
     public void startAbility(MultiArmCapability multiArmCapability){
         if(multiArmCapability.getPlayer().level().isClientSide && getStartSound() != null){
-            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStartSound(), SoundSource.PLAYERS,getVolumenStartAbility(),1.0f,false);
+            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStartSound(), SoundSource.PLAYERS, getVolumeStartAbility(),1.0f,false);
         }
     }
     public SoundEvent getStartSound(){
@@ -63,15 +63,15 @@ public class Upgrade {
     }
     public void stopAbility(MultiArmCapability multiArmCapability){
         if(multiArmCapability.getPlayer().level().isClientSide && getStopSound() != null){
-            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS,this.getVolumenStopAbility(),1.0f,false);
+            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS,this.getVolumeStopAbility(),1.0f,false);
         }
     }
 
-    private float getVolumenStopAbility() {
-        return 5.0f;
+    protected float getVolumeStopAbility() {
+        return 1.0f;
     }
-    private float getVolumenStartAbility() {
-        return 5.0f;
+    protected float getVolumeStartAbility() {
+        return 1.0f;
     }
 
     public void setRefinements(List<String> refinements){
