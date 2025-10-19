@@ -2,7 +2,7 @@ package com.TBK.crc.server.network.messager;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.HackerEye;
+import com.TBK.crc.server.upgrade.HackerEye;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

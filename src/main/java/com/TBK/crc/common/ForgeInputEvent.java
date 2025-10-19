@@ -4,13 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketKeySync;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -57,8 +51,8 @@ public class ForgeInputEvent {
         MultiArmCapability cap = MultiArmCapability.get(mc.player);
         if(cap!=null){
             if(CRCKeybinds.attackKey3.consumeClick() && !cap.hotbarActive){
-                selectActual = cap.getPosSelectMultiArmSkillAbstract();
-                selectInitial = cap.getPosSelectMultiArmSkillAbstract();
+                selectActual = cap.getPosSelectUpgrade();
+                selectInitial = cap.getPosSelectUpgrade();
             }
             cap.hotbarActive = CRCKeybinds.attackKey3.isDown();
             if(CRCKeybinds.attackKey3.getKey().getValue() == key && action == 0){

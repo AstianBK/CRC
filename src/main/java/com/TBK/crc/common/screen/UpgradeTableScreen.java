@@ -1,19 +1,12 @@
 package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
-import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.common.menu.UpgradeTableMenu;
-import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 
 public class UpgradeTableScreen extends AbstractContainerScreen<UpgradeTableMenu> {

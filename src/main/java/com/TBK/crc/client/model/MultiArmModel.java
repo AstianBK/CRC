@@ -5,21 +5,20 @@ package com.TBK.crc.client.model;// Made with Blockbench 4.12.6
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.GanchoArm;
+import com.TBK.crc.server.upgrade.Upgrade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
@@ -151,7 +150,7 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
 	}
-	public void selectArm(Player player,String name, MultiArmSkillAbstract arm, float ageInTicks){
+	public void selectArm(Player player, String name, Upgrade arm, float ageInTicks){
 		if(player.getMainHandItem().isEmpty()){
 			switch (name) {
 				case "claws_arm" -> {
@@ -202,11 +201,10 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 		switch (cap.pose){
 			case CHARGE_CANNON -> {
 				float percent = cap.getAnimShoot(partialTicks);
-				float f =1.0F;
-				poseStack.mulPose(Axis.YP.rotationDegrees((float) -29.0F * f));
+				poseStack.mulPose(Axis.YP.rotationDegrees((float) -29.0F));
 
-				poseStack.mulPose(Axis.XP.rotationDegrees((float) -29.0F * f) );
-				poseStack.mulPose(Axis.ZP.rotationDegrees((float) -13.0F * f));
+				poseStack.mulPose(Axis.XP.rotationDegrees((float) -29.0F) );
+				poseStack.mulPose(Axis.ZP.rotationDegrees((float) -13.0F));
 				poseStack.translate(0,-0.1F*percent,0);
 			}
 			case STOP_AIMING -> {
@@ -215,7 +213,12 @@ public class MultiArmModel<T extends Player> extends HierarchicalModel<T> {
 
 				poseStack.mulPose(Axis.XP.rotationDegrees((float) -29.0F * percent));
 				poseStack.mulPose(Axis.ZP.rotationDegrees((float) -13.0F * percent));
-
+			}
+			case CHARGE_CLAWS -> {
+				float percent = cap.getAnimChargeClaw(partialTicks);
+				float sin = Mth.sin(cap.getPlayer().tickCount*0.15F)*0.025F;
+				float cos = Mth.cos(cap.getPlayer().tickCount*0.15F)*0.025F;
+				poseStack.translate(sin,-0.4F*percent,cos);
 			}
 		}
 	}

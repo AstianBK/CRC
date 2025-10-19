@@ -1,33 +1,24 @@
 package com.TBK.crc.server.capability;
 
 import com.TBK.crc.CRC;
-import com.TBK.crc.UpgradeableParts;
-import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
-import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.TeleportEntity;
 import com.TBK.crc.server.manager.*;
-import com.TBK.crc.server.multiarm.*;
+import com.TBK.crc.server.upgrade.*;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.*;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -39,47 +30,45 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class MultiArmCapability implements IMultiArmPlayer {
-    public MultiArmSkillAbstract lastUsingMultiArmSkillAbstract=MultiArmSkillAbstract.NONE;
+    public Upgrade lastUsingUpgrade = Upgrade.NONE;
     public boolean chickenEnemy = false;
     public int cooldownUse;
     Player player;
     Level level;
-    int posSelectMultiArmSkillAbstract=0;
-    int castingTimer=0;
-    int castingClientTimer=0;
-    int maxCastingClientTimer=0;
+    int posSelectUpgrade = 0;
     public boolean hotbarActive = false;
     public int invokeTimer = 0;
     public int warningLevel = 0;
     public Entity catchEntity = null;
+    public int timeLevelWarning = 0;
+    public int timeLevelWarning0 = 0;
     public int timeShoot = 0;
     public int timeShoot0 = 0;
+    public int timeCharge = 0;
+    public int timeCharge0 = 0;
     public int stopAimingAnim = 0;
     public int stopAimingAnim0 = 0;
     public int levelCharge = 0;
-    public MultiArmSkillsAbstracts skills = new MultiArmSkillsAbstracts(Util.getMapArmEmpty());
-    public MultiArmSkillsAbstracts passives = new MultiArmSkillsAbstracts(Util.getMapEmpty());
+    public int wave = 0;
+    public Upgrades skills = new Upgrades(Util.getMapArmEmpty());
+    public Upgrades passives = new Upgrades(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
-    public EntityType<?>[] types = new EntityType[]{
-            BKEntityType.DRONE_CHICKEN.get(),BKEntityType.BOOM_CHICKEN.get(),BKEntityType.COIL_CHICKEN.get()
-    };
+    public Set<BoomChicken> chickens = new HashSet<>();
     public boolean dirty = false;
     public SkillPose pose = SkillPose.NONE;
     public static MultiArmCapability get(Player player){
         return CRCCapability.getEntityCap(player,MultiArmCapability.class);
     }
-    public void setPosSelectMultiArmSkillAbstract(int pos){
-        this.posSelectMultiArmSkillAbstract=pos;
+    public void setPosSelectUpgrade(int pos){
+        this.posSelectUpgrade =pos;
     }
 
-    public int getPosSelectMultiArmSkillAbstract(){
-        return this.posSelectMultiArmSkillAbstract;
+    public int getPosSelectUpgrade(){
+        return this.posSelectUpgrade;
     }
     @Override
     public Player getPlayer() {
@@ -96,12 +85,20 @@ public class MultiArmCapability implements IMultiArmPlayer {
         return this.catchEntity == entity;
     }
     @Override
-    public MultiArmSkillAbstract getSelectSkill() {
-        return this.getHotBarSkill().get(this.posSelectMultiArmSkillAbstract);
+    public Upgrade getSelectSkill() {
+        return this.getHotBarSkill().get(this.posSelectUpgrade);
+    }
+    @OnlyIn(Dist.CLIENT)
+    public float getAnimLevelWarning(float partialTick){
+        return Mth.lerp(partialTick,this.timeLevelWarning,this.timeLevelWarning0) / 20.0F;
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimShoot(float partialTick){
         return Mth.lerp(partialTick,this.timeShoot0,this.timeShoot) / 10.0F;
+    }
+    @OnlyIn(Dist.CLIENT)
+    public float getAnimChargeClaw(float partialTick){
+        return 1.0F-(Mth.lerp(partialTick,this.timeCharge0,this.timeCharge) / 10.0F);
     }
     @OnlyIn(Dist.CLIENT)
     public float getStopAiming(float partialTick){
@@ -109,18 +106,18 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     @OnlyIn(Dist.CLIENT)
     @Override
-    public MultiArmSkillAbstract getSkillForHotBar(int pos) {
+    public Upgrade getSkillForHotBar(int pos) {
         return this.skills.get(pos);
     }
 
     @Override
-    public MultiArmSkillAbstract getLastUsingSkill() {
-        return this.lastUsingMultiArmSkillAbstract;
+    public Upgrade getLastUsingSkill() {
+        return this.lastUsingUpgrade;
     }
 
     @Override
-    public void setLastUsingSkill(MultiArmSkillAbstract power) {
-        this.lastUsingMultiArmSkillAbstract=power;
+    public void setLastUsingSkill(Upgrade power) {
+        this.lastUsingUpgrade = power;
     }
 
     public void syncNewPlayer(ServerPlayer player,MultiArmCapability cap,boolean wasDeath){
@@ -131,12 +128,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     public void syncWarningLevel(CompoundTag tag){
         this.warningLevel = tag.getInt("warningLevel");
+        this.wave = tag.getInt("wave");
     }
     public void copyFrom(MultiArmCapability cap){
         this.skills = cap.skills;
         this.passives = cap.passives;
         this.implantStore = cap.implantStore;
-        this.setPosSelectMultiArmSkillAbstract(cap.getPosSelectMultiArmSkillAbstract());
+        this.setPosSelectUpgrade(cap.getPosSelectUpgrade());
         this.dirty = true;
     }
     @Override
@@ -144,16 +142,33 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(this.cooldownUse>0){
             this.cooldownUse--;
         }
+        if(!this.chickens.isEmpty()){
+            CRC.LOGGER.debug("Lista no vacia.");
+            this.chickens.forEach(e->{
+                CRC.LOGGER.debug("Entity :"+e);
+            });
+        }
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
-                for (int i = 0 ; i < this.warningLevel+1 ; i++){
-                    TeleportEntity tp = new TeleportEntity(level,types[this.level.random.nextInt(0,3)],Util.findRandomSurfaceNear(this.player,10,level.random),player,false);
-                    this.level.addFreshEntity(tp);
+                for (EntityTypeWaves wave : EntityTypeWaves.values()){
+                    int length =   wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
+                    for (int i = 0 ; i < length ;i++){
+                        TeleportEntity tp = new TeleportEntity(level,wave.type, Util.findCaveSurfaceNearHeight(this.player,10,level.random),player,false);
+                        this.level.addFreshEntity(tp);
+                    }
                 }
-                this.invokeTimer = 100;
-                this.warningLevel = Math.min(this.warningLevel+1,2);
+                this.invokeTimer = 1000;
+                this.wave = this.wave+1;
+                if(this.wave>6 && this.warningLevel<2){
+                    this.warningLevel = Math.min(this.warningLevel+1,2);
+                    this.wave = 0;
+                }
+                this.wave = Math.min(this.wave,6);
+
                 if(!this.level.isClientSide){
                     CompoundTag nbt = new CompoundTag();
+                    nbt.putInt("warningLevel",this.warningLevel);
+                    nbt.putInt("wave",this.wave);
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(nbt,false), (ServerPlayer) player);
                 }
             }else {
@@ -166,40 +181,45 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 PacketHandler.sendToPlayer(new PacketSyncSkill(this.skills.upgrades,this.passives.upgrades), (ServerPlayer) player);
                 this.dirty = false;
             }
-            PacketHandler.sendToPlayer(new PacketSyncPosHotBar(this.posSelectMultiArmSkillAbstract), (ServerPlayer) player);
+            PacketHandler.sendToPlayer(new PacketSyncPosHotBar(this.posSelectUpgrade), (ServerPlayer) player);
         }
 
         if(!this.getPassives().upgrades.isEmpty()){
             this.getPassives().upgrades.forEach((i, passive)->{
-                passive.getSkillAbstract().tick(this);
+                passive.getUpgrade().tick(this);
             });
         }
         if(Util.hasMultiArm(this)){
 
             if(!this.skills.getSkills().isEmpty()){
                 this.skills.getSkills().forEach(e->{
-                    e.getSkillAbstract().tick(this);
+                    e.getUpgrade().tick(this);
                 });
             }
             this.stopAimingAnim0 = this.stopAimingAnim;
-
-            if(this.stopAimingAnim>0){
-                this.stopAimingAnim--;
-                if(this.stopAimingAnim==0){
-                    this.pose = SkillPose.NONE;
+            this.timeCharge0 = this.timeCharge;
+            if(this.pose == SkillPose.STOP_AIMING){
+                if(this.stopAimingAnim>0){
+                    this.stopAimingAnim--;
+                    if(this.stopAimingAnim==0){
+                        this.pose = SkillPose.NONE;
+                    }
                 }
             }
+
             if(this.level.isClientSide){
                 this.timeShoot0 = this.timeShoot;
-                if(this.castingClientTimer>0){
-                    this.castingClientTimer--;
-                }
+                this.timeLevelWarning0 = this.timeLevelWarning;
                 if(this.timeShoot>0){
                     this.timeShoot--;
                 }
-            }else {
-                if (this.isCasting()){
-                    this.castingTimer--;
+                if(this.timeLevelWarning>0){
+                    this.timeLevelWarning--;
+                }
+                if(this.pose == SkillPose.CHARGE_CLAWS){
+                    if(this.timeCharge>0){
+                        this.timeCharge--;
+                    }
                 }
             }
         }
@@ -210,7 +230,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public static boolean hasEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
-            return cap.passives.upgrades.values().stream().anyMatch(e-> e.getSkillAbstract().hasEffect(cap,effect));
+            return cap.passives.upgrades.values().stream().anyMatch(e-> e.getUpgrade().hasEffect(cap,effect));
         }
         return false;
     }
@@ -218,16 +238,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public static boolean canEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
-            return cap.passives.upgrades.values().stream().allMatch(e-> e.getSkillAbstract().canEffect(cap,effect));
+            return cap.passives.upgrades.values().stream().allMatch(e-> e.getUpgrade().canEffect(cap,effect));
         }
         return false;
     }
 
-
-
-    public boolean isCasting(){
-        return this.castingTimer>0;
-    }
 
     @Override
     public void onJoinGame(Player player, EntityJoinLevelEvent event) {
@@ -235,75 +250,75 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
     public void clearAbilityStore(){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(new HashMap<>());
+        Upgrades map = new Upgrades(new HashMap<>());
         setSetHotbar(map);
 
         this.dirty = true;
     }
 
     public void clearForUpgradeStore(){
-        passives = new MultiArmSkillsAbstracts(new HashMap<>());
+        passives = new Upgrades(new HashMap<>());
         this.dirty = true;
     }
 
     public void clearForIndex(int index){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(passives.getUpgrades());
+        Upgrades map = new Upgrades(passives.getUpgrades());
 
-        map.upgrades.put(index,new MultiArmSkillAbstractInstance(MultiArmSkillAbstract.NONE,0));
+        map.upgrades.put(index,new UpgradeInstance(Upgrade.NONE,0));
 
         passives = map;
         this.dirty = true;
     }
 
-    public void addNewPassive(MultiArmSkillAbstract skill,int index){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(Util.getMapEmpty());
-        for (Map.Entry<Integer,MultiArmSkillAbstractInstance> entry : this.passives.getUpgrades().entrySet()){
-            map.addMultiArmSkillAbstracts(entry.getKey(),entry.getValue().getSkillAbstract());
+    public void addNewPassive(Upgrade skill, int index){
+        Upgrades map = new Upgrades(Util.getMapEmpty());
+        for (Map.Entry<Integer, UpgradeInstance> entry : this.passives.getUpgrades().entrySet()){
+            map.addMultiArmSkillAbstracts(entry.getKey(),entry.getValue().getUpgrade());
         }
         map.addMultiArmSkillAbstracts(index,skill);
         this.passives = map;
         this.dirty = true;
     }
 
-    public void addNewAbility(MultiArmSkillAbstract skill){
-        MultiArmSkillsAbstracts map = new MultiArmSkillsAbstracts(this.getHotBarSkill().upgrades);
+    public void addNewAbility(Upgrade skill){
+        Upgrades map = new Upgrades(this.getHotBarSkill().upgrades);
         int indexForUpgrade = Util.getIndexForName(skill.name);
         if(indexForUpgrade !=-1){
             map.addMultiArmSkillAbstracts(indexForUpgrade,skill);
             setSetHotbar(map);
-            setPosSelectMultiArmSkillAbstract(indexForUpgrade);
+            setPosSelectUpgrade(indexForUpgrade);
             this.dirty = true;
         }
     }
 
-    public void setSetHotbar(MultiArmSkillsAbstracts skillAbstracts){
+    public void setSetHotbar(Upgrades skillAbstracts){
         this.skills = skillAbstracts;
     }
 
     @Override
-    public void handledSkill(MultiArmSkillAbstract power) {
+    public void handledSkill(Upgrade power) {
         power.startAbility(this);
     }
 
     @Override
-    public void stopSkill(MultiArmSkillAbstract power) {
-        this.setLastUsingSkill(MultiArmSkillAbstract.NONE);
+    public void stopSkill(Upgrade power) {
+        this.setLastUsingSkill(Upgrade.NONE);
         power.stopAbility(this);
     }
 
 
     @Override
-    public boolean canUseSkill(MultiArmSkillAbstract skillAbstract) {
+    public boolean canUseSkill(Upgrade skillAbstract) {
         return this.player.getMainHandItem().isEmpty() && !skillAbstract.name.equals("none");
     }
 
     @Override
-    public MultiArmSkillsAbstracts getPassives() {
+    public Upgrades getPassives() {
         return this.passives;
     }
 
     @Override
-    public MultiArmSkillsAbstracts getHotBarSkill() {
+    public Upgrades getHotBarSkill() {
         return this.skills;
     }
 
@@ -320,7 +335,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.startCasting(this.getSelectSkill(),this.player);
             }else {
                 if(this.getSelectSkill().isCanReActive()){
-                    MultiArmSkillAbstract power=this.getSelectSkill();
+                    Upgrade power=this.getSelectSkill();
                     this.setLastUsingSkill(this.getSelectSkill());
                     this.handledSkill(power);
                 }
@@ -338,7 +353,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
     }
 
-    public void startCasting(MultiArmSkillAbstract power,Player player){
+    public void startCasting(Upgrade power, Player player){
         this.setLastUsingSkill(this.getSelectSkill());
         this.handledSkill(power);
     }
@@ -352,7 +367,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         CompoundTag passiveTag = new CompoundTag();
         this.passives.save(passiveTag);
         tag.put("passives",passiveTag);
-        tag.putInt("select_power",this.posSelectMultiArmSkillAbstract);
+        tag.putInt("select_power",this.posSelectUpgrade);
 
 
         return tag;
@@ -360,9 +375,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        this.skills = new MultiArmSkillsAbstracts(nbt);
-        this.passives = new MultiArmSkillsAbstracts(nbt.getCompound("passives"));
-        this.posSelectMultiArmSkillAbstract=nbt.getInt("select_power");
+        this.skills = new Upgrades(nbt);
+        this.passives = new Upgrades(nbt.getCompound("passives"));
+        this.posSelectUpgrade =nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
         this.implantStore = new ImplantStore(nbt);
     }
@@ -381,6 +396,17 @@ public class MultiArmCapability implements IMultiArmPlayer {
         STOP_AIMING;
     }
 
+    public enum EntityTypeWaves{
+        CHICKEN_COIL(BKEntityType.COIL_CHICKEN.get(),new int[]{1,2,2,3,3,3,4}),
+        CHICKEN_BOOM(BKEntityType.BOOM_CHICKEN.get(),new int[]{0,1,1,2,2,2,2}),
+        CHICKEN_DRONE(BKEntityType.DRONE_CHICKEN.get(),new int[]{0,0,0,0,1,2,3});
+        public final int[] waves;
+        public final EntityType<?> type;
+        EntityTypeWaves(EntityType<?> type,int[] waves){
+            this.type = type;
+            this.waves = waves;
+        }
+    }
     public static class SkillPlayerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
         private final LazyOptional<IMultiArmPlayer> instance = LazyOptional.of(MultiArmCapability::new);
 

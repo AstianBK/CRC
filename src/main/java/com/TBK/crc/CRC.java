@@ -14,6 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,6 +55,7 @@ public class CRC
     public static double yq=0;
     public static double zq=0;
     public static final Logger LOGGER = LogUtils.getLogger();
+
     public static final List<ResourceLocation> DESTROY_STAGES = IntStream.range(0, 10).mapToObj((p_119253_) -> {
         return new ResourceLocation(MODID,"groundeffect/destroy_stage_" + p_119253_);
     }).collect(Collectors.toList());
@@ -91,6 +95,7 @@ public class CRC
         BKBlocks.BLOCKS.register(modEventBus);
         BKCreativeModeTab.TABS.register(modEventBus);
         BKContainers.CONTAINERS.register(modEventBus);
+        BKSounds.register(modEventBus);
         PacketHandler.registerMessages();
         modEventBus.addListener(CRCCapability::registerCapabilities);
         Util.initUpgrades();
@@ -104,6 +109,9 @@ public class CRC
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,()->()->{
             modEventBus.addListener(this::registerRenderers);
         });
+    }
+
+    public void startServer(ServerStartedEvent event){
     }
 
     public void sleepLocationCheck(@NotNull SleepingLocationCheckEvent event) {
@@ -130,6 +138,7 @@ public class CRC
             }
         }
     }
+
 
     public static MinecraftServer getServer() {
         return ServerLifecycleHooks.getCurrentServer();

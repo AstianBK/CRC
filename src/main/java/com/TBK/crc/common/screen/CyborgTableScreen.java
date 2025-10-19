@@ -3,6 +3,7 @@ package com.TBK.crc.common.screen;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.menu.CyborgTableMenu;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 
 
@@ -28,8 +30,9 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
         super.init();
         this.acceptButton = new Button.Builder(Component.translatable("crc.cyborg_table.bottom_implant"),(s)->{
             this.menu.refreshPlayer(menu.player);
-            assert Minecraft.getInstance().player!=null;
+            assert Minecraft.getInstance().player!=null && Minecraft.getInstance().level!=null;
             Minecraft.getInstance().player.closeContainer();
+            Minecraft.getInstance().level.playLocalSound(menu.player.blockPosition(), BKSounds.CYBORG_TABLE_IMPLANT.get(), SoundSource.BLOCKS,4.0F,1.0F,false);
         }).bounds(this.leftPos + 45, (this.height / 2 - this.imageHeight / 2)  + 135, 100, 20).build();
         this.acceptButton.active = false;
         this.addRenderableWidget(this.acceptButton);
@@ -62,8 +65,6 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
     }
 
     private void refreshButtons(){
-        int i = (this.width - 147) / 2 - 86;
-        int j = (this.height - 166) / 2;
         this.acceptButton.active = isDirty();
     }
 

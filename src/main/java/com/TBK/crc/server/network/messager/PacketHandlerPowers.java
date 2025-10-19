@@ -1,13 +1,12 @@
 package com.TBK.crc.server.network.messager;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.CyborgTableMenu;
 import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.PortalEntity;
-import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
-import com.TBK.crc.server.multiarm.PassivePart;
+import com.TBK.crc.server.manager.UpgradeInstance;
+import com.TBK.crc.server.upgrade.Upgrade;
+import com.TBK.crc.server.upgrade.PassivePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -93,8 +92,8 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                     }
                 }
                 case 5 ->{
-                    for (MultiArmSkillAbstractInstance instance : cap.getPassives().getSkills()){
-                        ((PassivePart)instance.getSkillAbstract()).onDie(cap,this.newEntity);
+                    for (UpgradeInstance instance : cap.getPassives().getSkills()){
+                        ((PassivePart)instance.getUpgrade()).onDie(cap,this.newEntity);
                     }
                 }
                 case 6->{
@@ -110,7 +109,7 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                 cap.startCasting(cap.getSelectSkill(),player);
             }else {
                 if(cap.getSelectSkill().isCanReActive()){
-                    MultiArmSkillAbstract power=cap.getSelectSkill();
+                    Upgrade power=cap.getSelectSkill();
                     cap.setLastUsingSkill(cap.getSelectSkill());
                     cap.handledSkill(power);
                 }

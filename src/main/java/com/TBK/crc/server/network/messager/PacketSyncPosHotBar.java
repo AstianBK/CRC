@@ -32,6 +32,6 @@ public class PacketSyncPosHotBar {
         Minecraft mc=Minecraft.getInstance();
         Player player=mc.player;
         assert player!=null;
-        MultiArmCapability.get(player).setPosSelectMultiArmSkillAbstract(this.pos);
+        MultiArmCapability.get(player).setPosSelectUpgrade(this.pos);
     }
 }

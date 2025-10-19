@@ -1,26 +1,22 @@
 package com.TBK.crc.server.entity;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.GanchoArm;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.GanchoArm;
+import com.TBK.crc.server.upgrade.Upgrade;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -103,7 +99,7 @@ public class GanchoEntity extends AbstractArrow {
             if(this.getOwner() instanceof Player player){
                 MultiArmCapability cap = MultiArmCapability.get(player);
                 if(cap!=null){
-                    MultiArmSkillAbstract skill = cap.getHotBarSkill().getForName("gancho_arm");
+                    Upgrade skill = cap.getHotBarSkill().getForName("gancho_arm");
                     if(skill instanceof GanchoArm arm){
                         arm.hasGancho=true;
                         this.level().broadcastEntityEvent(this,(byte) 4);
@@ -121,7 +117,7 @@ public class GanchoEntity extends AbstractArrow {
             if(this.getOwner() instanceof Player player){
                 MultiArmCapability cap = MultiArmCapability.get(player);
                 if(cap!=null){
-                    MultiArmSkillAbstract skill = cap.getHotBarSkill().getForName("gancho_arm");
+                    Upgrade skill = cap.getHotBarSkill().getForName("gancho_arm");
                     if(skill instanceof GanchoArm arm){
                         arm.hasGancho=true;
                     }

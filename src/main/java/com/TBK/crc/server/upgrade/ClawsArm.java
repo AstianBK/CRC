@@ -1,21 +1,20 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
-import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ResidualEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-public class ClawsArm extends MultiArmSkillAbstract{
+public class ClawsArm extends Upgrade {
     public boolean dash = false;
     public boolean charge = false;
     public int dashTime = 0;
@@ -30,7 +29,7 @@ public class ClawsArm extends MultiArmSkillAbstract{
     }
 
     @Override
-    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+    public void swapArm(MultiArmCapability multiArmCapability, Upgrade otherArm) {
         this.charge = false;
         this.dash = false;
         this.dashTime = 0;
@@ -48,10 +47,12 @@ public class ClawsArm extends MultiArmSkillAbstract{
         if(this.dash){
             player.fallDistance = 0.0F;
             player.setDeltaMovement(player.getDeltaMovement().multiply(1.0F,0.89F,1.0F));
-            for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F), e->e!=player)){
-                living.invulnerableTime = 0;
-                living.hurt(player.damageSources().playerAttack(player),5.0F);
-                living.invulnerableTime = 0;
+            if(!player.level().isClientSide){
+                for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F), e->e!=player)){
+                    living.invulnerableTime = 0;
+                    living.hurt(Util.electricDamage((ServerLevel) player.level(),player),5.0F);
+                    living.invulnerableTime = 0;
+                }
             }
             if(this.dashTime > 0){
                 this.dashTime--;
@@ -85,6 +86,8 @@ public class ClawsArm extends MultiArmSkillAbstract{
             this.startCooldown(multiArmCapability);
             if(!this.charge){
                 multiArmCapability.pose = MultiArmCapability.SkillPose.CHARGE_CLAWS;
+                multiArmCapability.timeCharge = 10;
+                multiArmCapability.timeCharge0 = 10;
                 this.charge = true;
             }
         }
@@ -92,7 +95,12 @@ public class ClawsArm extends MultiArmSkillAbstract{
 
     @Override
     public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
-        event.setAmount(event.getAmount()+10.0F);
+        if(event.getSource().is(Util.ELECTRIC_DAMAGE_MOB) || event.getSource().is(Util.ELECTRIC_DAMAGE_PLAYER))return;
+
+        event.getEntity().invulnerableTime = 0;
+
+        event.getEntity().hurt(Util.electricDamage((ServerLevel) multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer()),10.0F * multiArmCapability.getPlayer().getAttackStrengthScale(0.5F));
+        event.setCanceled(true);
     }
 
 
@@ -104,7 +112,7 @@ public class ClawsArm extends MultiArmSkillAbstract{
 
     @Override
     public SoundEvent getStopSound() {
-        return super.getStopSound();
+        return BKSounds.MULTIARM_CLAW_DASH.get();
     }
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {

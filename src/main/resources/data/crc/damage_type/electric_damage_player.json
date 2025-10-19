@@ -1,0 +1,14 @@
+{
+  "exhaustion": 0.1,
+  "message_id": "player",
+  "scaling": "never",
+  "effects": {
+    "death_message_type": "default"
+  },
+  "damage_properties": {
+    "bypasses_armor": true,
+    "bypasses_magic": true,
+    "bypasses_invulnerability": false,
+    "bypasses_shield": true
+  }
+}

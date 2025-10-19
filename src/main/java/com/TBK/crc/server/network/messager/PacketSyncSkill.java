@@ -3,7 +3,7 @@ package com.TBK.crc.server.network.messager;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
+import com.TBK.crc.server.manager.UpgradeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -17,16 +17,16 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PacketSyncSkill implements Packet<PacketListener> {
-    private final Map<Integer, MultiArmSkillAbstractInstance> upgradesPassive;
+    private final Map<Integer, UpgradeInstance> upgradesPassive;
 
-    private final Map<Integer, MultiArmSkillAbstractInstance> upgrades;
+    private final Map<Integer, UpgradeInstance> upgrades;
 
 
     public PacketSyncSkill(FriendlyByteBuf buf) {
         this.upgrades = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
         this.upgradesPassive = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
     }
-    public PacketSyncSkill(Map<Integer, MultiArmSkillAbstractInstance> upgrade,Map<Integer, MultiArmSkillAbstractInstance> passives) {
+    public PacketSyncSkill(Map<Integer, UpgradeInstance> upgrade, Map<Integer, UpgradeInstance> passives) {
         this.upgrades = upgrade;
         this.upgradesPassive = passives;
     }
@@ -41,17 +41,17 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         return buffer.readInt();
     }
 
-    public static MultiArmSkillAbstractInstance readCoolDownInstance(FriendlyByteBuf buffer) {
+    public static UpgradeInstance readCoolDownInstance(FriendlyByteBuf buffer) {
         String name = buffer.readUtf();
-        return new MultiArmSkillAbstractInstance(Util.getTypeSkillForName(name), 0);
+        return new UpgradeInstance(Util.getTypeSkillForName(name), 0);
     }
 
     public static void writePowerId(FriendlyByteBuf buf, Integer powerId) {
         buf.writeInt(powerId);
     }
 
-    public static void writeCoolDownInstance(FriendlyByteBuf buf, MultiArmSkillAbstractInstance cooldownInstance) {
-        buf.writeUtf(cooldownInstance.getSkillAbstract().name);
+    public static void writeCoolDownInstance(FriendlyByteBuf buf, UpgradeInstance cooldownInstance) {
+        buf.writeUtf(cooldownInstance.getUpgrade().name);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -73,11 +73,11 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         passives.upgrades.clear();
 
         this.upgrades.forEach((k, v) -> {
-            upgrades.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
+            upgrades.addMultiArmSkillAbstracts(k,v.getUpgrade());
         });
 
         this.upgradesPassive.forEach((k, v) -> {
-            passives.addMultiArmSkillAbstracts(k,v.getSkillAbstract());
+            passives.addMultiArmSkillAbstracts(k,v.getUpgrade());
         });
         for(int i = 0 ; i < 6 ; i++){
             CRC.LOGGER.debug("skill :"+ cap.skills.get(i).name + " passive :"+cap.passives.get(i).name);

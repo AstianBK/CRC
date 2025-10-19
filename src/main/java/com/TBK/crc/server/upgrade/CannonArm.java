@@ -1,14 +1,17 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroProjectile;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class CannonArm extends MultiArmSkillAbstract{
+public class CannonArm extends Upgrade {
 
     public int stopAiming = 0;
     public int chargeTime = 0;
@@ -17,8 +20,9 @@ public class CannonArm extends MultiArmSkillAbstract{
         super("cannon_arm", 100, false, true);
     }
 
+
     @Override
-    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+    public void swapArm(MultiArmCapability multiArmCapability, Upgrade otherArm) {
         this.charge = false;
         this.chargeTime = 0;
         this.stopAiming = 0;
@@ -33,20 +37,29 @@ public class CannonArm extends MultiArmSkillAbstract{
 
         if(charge){
             Player player = multiArmCapability.getPlayer();
-            player.setDeltaMovement(player.getDeltaMovement().multiply(0.05F,1.0F,0.05F));
+            Level level = player.level();
             this.chargeTime++;
             this.stopAiming = 20;
             if(this.chargeTime<71){
                 if(multiArmCapability.levelCharge>0 && (this.chargeTime-10)%20==0){
                     multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
+                    level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
                 }
-                if(multiArmCapability.levelCharge==0 && this.chargeTime>10){
-                    multiArmCapability.levelCharge=1;
+
+                if(this.chargeTime>10){
+                    player.setDeltaMovement(player.getDeltaMovement().multiply(0.05F,1.0F,0.05F));
+                    if(multiArmCapability.levelCharge==0){
+                        level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
+                        multiArmCapability.levelCharge=1;
+                    }
                 }
             }
-            if(player.level().isClientSide){
-                Util.spawnChargedParticle(getPos(player.getEyePosition(),player));
+            if(multiArmCapability.levelCharge>0){
+                if(player.level().isClientSide){
+                    Util.spawnChargedParticle(getPos(player.getEyePosition(),player));
+                }
             }
+
         }else {
             if(this.stopAiming > 0 ){
                 this.stopAiming--;
@@ -60,22 +73,20 @@ public class CannonArm extends MultiArmSkillAbstract{
 
     }
 
-    @Override
-    public SoundEvent getStartSound() {
-        return super.getStartSound();
-    }
 
     @Override
     public SoundEvent getStopSound() {
-        return super.getStopSound();
+        return this.chargeTime>10 ? BKSounds.MULTIARM_CANNON_CHARGED_SHOT.get() : BKSounds.MULTIARM_CANNON_NORMAL_SHOT.get();
     }
 
 
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         super.startAbility(multiArmCapability);
-        multiArmCapability.pose =  MultiArmCapability.SkillPose.CHARGE_CANNON;
-        this.charge = true;
+        if(!this.charge){
+            multiArmCapability.pose =  MultiArmCapability.SkillPose.CHARGE_CANNON;
+            this.charge = true;
+        }
     }
 
 

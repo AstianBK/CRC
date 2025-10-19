@@ -2,7 +2,7 @@ package com.TBK.crc.common.item;
 
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.Util;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CyberImplantItem extends ItemCyborg{
-    public MultiArmSkillAbstract skill;
-    public CyberImplantItem(Properties p_41383_, UpgradeableParts part,MultiArmSkillAbstract skillAbstract) {
+    public Upgrade skill;
+    public CyberImplantItem(Properties p_41383_, UpgradeableParts part, Upgrade skillAbstract) {
         super(p_41383_, part,0);
         this.skill = skillAbstract;
     }
@@ -27,7 +27,7 @@ public class CyberImplantItem extends ItemCyborg{
     public void setTier(CompoundTag tag,int tier){
         tag.putInt("tier",tier);
     }
-    public static boolean canAddUpgrade(CompoundTag tag,MultiArmSkillAbstract upgrade){
+    public static boolean canAddUpgrade(CompoundTag tag, Upgrade upgrade){
         if(tag.contains("storeUpgrade")){
             ListTag list = tag.getList("storeUpgrade",10);
             if(!list.isEmpty()){
@@ -41,7 +41,7 @@ public class CyberImplantItem extends ItemCyborg{
         }
         return true;
     }
-    public static void addUpgrade(CompoundTag tag, MultiArmSkillAbstract upgrade){
+    public static void addUpgrade(CompoundTag tag, Upgrade upgrade){
         if(tag.contains("storeUpgrade")){
             ListTag list = tag.getList("storeUpgrade",10);
             if(!list.isEmpty()){
@@ -57,8 +57,8 @@ public class CyberImplantItem extends ItemCyborg{
             tag.put("storeUpgrade",list);
         }
     }
-    public static List<MultiArmSkillAbstract> getUpgrade(CyberImplantItem implantItem,CompoundTag tag){
-        List<MultiArmSkillAbstract> upgrades = new ArrayList<>();
+    public static List<Upgrade> getUpgrade(CyberImplantItem implantItem, CompoundTag tag){
+        List<Upgrade> upgrades = new ArrayList<>();
         if(!implantItem.skill.name.equals("none")){
             upgrades.add(Util.getTypeSkillForName(implantItem.skill.name));
         }
@@ -67,7 +67,7 @@ public class CyberImplantItem extends ItemCyborg{
             if(!list.isEmpty()){
                 for (int i = 0 ; i<list.size() ; i++){
                     CompoundTag nbt = list.getCompound(i);
-                    if(!nbt.getString("nameUpgrade").equals(MultiArmSkillAbstract.NONE.name)){
+                    if(!nbt.getString("nameUpgrade").equals(Upgrade.NONE.name)){
                         upgrades.add(Util.getTypeSkillForName(nbt.getString("nameUpgrade")));
                     }
                 }
@@ -78,11 +78,11 @@ public class CyberImplantItem extends ItemCyborg{
 
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-        List<MultiArmSkillAbstract> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
+        List<Upgrade> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
         upgrades.remove(this.skill);
         if(!upgrades.isEmpty()){
-            for (MultiArmSkillAbstract upgrade : upgrades){
-                if (upgrade==MultiArmSkillAbstract.NONE)continue;
+            for (Upgrade upgrade : upgrades){
+                if (upgrade== Upgrade.NONE)continue;
                 p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
             }
         }

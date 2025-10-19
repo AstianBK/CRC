@@ -1,6 +1,5 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.GanchoEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -9,8 +8,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-public class GanchoArm extends MultiArmSkillAbstract{
-    public static final int MAX_RANGE = 20;
+public class GanchoArm extends Upgrade {
+    public static final int MAX_RANGE = 22;
     public boolean hasGancho = true;
     public int ganchoId = -1;
     public float largoActual = 0.0F;
@@ -36,7 +35,7 @@ public class GanchoArm extends MultiArmSkillAbstract{
     }
 
     @Override
-    public void swapArm(MultiArmCapability multiArmCapability, MultiArmSkillAbstract otherArm) {
+    public void swapArm(MultiArmCapability multiArmCapability, Upgrade otherArm) {
         hasGancho = true;
         if(ganchoId!=-1){
             Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);

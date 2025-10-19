@@ -22,6 +22,7 @@ public class LightningTrailParticles extends TextureSheetParticle {
         this.setSpriteFromAge(spriteSet);
     }
 
+
     @Override
     public void tick() {
         this.xo = this.x;
@@ -47,7 +48,7 @@ public class LightningTrailParticles extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 
     }
 

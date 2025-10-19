@@ -4,13 +4,11 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.Upgrade;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +29,7 @@ public class MultiArmOverlay implements IGuiOverlay {
                 graphics.pose().pushPose();
 
                 if(cap.passives.hasMultiArmSkillAbstract("night_eye") || cap.passives.hasMultiArmSkillAbstract("hacker_eye") ){
-                    MultiArmSkillAbstract passive = cap.passives.get(1);
+                    Upgrade passive = cap.passives.get(1);
                     RenderSystem.disableDepthTest();
                     RenderSystem.depthMask(false);
                     RenderSystem.enableBlend();
@@ -63,11 +61,25 @@ public class MultiArmOverlay implements IGuiOverlay {
                 }
                 graphics.pose().pushPose();
                 if(cap.warningLevel>0){
-                    int i = width / 2 ;
-                    int j1 =  i;
+                    CRC.LOGGER.debug("Warning :" + cap.warningLevel);
+                    int i = width / 2 -140;
+                    int j1 =  i + 101;
                     int k1 = height ;
+                    float percent = cap.getAnimLevelWarning(partialTicks);
+                    RenderSystem.disableDepthTest();
+                    RenderSystem.depthMask(false);
+                    RenderSystem.enableBlend();
+                    RenderSystem.defaultBlendFunc();
+                    if(percent>0){
+                        graphics.pose().scale(1.5F - 0.5F*percent,1.5F - 0.5F*percent,1.5F - 0.5F*percent);
+                        graphics.setColor(1.0F, 1.0F, 1.0F, percent);
+                    }
                     ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
-                    graphics.blit(location, j1, k1 , 0,0,18, 18, 18, 18);
+                    graphics.blit(location, (int) (j1 + CRC.z), (int) (k1 -74 + CRC.z), 0,0,18, 18, 18, 18);
+                    RenderSystem.disableBlend();
+                    RenderSystem.depthMask(true);
+                    RenderSystem.enableDepthTest();
+                    RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
 
                 }
                 graphics.pose().popPose();
@@ -80,10 +92,10 @@ public class MultiArmOverlay implements IGuiOverlay {
 
                     if(cap.hotbarActive){
                         for(int i1 = 0; i1 < cap.skills.upgrades.size(); ++i1) {
-                            MultiArmSkillAbstract skillAbstract=cap.getHotBarSkill().get(i1);
+                            Upgrade skillAbstract=cap.getHotBarSkill().get(i1);
                             int j1 =  i + 101 + i1 * 20;
                             int k1 = height - 58;
-                            if(!skillAbstract.equals(MultiArmSkillAbstract.NONE)){
+                            if(!skillAbstract.equals(Upgrade.NONE)){
                                 graphics.pose().pushPose();
                                 graphics.blit(getIconsForSkill(skillAbstract), j1, k1 , 0,0,16, 16, 16, 16);
                                 graphics.pose().popPose();
@@ -103,7 +115,7 @@ public class MultiArmOverlay implements IGuiOverlay {
         }
     }
 
-    private ResourceLocation getIconsForSkill(MultiArmSkillAbstract skillAbstract) {
+    private ResourceLocation getIconsForSkill(Upgrade skillAbstract) {
         return new ResourceLocation(CRC.MODID,"textures/gui/skill/"+skillAbstract.name+"_icon.png");
     }
 }

@@ -1,23 +1,10 @@
 package com.TBK.crc.server.network.messager;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
-import com.TBK.crc.common.menu.CyborgTableMenu;
-import com.TBK.crc.common.screen.CyborgTableScreen;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.TBK.crc.server.multiarm.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 

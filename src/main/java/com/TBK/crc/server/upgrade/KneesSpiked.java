@@ -1,11 +1,9 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import java.util.ArrayList;
 import java.util.List;

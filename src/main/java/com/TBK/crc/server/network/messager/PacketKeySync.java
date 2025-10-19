@@ -1,9 +1,8 @@
 package com.TBK.crc.server.network.messager;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.ImplantMenu;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
@@ -65,10 +64,10 @@ public class PacketKeySync implements Packet<PacketListener>{
                 }
             }
             case 0x12->{
-                MultiArmSkillAbstract skill = cap.getSelectSkill();
+                Upgrade skill = cap.getSelectSkill();
                 cap.stopCasting(player);
                 skill.swapArm(cap, cap.getSkillForHotBar(this.action));
-                cap.setPosSelectMultiArmSkillAbstract(this.action);
+                cap.setPosSelectUpgrade(this.action);
                 cap.getSelectSkill().swapArm(cap,skill);
             }
             case 86->{

@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -18,16 +19,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
+import net.minecraftforge.entity.PartEntity;
 
 import java.util.List;
 
 public class ElectroProjectile extends AbstractArrow {
     private static final EntityDataAccessor<Integer> RECHARGE = SynchedEntityData.defineId(ElectroProjectile.class,EntityDataSerializers.INT);
+    private int life = 0;
     public ElectroProjectile(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
         super(p_36721_, p_36722_);
     }
@@ -41,15 +42,63 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     public void tick() {
-        if (!this.level().isClientSide()) {
-            HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (result.getType() == HitResult.Type.MISS && this.isAlive()) {
-                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()), this::canHitEntity);
-                if (!intersecting.isEmpty())
-                    this.onHit(new EntityHitResult(intersecting.get(0)));
+
+        if(this.life++>300){
+            this.discard();
+        }
+        Vec3 vec32 = this.position();
+        Vec3 vec33 = vec32.add(this.getDeltaMovement());
+        HitResult hitresult = this.level().clip(new ClipContext(vec32, vec33, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        if (hitresult.getType() != HitResult.Type.MISS) {
+            vec33 = hitresult.getLocation();
+        }
+
+        while(!this.isRemoved()) {
+            EntityHitResult entityhitresult = this.findHitEntity(vec32, vec33);
+            if (entityhitresult != null) {
+                hitresult = entityhitresult;
             }
+
+            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
+                Entity entity = ((EntityHitResult)hitresult).getEntity();
+                Entity entity1 = this.getOwner();
+                if (entity instanceof Player && entity1 instanceof Player && !((Player)entity1).canHarmPlayer((Player)entity)) {
+                    hitresult = null;
+                    entityhitresult = null;
+                }
+            }
+
+            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS) {
+                switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
+                    case SKIP_ENTITY:
+                        if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
+                            this.onHit(hitresult);
+                            this.hasImpulse = true;
+                            break;
+                        }
+                        entityhitresult = null;
+                        break;
+                    case STOP_AT_CURRENT_NO_DAMAGE:
+                        this.discard();
+                        entityhitresult = null;
+                        break;
+                    case STOP_AT_CURRENT:
+                        this.setPierceLevel((byte) 0);
+                    case DEFAULT:
+                        this.onHit(hitresult);
+                        this.hasImpulse = true;
+                        break;
+                }
+            }
+
+            if (entityhitresult == null || this.getPierceLevel() <= 0) {
+                break;
+            }
+
+            hitresult = null;
         }
         this.refreshDimensions();
+
         Vec3 vec3;
         vec3 = this.getDeltaMovement();
         double d5 = vec3.x;
@@ -81,6 +130,11 @@ public class ElectroProjectile extends AbstractArrow {
         return false;
     }
 
+    @Override
+    protected void onHitBlock(BlockHitResult p_36755_) {
+
+    }
+
     public float getScale(){
         return (1.0F+(this.getTimeRecharge()/30.0F));
     }
@@ -105,19 +159,26 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult p_36757_) {
-        if(p_36757_.getEntity() instanceof LivingEntity livingEntity){
-            int time = this.getTimeRecharge();
-            p_36757_.getEntity().hurt(damageSources().generic(), (float) this.getBaseDamage());
-            if(time>=50 && !this.level().isClientSide){
+        int time = this.getTimeRecharge();
+        if(!this.level().isClientSide){
+            if(this.getOwner() instanceof Player player){
+                p_36757_.getEntity().hurt(Util.electricDamage((ServerLevel) level(),player), (float) this.getBaseDamage());
+            }else if(this.getOwner() instanceof Mob mob){
+                p_36757_.getEntity().hurt(Util.electricDamageMob((ServerLevel) level(),mob), (float) this.getBaseDamage());
+            }else {
+                p_36757_.getEntity().hurt(damageSources().generic(),(float) this.getBaseDamage());
+            }
+            if(time>=50){
                 float maxCharge = ((float) time-50.0F) / 20.0F;
-                BlockPos end = livingEntity.blockPosition();
+                BlockPos end = p_36757_.getEntity().blockPosition();
                 if(!this.level().isClientSide){
                     Util.createExplosion(this,this.level(),end,1.0F + 4.0F * maxCharge);
                     this.level().broadcastEntityEvent(this,(byte) 4);
                 }
             }
-            this.discard();
         }
+
+        this.discard();
     }
 
     @Override

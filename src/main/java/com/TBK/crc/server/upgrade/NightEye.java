@@ -1,4 +1,4 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.core.BlockPos;
@@ -7,7 +7,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Block;
 
 public class NightEye extends PassivePart{
     public NightEye() {

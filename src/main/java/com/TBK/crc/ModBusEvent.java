@@ -1,43 +1,40 @@
 package com.TBK.crc;
 
 import com.TBK.crc.client.model.MultiArmModel;
-import com.TBK.crc.common.ForgeInputEvent;
 import com.TBK.crc.common.Util;
-import com.TBK.crc.common.block.CyborgTableBlock;
 import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.common.registry.BKDimension;
+import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.manager.MultiArmSkillAbstractInstance;
-import com.TBK.crc.server.multiarm.PassivePart;
+import com.TBK.crc.server.manager.UpgradeInstance;
+import com.TBK.crc.server.network.PacketHandler;
+import com.TBK.crc.server.network.messager.PacketSyncPlayerData;
+import com.TBK.crc.server.upgrade.PassivePart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
-import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -45,16 +42,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.*;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-
-import java.util.Optional;
 
 @Mod.EventBusSubscriber()
 public class ModBusEvent {
@@ -115,13 +107,16 @@ public class ModBusEvent {
                     " YQ :" + CRC.yq + " ZQ :"+CRC.zq);
         }
 
-        if (event.getItemStack().is(Items.PRISMARINE_SHARD)){
-            MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
-            if (cap!=null){
-                cap.clearAbilityStore();
-                cap.clearForUpgradeStore();
-                cap.implantStore.store.clearContent();
-                cap.dirty = true;
+        if(!event.getLevel().isClientSide){
+            if(event.getItemStack().is(BKItems.SIGNAL_JAMMER.get())){
+                MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
+                if (cap!=null){
+                    cap.chickenEnemy = false;
+                    cap.warningLevel = 0;
+                    CompoundTag tag = new CompoundTag();
+                    tag.putInt("warningLevel",0);
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(tag,false), (ServerPlayer) event.getEntity());
+                }
             }
         }
     }
@@ -248,6 +243,8 @@ public class ModBusEvent {
                 MultiArmCapability cap = MultiArmCapability.get(player);
                 if(cap!=null){
                     cap.chickenEnemy=true;
+                    cap.timeLevelWarning = 20;
+                    cap.timeLevelWarning0 = 20;
                 }
             }
         }
@@ -255,8 +252,8 @@ public class ModBusEvent {
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null){
                 boolean flag = false;
-                for (MultiArmSkillAbstractInstance instance : cap.getPassives().getSkills()){
-                    if(instance.getSkillAbstract() instanceof PassivePart passive){
+                for (UpgradeInstance instance : cap.getPassives().getSkills()){
+                    if(instance.getUpgrade() instanceof PassivePart passive){
                         flag = flag || passive.onDie(cap,event.getSource().getEntity());
                     }
                 }
@@ -357,7 +354,7 @@ public class ModBusEvent {
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null){
                 cap.passives.upgrades.forEach((i,passive)->{
-                    passive.getSkillAbstract().onHurt(cap, event);
+                    passive.getUpgrade().onHurt(cap, event);
                 });
             }
         }
@@ -365,7 +362,7 @@ public class ModBusEvent {
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null){
                 cap.passives.upgrades.forEach((i,passive)->{
-                    passive.getSkillAbstract().onAttack(cap,event);
+                    passive.getUpgrade().onAttack(cap,event);
                 });
                 if(cap.getSelectSkill().name.equals("claws_arm") && player.getMainHandItem().isEmpty()){
                     cap.getSelectSkill().onAttack(cap,event);

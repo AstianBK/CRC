@@ -1,13 +1,13 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 
-public class RabbitFeet extends PassivePart{
-    public RabbitFeet() {
-        super("rabbit_feet", false);
+public class CoilFeet extends PassivePart{
+    public CoilFeet() {
+        super("coil_feet", false);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class BKSounds {
     //BLOCKS
 
     public static final RegistryObject<SoundEvent> CYBORG_TABLE_IMPLANT =
-            registerSoundEvent("heart_reflex");
+            registerSoundEvent("cyborg_table_implant");
 
 
 

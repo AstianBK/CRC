@@ -1,19 +1,13 @@
 package com.TBK.crc.server.manager;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.CyberImplantItem;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
-import com.TBK.crc.server.network.PacketHandler;
-import com.TBK.crc.server.network.messager.PacketAddImplant;
-import com.TBK.crc.server.network.messager.PacketHandlerPowers;
+import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +51,7 @@ public class ImplantStore{
 
         return listtag;
     }
-    public void setImplant(Level level, ItemStack implant, UpgradeableParts type){
-        int index = getSlotForType(type);
-        if(index!=-1){
-            this.store.setItem(index,implant);
 
-        }
-    }
     public void setImplant(ItemStack implant, int index){
         if(index!=-1){
             this.store.setItem(index,implant);
@@ -80,11 +68,11 @@ public class ImplantStore{
         }
         return list;
     }
-    public ItemStack getImplantForSkill(MultiArmSkillAbstract skill){
+    public ItemStack getImplantForSkill(Upgrade skill){
         return getItems().stream().filter(e->e.getItem() instanceof CyberImplantItem item && (item.skill.name.equals(skill.name) || CyberImplantItem.getUpgrade(item,e.getOrCreateTag()).contains(skill))).findFirst().orElse(null);
     }
 
-    public ItemStack getArmForSkill(MultiArmSkillAbstract skill){
+    public ItemStack getArmForSkill(Upgrade skill){
         return getImplant(0).getItem() instanceof CyberImplantItem implantItem && CyberImplantItem.getUpgrade(implantItem,getImplant(0).getOrCreateTag()).stream().anyMatch(e->e.name.equals(skill.name)) ? getImplant(0) : null;
     }
     public void setStoreForList(List<ItemStack> list){

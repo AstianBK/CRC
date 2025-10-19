@@ -1,4 +1,4 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;

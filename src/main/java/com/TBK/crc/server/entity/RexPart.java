@@ -3,6 +3,7 @@ package com.TBK.crc.server.entity;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketActionRex;
 import net.minecraft.core.BlockPos;
@@ -62,20 +63,21 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
 
     @Override
     public void tick() {
-
         if(!this.level().isClientSide){
             if(this.isTower && this.parentMob.getTarget()!=null && !this.isBreaking()){
-                if(this.prepareShootTimer>0){
-                    this.prepareShootTimer--;
-                    if(this.prepareShootTimer<=0){
-                        this.shoot();
-                        this.launchBoomChicken(this.parentMob.getTarget(),this.parentMob.getTarget().blockPosition());
+                if(this.level().getEntitiesOfClass(BoomChicken.class,this.parentMob.getBoundingBox().inflate(100.0F)).size()<6){
+                    if(this.prepareShootTimer>0){
+                        this.prepareShootTimer--;
+                        if(this.prepareShootTimer<=0){
+                            this.shoot();
+                            this.launchBoomChicken(this.parentMob.getTarget(),this.parentMob.getTarget().blockPosition());
+                        }
                     }
-                }
-                if(this.nextShootTimer<=this.maxTimer){
-                    this.nextShootTimer++;
-                    if(this.nextShootTimer>this.maxTimer){
-                        this.startShoot();
+                    if(this.nextShootTimer<=this.maxTimer){
+                        this.nextShootTimer++;
+                        if(this.nextShootTimer>this.maxTimer){
+                            this.startShoot();
+                        }
                     }
                 }
             }
@@ -117,7 +119,6 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
 
 
 
-
     public boolean hurt(DamageSource p_31020_, float p_31021_) {
         if(!this.parentMob.isPowered()){
             if(this.isTower){
@@ -125,8 +126,14 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
                 if(this.hits<=0){
                     this.destroy();
                 }
-            }else if(this.parentMob.stunnedTick>0){
-                this.parentMob.setHealth(this.parentMob.getHealth()-20.0F);
+            }else if(this.parentMob.stunnedTick>0 && this.name.equals("head")){
+                float healtCurrent = this.parentMob.getHealth()-20.0F;
+                if(healtCurrent<=0){
+                    this.parentMob.setHealth(0.0F);
+                    this.parentMob.die(p_31020_);
+                }else {
+                    this.parentMob.setHealth(healtCurrent);
+                }
                 this.parentMob.regenerationShieldTimer=0;
                 this.parentMob.setShieldAmount(50);
                 this.parentMob.stunnedTick = 0;
@@ -135,15 +142,16 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
                     this.parentMob.level().broadcastEntityEvent(this,(byte) 17);
                     this.callReinforcement(p_31020_.getEntity());
                 }
+                return true;
             }
         }
-        return !this.parentMob.isPowered();
+        return this.parentMob.hurt(p_31020_,p_31021_);
     }
 
     public void callReinforcement(Entity entity){
         if (entity instanceof LivingEntity target){
             for (int i = 0 ; i<3 ; i++){
-                TeleportEntity teleport = new TeleportEntity(this.level(), BKEntityType.DRONE_CHICKEN.get(), Util.findRandomSurfaceNear(entity,3,this.random),target,true);
+                TeleportEntity teleport = new TeleportEntity(this.level(), BKEntityType.DRONE_CHICKEN.get(), Util.findCaveSurfaceNearHeight(entity,3,this.random),target,true);
                 this.level().addFreshEntity(teleport);
             }
         }
@@ -176,6 +184,9 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
     }
     public void destroy(){
         if(!this.level().isClientSide){
+            this.setBreaking(true);
+            this.parentMob.stunnedTick=100;
+            this.parentMob.level().broadcastEntityEvent(this,(byte) 12);
             PacketHandler.sendToAllTracking(new PacketActionRex(this.parentMob.getId(),this.getId(),12),this.parentMob);
         }
     }
@@ -202,6 +213,8 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
         if(p_19882_==4){
             this.prepareShoot.stop();
             this.towerShoot.start(this.parentMob.tickCount);
+            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), BKSounds.REX_CANNON_SHOOT.get(), SoundSource.HOSTILE,1.0F,1.0F,false);
+
         }else if(p_19882_==8){
             this.towerShoot.stop();
             this.prepareShoot.start(this.parentMob.tickCount);

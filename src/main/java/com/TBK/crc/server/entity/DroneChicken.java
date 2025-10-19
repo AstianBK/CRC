@@ -204,31 +204,53 @@ public class DroneChicken extends RobotChicken {
                 this.circlingAngle += this.rot ? 0.05F : -0.05F;
 
                 Vec3 direction;
-                if(!this.meleeAttack){
+                if (!this.meleeAttack) {
                     double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
                     double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
                     double heightOffset = this.minAltitude + 2.0D;
                     this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
-                    direction = this.circlingPosition.subtract(this.drone.position()).normalize();
-                    this.drone.setDeltaMovement(direction.scale(this.speed));
+
+                    // Dirección deseada hacia la posición de círculo
+                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(this.speed);
+
+                    // Movimiento actual
+                    Vec3 currentMotion = this.drone.getDeltaMovement();
+
+                    // Interpolación (lerp): mezcla entre movimiento actual y el nuevo, suaviza el cambio
+                    double smoothFactor = 0.1D; // cuanto más bajo, más suave (0.05-0.2 suele ir bien)
+                    Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
+
+                    this.drone.setDeltaMovement(smoothedMotion);
                 }
+
                 this.rotateTowardsTarget(target);
-                if (this.attackCooldown>=20 && !this.meleeAttack && distanceToTarget<64.0F) {
-                    ElectroProjectile electro = new ElectroProjectile(this.world,this.drone,0);
+
+                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 64.0F) {
+                    ElectroProjectile electro = new ElectroProjectile(this.world, this.drone, 0);
                     electro.setPos(this.drone.position());
-                    electro.shoot(target.getX()-drone.getX(), target.getY()+target.getBbWidth()/2-drone.getY(), target.getZ()-drone.getZ(), 1.0F, 0.1F);
-                    //this.drone.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.drone.getRandom().nextFloat() * 0.4F + 0.8F));
+                    electro.shoot(
+                            target.getX() - drone.getX(),
+                            target.getY() + target.getBbWidth() / 2 - drone.getY(),
+                            target.getZ() - drone.getZ(),
+                            1.0F, 0.1F
+                    );
                     this.world.addFreshEntity(electro);
-                    this.attackCooldown=0;
+                    this.attackCooldown = 0;
                 } else {
-                    if(this.meleeAttack){
-                        this.drone.setDeltaMovement(target.position().subtract(this.drone.position()).normalize().scale(0.5F));
-                        if(distanceToTarget<9.0F){
+                    if (this.meleeAttack) {
+                        // suavizado también para el movimiento cuerpo a cuerpo
+                        Vec3 desiredMotion = target.position().subtract(this.drone.position()).normalize().scale(0.5F);
+                        Vec3 currentMotion = this.drone.getDeltaMovement();
+                        Vec3 smoothedMotion = currentMotion.add(desiredMotion.subtract(currentMotion).scale(0.3D));
+                        this.drone.setDeltaMovement(smoothedMotion);
+
+                        if (distanceToTarget < 9.0F) {
                             this.drone.doHurtTarget(target);
                         }
                     }
                 }
-                this.attackCooldown=Math.min(this.attackCooldown+1,20);
+
+                this.attackCooldown = Math.min(this.attackCooldown + 1, 20);
             }
 
         }

@@ -1,6 +1,7 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class TeleportEntity extends Entity {
@@ -84,6 +86,12 @@ public class TeleportEntity extends Entity {
                 ((Mob) entity).setTarget(this.target);
             }
             this.level().addFreshEntity(entity);
+            if(this.target instanceof Player player && entity instanceof BoomChicken){
+                MultiArmCapability cap = MultiArmCapability.get(player);
+                if (cap!=null){
+                    cap.chickens.add((BoomChicken) entity);
+                }
+            }
         }
     }
 

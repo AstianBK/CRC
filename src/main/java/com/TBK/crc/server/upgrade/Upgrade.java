@@ -1,36 +1,34 @@
-package com.TBK.crc.server.multiarm;
+package com.TBK.crc.server.upgrade;
 
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-public class MultiArmSkillAbstract {
-    public static MultiArmSkillAbstract NONE = new MultiArmSkillAbstract("none",30,false, false);
+public class Upgrade {
+    public static Upgrade NONE = new Upgrade("none",30,false, false);
     public final String name;
     public final int cd;
     public boolean canReactive;
     public boolean isCasting;
-    public MultiArmSkillAbstract(String name , int cd,boolean canReactive,boolean isCasting){
+    public Upgrade(String name , int cd, boolean canReactive, boolean isCasting){
         this.name = name;
         this.cd = cd;
         this.canReactive=canReactive;
         this.isCasting = isCasting;
     }
-    public MultiArmSkillAbstract(CompoundTag tag){
+    public Upgrade(CompoundTag tag){
         this.name = tag.getString("name");
         this.cd = tag.getInt("cd");
         this.canReactive = tag.getBoolean("canReactive");
         this.isCasting = tag.getBoolean("isCasting");
         this.load(tag);
     }
-    public MultiArmSkillAbstract(FriendlyByteBuf buf){
+    public Upgrade(FriendlyByteBuf buf){
         this.name = buf.readUtf();
         this.cd = buf.readInt();
         this.canReactive = buf.readBoolean();
@@ -60,7 +58,7 @@ public class MultiArmSkillAbstract {
     }
     public void stopAbility(MultiArmCapability multiArmCapability){
         if(multiArmCapability.getPlayer().level().isClientSide && getStopSound() != null){
-            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS,10.0f,1.0f,false);
+            multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS,5.0f,1.0f,false);
         }
     }
 
@@ -95,7 +93,7 @@ public class MultiArmSkillAbstract {
         return true;
     }
 
-    public void swapArm(MultiArmCapability multiArmCapability,MultiArmSkillAbstract otherArm){
+    public void swapArm(MultiArmCapability multiArmCapability, Upgrade otherArm){
 
     }
 
@@ -107,8 +105,4 @@ public class MultiArmSkillAbstract {
 
     }
 
-    public boolean canInteractionOnWorld(MultiArmCapability cap) {
-
-        return true;
-    }
 }

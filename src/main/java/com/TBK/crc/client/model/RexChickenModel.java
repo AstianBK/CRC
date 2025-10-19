@@ -564,6 +564,7 @@ public class RexChickenModel<T extends RexChicken> extends HierarchicalModel<T> 
 		this.animate(entity.prepareCharge,RexChickenAnim.startcharge,ageInTicks,1.0F);
 		this.animate(entity.death,RexChickenAnim.deathstart,ageInTicks,1.0F);
 		this.animate(entity.idleDeath,RexChickenAnim.deathidle,ageInTicks,1.0F);
+		this.animate(entity.recovery,RexChickenAnim.recover,ageInTicks,1.0F);
 		int i = 0;
 		this.ChickLauncher.getAllParts().forEach(ModelPart::resetPose);
 		this.ChickLauncher2.getAllParts().forEach(ModelPart::resetPose);

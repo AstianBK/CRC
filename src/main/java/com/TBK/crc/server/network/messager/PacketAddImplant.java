@@ -2,10 +2,9 @@ package com.TBK.crc.server.network.messager;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
-import com.TBK.crc.common.Util;
 import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.server.capability.MultiArmCapability;
-import com.TBK.crc.server.multiarm.MultiArmSkillAbstract;
+import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -43,12 +42,12 @@ public class PacketAddImplant implements Packet<PacketListener> {
 
                 if(this.stack.getItem() instanceof CyberImplantItem implant){
                     if(implant.typePart == UpgradeableParts.ARM){
-                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                        for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
                             cap.addNewAbility(upgrade);
                             CRC.LOGGER.debug("Se agrego una abilidad nueva");
                         }
                     }else {
-                        for (MultiArmSkillAbstract upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                        for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
                             CRC.LOGGER.debug("Se agrego una pasiva nueva");
                             cap.addNewPassive(upgrade,index);
                         }
