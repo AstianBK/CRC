@@ -27,10 +27,10 @@ public class PunchChicken extends PathfinderMob {
     }
     public static AttributeSupplier setAttributes() {
         return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0D)
-                .add(Attributes.FOLLOW_RANGE, 45.D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3d)
-                .add(Attributes.ATTACK_DAMAGE,12.0D)
+                .add(Attributes.MAX_HEALTH, 30.0D)
+                .add(Attributes.FOLLOW_RANGE, 55.D)
+                .add(Attributes.MOVEMENT_SPEED, 0.28d)
+                .add(Attributes.ATTACK_DAMAGE,15.0D)
                 .build();
 
     }
