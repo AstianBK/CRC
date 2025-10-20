@@ -31,13 +31,20 @@
   "upgrades.claws_arm": "Upgrade: Electric Claws",
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
   "upgrades.gancho_arm": "Upgrade: Harpoon",
-  "upgrades.none": "NONE",
+
+  "upgrades.none": "MULTI-ARM DESCRIPTION",
+  "upgrades.night_eye": "NIGHT EYE DESCRIPTION",
+  "upgrades.hacker_eye": "HACKER EYE DESCRIPTION",
+  "upgrades.hearth_reflex": "HEART DESCRIPTION",
+
+
+  "tooltip.cyber_implant": "Cyber-Implant",
+  "tooltip.cyber_component": "Cyber-Component",
 
   "entity.crc.rex_chicken": "Cyber Chicken",
   "crc.cyborg_table.bottom_implant": "IMPLANT",
   "crc.portal.bottom_accept": "Accept",
-  "crc.portal.bottom_cancel": "Cancel",
-  "tooltip.cyber_implant": "Implant"
+  "crc.portal.bottom_cancel": "Cancel"
 }
 
 
