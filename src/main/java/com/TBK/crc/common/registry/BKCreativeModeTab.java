@@ -33,11 +33,11 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CLAWS.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_CANNON.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_ARM_GANCHO.get()));
-                a.accept(new ItemStack(BKItems.UPGRADE_SYSTEM_HEART.get()));
-                a.accept(new ItemStack(BKItems.UPGRADE_SYSTEM_THORACIC_CAGE.get()));
-                a.accept(new ItemStack(BKItems.UPGRADE_LEGS_COIL_FEET.get()));
-                a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES.get()));
-                a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES_SPIKED.get()));
+                // a.accept(new ItemStack(BKItems.UPGRADE_SYSTEM_HEART.get()));
+                // a.accept(new ItemStack(BKItems.UPGRADE_SYSTEM_THORACIC_CAGE.get()));
+                //a.accept(new ItemStack(BKItems.UPGRADE_LEGS_COIL_FEET.get()));
+                //a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES.get()));
+                //a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES_SPIKED.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_JETSTREAM.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_MILITARY.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_CYBORG.get()));
