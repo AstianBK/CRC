@@ -93,7 +93,7 @@ public class Util {
                 double xp = entity.x + d0;
                 double yp = entity.y + d1;
                 double zp = entity.z + d2;
-                Particle particle = mc.particleEngine.createParticle(BKParticles.LIGHTNING_TRAIL_PARTICLES.get(),xp,yp,zp,-d0*0.1F,-d1*0.1F,-d2*0.1F);
+                Particle particle = mc.particleEngine.createParticle(BKParticles.LIGHTNING_SPARK_PARTICLES.get(),xp,yp,zp,-d0*0.1F,-d1*0.1F,-d2*0.1F);
                 if(particle !=null){
                     particle.scale(0.5F);
                 }

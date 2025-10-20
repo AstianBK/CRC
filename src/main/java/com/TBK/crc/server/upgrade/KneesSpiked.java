@@ -28,10 +28,10 @@ public class KneesSpiked extends PassivePart{
     public void tick(MultiArmCapability multiArmCapability) {
         Player player = multiArmCapability.getPlayer();
         if(!player.onGround() && player.getDeltaMovement().y>0){
-            for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F),e->e!=player)){
+            for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.0F),e->e!=player)){
                 if(!hurtEntities.contains(living)){
                     living.invulnerableTime = 0;
-                    living.hurt(player.damageSources().playerAttack(player),5.0F);
+                    living.hurt(player.damageSources().playerAttack(player),2.0F);
                     living.invulnerableTime = 0;
                     hurtEntities.add(living);
                 }
