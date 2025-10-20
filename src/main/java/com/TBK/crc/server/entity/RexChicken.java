@@ -879,7 +879,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         @Override
         public boolean canUse() {
-            return super.canUse() && RexChicken.this.recoveryTimer>0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
+            return super.canUse() && RexChicken.this.recoveryTimer<=0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
         }
 
         @Override

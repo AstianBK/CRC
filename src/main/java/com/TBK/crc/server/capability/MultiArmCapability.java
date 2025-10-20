@@ -3,6 +3,7 @@ package com.TBK.crc.server.capability;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.entity.TeleportEntity;
 import com.TBK.crc.server.manager.*;
 import com.TBK.crc.server.upgrade.*;
@@ -11,6 +12,7 @@ import com.TBK.crc.server.network.messager.*;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
@@ -44,6 +46,10 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public Entity catchEntity = null;
     public int timeLevelWarning = 0;
     public int timeLevelWarning0 = 0;
+    public int chickenAnimTime = 0;
+    public int chickenAnimTime0 = 0;
+    public boolean chickenSpoke = false;
+    public boolean playChickenWarning = false;
     public int timeShoot = 0;
     public int timeShoot0 = 0;
     public int timeCharge = 0;
@@ -87,7 +93,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimLevelWarning(float partialTick){
-        return 1.0F - Mth.lerp(partialTick,this.timeLevelWarning,this.timeLevelWarning0) / 20.0F;
+        return Mth.lerp(partialTick,this.timeLevelWarning0,this.timeLevelWarning) / 20.0F;
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimShoot(float partialTick){
@@ -100,6 +106,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
     @OnlyIn(Dist.CLIENT)
     public float getStopAiming(float partialTick){
         return Mth.lerp(partialTick,this.stopAimingAnim0,this.stopAimingAnim) / 5.0F;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public float getChickenTalkAnim(float partialTick){
+        return Mth.lerp(partialTick,this.chickenAnimTime0,this.chickenAnimTime) / 20.0F;
     }
     @OnlyIn(Dist.CLIENT)
     @Override
@@ -128,6 +139,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.wave = tag.getInt("wave");
         this.timeLevelWarning = tag.getInt("timeLevelWarning");
         this.timeLevelWarning0 = tag.getInt("timeLevelWarning");
+        this.playChickenWarning = tag.getBoolean("playAnim");
     }
     public void copyFrom(MultiArmCapability cap){
         this.skills = cap.skills;
@@ -141,6 +153,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         tag.putInt("warningLevel",this.warningLevel);
         tag.putInt("wave",this.wave);
         tag.putInt("timeLevelWarning",this.timeLevelWarning);
+        tag.putBoolean("playAnim",this.playChickenWarning);
         return tag;
     }
     @Override
@@ -173,6 +186,42 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.invokeTimer--;
             }
         }
+
+        if(this.level.isClientSide){
+            this.timeLevelWarning0 = this.timeLevelWarning;
+            this.chickenAnimTime0 = this.chickenAnimTime;
+            if(this.playChickenWarning){
+                if(this.chickenAnimTime<=0){
+                    if(this.chickenSpoke){
+                        if(this.timeLevelWarning>0){
+                            this.timeLevelWarning--;
+                            if(this.timeLevelWarning == 0){
+                                this.playChickenWarning = false;
+                                this.chickenSpoke = false;
+                            }
+                        }
+                    }else {
+                        if(this.timeLevelWarning<20){
+                            this.timeLevelWarning++;
+                            if(this.timeLevelWarning==20){
+                                this.chickenAnimTime = 20;
+                                this.chickenAnimTime0 = 20;
+                                this.level.playLocalSound(player.blockPosition().above(1), BKSounds.CHICKEN_CYBORG_SPEECH.get(), SoundSource.AMBIENT,10.0F,1.0F,false);
+                            }
+                        }
+                    }
+                }else {
+                    this.chickenAnimTime--;
+                    if(this.chickenAnimTime==10){
+                        this.level.playLocalSound(player.blockPosition().above(1), BKSounds.CHICKEN_CYBORG_SPEECH.get(), SoundSource.AMBIENT,10.0F,1.0F,false);
+                    }
+                    if(this.chickenAnimTime == 0){
+                        this.chickenSpoke = true;
+                    }
+                }
+            }
+        }
+
         if(player instanceof ServerPlayer){
             if(this.dirty){
                 PacketHandler.sendToPlayer(new PacketSyncImplant(player.getId(),this.implantStore.store), (ServerPlayer) player);
@@ -187,6 +236,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 passive.getUpgrade().tick(this);
             });
         }
+
+
         if(Util.hasMultiArm(this)){
 
             if(!this.skills.getSkills().isEmpty()){
@@ -207,13 +258,10 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
             if(this.level.isClientSide){
                 this.timeShoot0 = this.timeShoot;
-                this.timeLevelWarning0 = this.timeLevelWarning;
                 if(this.timeShoot>0){
                     this.timeShoot--;
                 }
-                if(this.timeLevelWarning>0){
-                    this.timeLevelWarning--;
-                }
+
                 if(this.pose == SkillPose.CHARGE_CLAWS){
                     if(this.timeCharge>0){
                         this.timeCharge--;

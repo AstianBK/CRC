@@ -46,57 +46,15 @@ public class ElectroProjectile extends AbstractArrow {
         if(this.life++>300){
             this.discard();
         }
-        Vec3 vec32 = this.position();
-        Vec3 vec33 = vec32.add(this.getDeltaMovement());
-        HitResult hitresult = this.level().clip(new ClipContext(vec32, vec33, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-        if (hitresult.getType() != HitResult.Type.MISS) {
-            vec33 = hitresult.getLocation();
+        if (!this.level().isClientSide()) {
+            HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+            if (result.getType() == HitResult.Type.MISS && this.isAlive()) {
+                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()), this::canHitEntity);
+                if (!intersecting.isEmpty())
+                    this.onHit(new EntityHitResult(intersecting.get(0)));
+            }
         }
 
-        while(!this.isRemoved()) {
-            EntityHitResult entityhitresult = this.findHitEntity(vec32, vec33);
-            if (entityhitresult != null) {
-                hitresult = entityhitresult;
-            }
-
-            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
-                Entity entity = ((EntityHitResult)hitresult).getEntity();
-                Entity entity1 = this.getOwner();
-                if (entity instanceof Player && entity1 instanceof Player && !((Player)entity1).canHarmPlayer((Player)entity)) {
-                    hitresult = null;
-                    entityhitresult = null;
-                }
-            }
-
-            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS) {
-                switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
-                    case SKIP_ENTITY:
-                        if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
-                            this.onHit(hitresult);
-                            this.hasImpulse = true;
-                            break;
-                        }
-                        entityhitresult = null;
-                        break;
-                    case STOP_AT_CURRENT_NO_DAMAGE:
-                        this.discard();
-                        entityhitresult = null;
-                        break;
-                    case STOP_AT_CURRENT:
-                        this.setPierceLevel((byte) 0);
-                    case DEFAULT:
-                        this.onHit(hitresult);
-                        this.hasImpulse = true;
-                        break;
-                }
-            }
-
-            if (entityhitresult == null || this.getPierceLevel() <= 0) {
-                break;
-            }
-
-            hitresult = null;
-        }
         this.refreshDimensions();
 
         Vec3 vec3;
@@ -193,7 +151,7 @@ public class ElectroProjectile extends AbstractArrow {
             for (int i = 0 ; i<3 ; i++){
                 this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
             }
-            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,true);
+            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,10.0F,1.0f,true);
 
         }
         super.handleEntityEvent(p_19882_);

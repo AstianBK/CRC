@@ -77,7 +77,7 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
             if(craft.getItem()!=store.getItem()){
                 return true;
             }else if(craft.getItem() == store.getItem()){
-                return CyberImplantItem.equalsUpgrades(craft,store,i==0);
+                return !CyberImplantItem.equalsUpgrades(craft,store,i==0);
             }
         }
         return false;

@@ -243,11 +243,13 @@ public class ModBusEvent {
                 MultiArmCapability cap = MultiArmCapability.get(player);
                 if(cap!=null && !cap.chickenEnemy){
                     cap.chickenEnemy=true;
-                    cap.timeLevelWarning = 20;
-                    cap.timeLevelWarning0 = 20;
+                    cap.timeLevelWarning = 0;
+                    cap.timeLevelWarning0 = 0;
                     cap.wave = 0;
                     cap.warningLevel = 1;
+                    cap.playChickenWarning = true;
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
+                    cap.playChickenWarning = false;
                 }
             }
         }

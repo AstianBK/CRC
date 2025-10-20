@@ -6,9 +6,11 @@ import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.upgrade.Upgrade;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -19,6 +21,14 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class MultiArmOverlay implements IGuiOverlay {
     protected static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(CRC.MODID,"textures/gui/skill_hotbar.png");
+    protected static final ResourceLocation[] FRAMES = new ResourceLocation[]{
+            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_0.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_1.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_2.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_3.png")
+    };
+    protected static final ResourceLocation STATIC_FRAME = new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_static.png");
+
     private final Minecraft mc = Minecraft.getInstance();
     @Override
     public void render(ForgeGui gui, @NotNull GuiGraphics graphics, float partialTicks, int width, int height) {
@@ -27,6 +37,7 @@ public class MultiArmOverlay implements IGuiOverlay {
             MultiArmCapability cap=MultiArmCapability.get(player);
             if (cap != null) {
                 graphics.pose().pushPose();
+                float ageInTick = player.tickCount + partialTicks;
 
                 if(cap.passives.hasMultiArmSkillAbstract("night_eye") || cap.passives.hasMultiArmSkillAbstract("hacker_eye") ){
                     Upgrade passive = cap.passives.get(1);
@@ -38,7 +49,6 @@ public class MultiArmOverlay implements IGuiOverlay {
                     if(color.length>0){
                         RenderSystem.setShaderColor(color[0],color[1],color[2],color[3]);
                         if(passive.name.equals("night_eye")){
-                            float ageInTick = player.tickCount + partialTicks;
                             int frame = (int) ((1.25F * ageInTick) % CRC.NIGHT_VISION_STAGES.size());
                             ResourceLocation location = CRC.NIGHT_VISION_LOCATIONS.get(frame);
 
@@ -61,27 +71,33 @@ public class MultiArmOverlay implements IGuiOverlay {
                 }
                 graphics.pose().pushPose();
                 if(cap.warningLevel>0){
-                    CRC.LOGGER.debug("Warning :" + cap.warningLevel);
                     int i = width / 2 -140;
                     int j1 =  i + 101;
-                    int k1 = height ;
+                    int k1 = height - 58 ;
                     float percent = cap.getAnimLevelWarning(partialTicks);
                     RenderSystem.disableDepthTest();
                     RenderSystem.depthMask(false);
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
-                    if(cap.timeLevelWarning>0){
-                        CRC.LOGGER.debug("render");
-                        graphics.pose().scale(1.5F - 0.5F*percent,1.5F - 0.5F*percent,1.5F - 0.5F*percent);
-                        graphics.setColor(1.0F, 1.0F, 1.0F, percent);
+
+                    float xExtra = cap.chickenSpoke ? Mth.lerp(percent,129,-40) : Mth.lerp(percent,30,-40);
+                    float yExtra = cap.chickenSpoke ? Mth.lerp(percent,13,-155) : Mth.lerp(percent,-76,-155);
+                    float centerX = (j1 + xExtra);
+                    float centerY = (k1 + yExtra);
+
+                    ResourceLocation location = cap.playChickenWarning ? STATIC_FRAME : (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
+                    if(cap.getChickenTalkAnim(partialTicks)>0.0F){
+                        graphics.pose().translate(centerX, centerY, 0);
+                        graphics.pose().mulPose(Axis.XP.rotationDegrees(Mth.sin((ageInTick *0.5F)) * 30.0F ));
+                        graphics.pose().mulPose(Axis.YP.rotationDegrees(Mth.sin((ageInTick *0.9F)) * 15.0F ));
+                        graphics.pose().translate(-centerX, -centerY, 0);
+                        location = FRAMES[(int) ((ageInTick)%4)];
                     }
-                    ResourceLocation location = (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
-                    graphics.blit(location, (int) (j1 + CRC.x), (int) (k1 + CRC.z), 0,0,18, 18, 18, 18);
+                    graphics.blit(location, (int) centerX, (int) centerY, 0,0, Mth.ceil(18 + 128*percent),  Mth.ceil(18 + 128*percent), Mth.ceil(18 + 128*percent) ,  Mth.ceil(18 + 128*percent));
                     RenderSystem.disableBlend();
                     RenderSystem.depthMask(true);
                     RenderSystem.enableDepthTest();
                     RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
-
                 }
                 graphics.pose().popPose();
                 graphics.pose().popPose();
