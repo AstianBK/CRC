@@ -31,8 +31,8 @@ public class ContraAttack extends PassivePart{
         float amount = event.getAmount();
         DamageSource source = event.getSource();
         if(!this.contraAttack){
-            float damage = Math.min(this.damageActually + amount,getMaxDamage());
-            if(damage==getMaxDamage()){
+            float damage = Math.min(this.damageActually + amount,20.0F);
+            if(damage==20.0F){
                 this.contraAttack = true;
             }
             this.damageActually = damage;
