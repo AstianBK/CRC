@@ -31,8 +31,6 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
     private static final ResourceLocation TEXTURE = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm.png");
     private static final ResourceLocation GLOWING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_glowing.png");
 
-    private static final ResourceLocation PULSING = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_3.png");
-
     public MultiArmModel<?> multiarm;
     private final ItemInHandRenderer itemInHandRenderer;
 

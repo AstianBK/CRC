@@ -38,6 +38,9 @@ public class ClientEvent {
     }
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(RobotChickenModel.LAYER_LOCATION, Suppliers.ofInstance(RobotChickenModel.createBodyLayer(CubeDeformation.NONE)));
+        event.registerLayerDefinition(RobotChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(RobotChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
+
         event.registerLayerDefinition(BoomChickenModel.LAYER_LOCATION, Suppliers.ofInstance(BoomChickenModel.createBodyLayer(CubeDeformation.NONE)));
         event.registerLayerDefinition(BoomChickenModel.ARMOR_LOCATION, Suppliers.ofInstance(BoomChickenModel.createBodyLayer(OUT_ARMOR_DEFORMATION)));
 

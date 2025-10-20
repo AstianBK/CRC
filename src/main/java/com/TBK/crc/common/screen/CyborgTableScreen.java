@@ -74,13 +74,19 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
         for (int i = 0 ; i<6 ; i++){
             ItemStack craft = this.menu.craftSlots.getItem(i);
             ItemStack store = this.menu.getPlayerStore().store.getItem(i);
-            if(craft.getItem()!=store.getItem()){
+            if(craft!=store){
                 return true;
-            }else if(craft.getItem() == store.getItem()){
-                return !CyberImplantItem.equalsUpgrades(craft,store,i==0);
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean keyPressed(int p_97765_, int p_97766_, int p_97767_) {
+        if(p_97765_ == 86){
+            this.onClose();
+        }
+        return super.keyPressed(p_97765_, p_97766_, p_97767_);
     }
 
     @Override

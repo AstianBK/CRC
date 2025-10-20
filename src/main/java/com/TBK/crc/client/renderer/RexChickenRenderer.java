@@ -1,6 +1,7 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.layer.RexGlowingLayer;
 import com.TBK.crc.client.layer.ShieldLayer;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
 import com.TBK.crc.client.model.RexChickenModel;
@@ -29,6 +30,7 @@ public class RexChickenRenderer<T extends RexChicken,M extends RexChickenModel<T
     public RexChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new RexChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(RexChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new ShieldLayer<>(this));
+        this.addLayer(new RexGlowingLayer<>(this));
     }
 
     @Override

@@ -59,6 +59,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public int levelCharge = 0;
     public int wave = 0;
     public int energy = 10;
+    public float[] chanceLeaderSpawn = new float[]{
+            0.05F,0.5F,1.0F
+    };
     public Upgrades skills = new Upgrades(Util.getMapArmEmpty());
     public Upgrades passives = new Upgrades(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
@@ -113,7 +116,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public float getChickenTalkAnim(float partialTick){
         return Mth.lerp(partialTick,this.chickenAnimTime0,this.chickenAnimTime) / 30.0F;
     }
-    @OnlyIn(Dist.CLIENT)
     @Override
     public Upgrade getSkillForHotBar(int pos) {
         return this.skills.get(pos);
@@ -165,13 +167,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
-                for (EntityTypeWaves wave : EntityTypeWaves.values()){
-                    int length = wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
-                    for (int i = 0 ; i < length ;i++){
-                        TeleportEntity tp = new TeleportEntity(level,wave.type, Util.findCaveSurfaceNearHeight(this.player,10,level.random),player,false);
-                        this.level.addFreshEntity(tp);
-                    }
-                }
+                this.teleportChicken();
                 this.invokeTimer = 1000;
                 this.wave = this.wave+1;
                 if(this.wave>6 && this.warningLevel<2){
@@ -272,8 +268,30 @@ public class MultiArmCapability implements IMultiArmPlayer {
         }
     }
 
+    private void teleportChicken() {
+        float chanceLeader = this.chanceLeaderSpawn[this.warningLevel];
+        for (EntityTypeWaves wave : EntityTypeWaves.values()){
+            int length = wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
+            boolean hasShield;
+            if(warningLevel==2 || wave.type.equals(BKEntityType.PUNCH_CHICKEN.get())){
+                hasShield = true;
+            }else if((warningLevel>0) || this.wave == 6){
+                hasShield = this.level.random.nextBoolean();
+            }else {
+                hasShield = false;
+            }
+            if(wave.type.equals(BKEntityType.PUNCH_CHICKEN.get())){
+                length = this.level.random.nextFloat()<chanceLeader ? 1 : 0;
+            }
+            for (int i = 0 ; i < length ;i++){
+                TeleportEntity tp = new TeleportEntity(level,wave.type, Util.findCaveSurfaceNearHeight(this.player,10,level.random),player,hasShield);
+                this.level.addFreshEntity(tp);
+            }
+        }
+    }
 
-    public static float getJumpBoost(MobEffect effect,Player player){
+
+    public static float getJumpBoost(Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){
             return cap.passives.getForName("coil_feet").name!="none" ? ((CoilFeet)cap.passives.getForName("coil_feet")).getJumpBoost() : 1.0F;
@@ -413,7 +431,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @Override
     public CompoundTag serializeNBT() {
-        CompoundTag tag=new CompoundTag();
+        CompoundTag tag=saveChickenEnemyData();
         tag.putBoolean("publicEnemy",this.chickenEnemy);
         this.skills.save(tag);
         this.implantStore.save(tag);
@@ -433,6 +451,8 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.posSelectUpgrade =nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
         this.implantStore = new ImplantStore(nbt);
+        this.syncWarningLevel(nbt);
+
     }
 
     public void init(Player player) {
@@ -452,7 +472,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public enum EntityTypeWaves{
         CHICKEN_COIL(BKEntityType.COIL_CHICKEN.get(),new int[]{1,2,2,3,3,3,4}),
         CHICKEN_BOOM(BKEntityType.BOOM_CHICKEN.get(),new int[]{0,1,1,2,2,2,2}),
-        CHICKEN_DRONE(BKEntityType.DRONE_CHICKEN.get(),new int[]{0,0,0,0,1,2,3});
+        CHICKEN_DRONE(BKEntityType.DRONE_CHICKEN.get(),new int[]{0,0,0,0,1,2,3}),
+        CHICKEN_PUNCH(BKEntityType.PUNCH_CHICKEN.get(),new int[]{0,0,0,0,0,0,0});
+
         public final int[] waves;
         public final EntityType<?> type;
         EntityTypeWaves(EntityType<?> type,int[] waves){

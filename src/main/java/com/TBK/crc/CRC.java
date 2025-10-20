@@ -158,6 +158,8 @@ public class CRC
         EntityRenderers.register(BKEntityType.BOOM_CHICKEN.get(), BoomChickenRenderer::new);
         EntityRenderers.register(BKEntityType.COIL_CHICKEN.get(), CoilChickenRenderer::new);
         EntityRenderers.register(BKEntityType.DRONE_CHICKEN.get(), DroneChickenRenderer::new);
+        EntityRenderers.register(BKEntityType.PUNCH_CHICKEN.get(), PunchChickenRenderer::new);
+
 
         EntityRenderers.register(BKEntityType.CYBORG_ROBOT_CHICKEN.get(), CyborgRobotChickenRenderer::new);
 

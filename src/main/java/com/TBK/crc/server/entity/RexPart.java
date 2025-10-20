@@ -193,14 +193,12 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
     }
     public void launchBoomChicken(LivingEntity living, BlockPos targetPos){
         BoomChicken missile = new BoomChicken(this.level());
-        //missile.setOwner(this);
         missile.setTarget(living);
         missile.setIsLaunch(true);
         missile.setPos(this.getX(),this.getY() + 3.0d,this.getZ());
         missile.calculateRotPosition(missile.blockPosition(),targetPos);
         missile.setDeltaMovement(missile.calculateJumpVelocity(missile.blockPosition(),living.blockPosition()));
         this.level().addFreshEntity(missile);
-        //PacketHandler.sendToAllTracking(new PacketMissileTarget(missile.getId(),living.getId(),i + 1),this);
     }
     public boolean isBreaking(){
         return this.entityData.get(BREAKING);

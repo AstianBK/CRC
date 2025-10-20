@@ -21,6 +21,10 @@ public class BKEntityType {
             .register("portal", () -> EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)
                     .fireImmune().sized(0.5F, 2F).build(CRC.MODID+ "portal"));
 
+    public static final RegistryObject<EntityType<PunchChicken>> PUNCH_CHICKEN = ENTITY_TYPES
+            .register("punch_chicken", () -> EntityType.Builder.<PunchChicken>of(PunchChicken::new, MobCategory.MISC)
+                    .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "punch_chicken"));
+
     public static final RegistryObject<EntityType<CyborgRobotChicken>> CYBORG_ROBOT_CHICKEN = ENTITY_TYPES
             .register("cyborg_robot_chicken", () -> EntityType.Builder.<CyborgRobotChicken>of(CyborgRobotChicken::new, MobCategory.MISC)
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "cyborg_robot_chicken"));

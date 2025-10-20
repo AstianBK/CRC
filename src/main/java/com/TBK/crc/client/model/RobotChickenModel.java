@@ -4,6 +4,8 @@ package com.TBK.crc.client.model;// Made with Blockbench 5.0.2
 
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.animacion.CyborgRobotChickenAnim;
+import com.TBK.crc.client.animacion.PunchChickenAnim;
 import com.TBK.crc.server.entity.PunchChicken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +18,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RobotChickenModel<T extends PunchChicken> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "cyborgrobotchicken"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "punch_chicken"), "main");
+	public static final ModelLayerLocation ARMOR_LOCATION = new ModelLayerLocation(new ResourceLocation(CRC.MODID, "armor_punch_chicken"), "main");
+
 	private final ModelPart truemain;
 	private final ModelPart Chicken;
 	private final ModelPart head;
@@ -32,7 +36,7 @@ public class RobotChickenModel<T extends PunchChicken> extends HierarchicalModel
 
 	public RobotChickenModel(ModelPart root) {
 		this.truemain = root.getChild("truemain");
-		this.Chicken = this.truemain.getChild("Chicken");
+		this.Chicken = this.truemain.getChild("chicken");
 		this.head = this.Chicken.getChild("head");
 		this.bill = this.head.getChild("bill");
 		this.chin = this.head.getChild("chin");
@@ -51,7 +55,7 @@ public class RobotChickenModel<T extends PunchChicken> extends HierarchicalModel
 
 		PartDefinition truemain = partdefinition.addOrReplaceChild("truemain", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition Chicken = truemain.addOrReplaceChild("Chicken", CubeListBuilder.create(), PartPose.offset(0.0F, -9.0F, -4.0F));
+		PartDefinition Chicken = truemain.addOrReplaceChild("chicken", CubeListBuilder.create(), PartPose.offset(0.0F, -9.0F, -4.0F));
 
 		PartDefinition head = Chicken.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -6.0F, -2.0F, 4.0F, 6.0F, 3.0F, deformation)
 		.texOffs(0, 23).addBox(0.0F, -8.0F, -2.0F, 1.0F, 6.0F, 4.0F, deformation), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -88,6 +92,9 @@ public class RobotChickenModel<T extends PunchChicken> extends HierarchicalModel
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
+		this.animateWalk(PunchChickenAnim.walk,limbSwing,limbSwingAmount,ageInTicks,2.0F);
+		this.animate(entity.idle,PunchChickenAnim.idle,1.0F,1.0F);
+		this.animate(entity.attack,PunchChickenAnim.punch,1.0f,1.0f);
 	}
 
 	@Override
