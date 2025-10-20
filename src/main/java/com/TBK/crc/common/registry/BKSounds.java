@@ -58,6 +58,9 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> REX_SHIELD_ON =
             registerSoundEvent("rex_shield_on");
 
+    public static final RegistryObject<SoundEvent> REX_CRASH =
+            registerSoundEvent("rex_crash");
+
     //CYBER-IMPLANTS
 
     public static final RegistryObject<SoundEvent> HEART_REFLEX =

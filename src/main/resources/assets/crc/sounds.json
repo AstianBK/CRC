@@ -71,6 +71,12 @@
       "crc:rex_stomp"
     ]
   },
+  "rex_crash": {
+    "subtitle": "sounds.crc.rex_crash",
+    "sounds": [
+      "crc:rex_crash"
+    ]
+  },
   "rex_shield_off": {
     "subtitle": "sounds.crc.rex_shield_off",
     "sounds": [

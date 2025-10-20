@@ -19,7 +19,7 @@ public class BKEntityType {
 
     public static final RegistryObject<EntityType<PortalEntity>> PORTAL = ENTITY_TYPES
             .register("portal", () -> EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)
-                    .fireImmune().sized(0.5F, 2F).build(CRC.MODID+ "portal"));
+                    .fireImmune().sized(0.5F, 5F).build(CRC.MODID+ "portal"));
 
     public static final RegistryObject<EntityType<PunchChicken>> PUNCH_CHICKEN = ENTITY_TYPES
             .register("punch_chicken", () -> EntityType.Builder.<PunchChicken>of(PunchChicken::new, MobCategory.MISC)
