@@ -79,7 +79,7 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     public EntityDimensions getDimensions(Pose p_19975_) {
-        float scale = getScale()*4;
+        float scale = getScale()*3;
         return super.getDimensions(p_19975_).scale(scale);
     }
 
