@@ -4,6 +4,10 @@
   "block.crc.cyborg_table": "Cyborg Surgical Table",
   "block.crc.upgrade_table": "Cyber-Implant Upgrade Table",
 
+  "item.crc.coil_chicken_spawn_egg": "Coil Chicken Spawn Egg",
+  "item.crc.drone_chicken_spawn_egg": "Drone Chicken Spawn Egg",
+  "item.crc.boom_chicken_spawn_egg": "Boom Chicken Spawn Egg",
+
   "item.crc.signal_jammer": "Signal Jammer",
   "item.crc.tantalum_ingot": "Tantalum",
 
