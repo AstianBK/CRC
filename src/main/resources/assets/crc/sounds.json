@@ -11,6 +11,18 @@
       "crc:chicken_minion_hurt"
     ]
   },
+  "chicken_coil_move_1": {
+    "subtitle": "sounds.crc.chicken_coil_move_1",
+    "sounds": [
+      "crc:chicken_coil_move_1"
+    ]
+  },
+  "chicken_coil_move_2": {
+    "subtitle": "sounds.crc.chicken_coil_move_2",
+    "sounds": [
+      "crc:chicken_coil_move_2"
+    ]
+  },
   "rex_laser_loop": {
     "subtitle": "sounds.crc.rex_laser_loop",
     "sounds": [

@@ -22,6 +22,12 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> CHICKEN_MINION_HURT =
             registerSoundEvent("chicken_minion_hurt");
 
+    public static final RegistryObject<SoundEvent> CHICKEN_COIL_MOVE_1 =
+            registerSoundEvent("chicken_coil_move_1");
+
+    public static final RegistryObject<SoundEvent> CHICKEN_COIL_MOVE_2 =
+            registerSoundEvent("chicken_coil_move_2");
+
     public static final RegistryObject<SoundEvent> REX_LASER_LOOP =
             registerSoundEvent("rex_laser_loop");
 
