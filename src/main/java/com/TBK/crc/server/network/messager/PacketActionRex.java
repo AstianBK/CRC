@@ -61,7 +61,6 @@ public class PacketActionRex implements Packet<PacketListener> {
             target = ray.getPartForId(this.targetId);
             if(target instanceof RexPart<?> part){
                 part.handleEntityEvent((byte) action);
-
             }
         }
     }

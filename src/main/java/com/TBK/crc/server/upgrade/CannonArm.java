@@ -16,6 +16,7 @@ public class CannonArm extends Upgrade {
     public int stopAiming = 0;
     public int chargeTime = 0;
     public boolean charge = false;
+    public boolean canRechargeEnergy = true;
     public CannonArm() {
         super("cannon_arm", 100, false, true);
     }
@@ -40,17 +41,26 @@ public class CannonArm extends Upgrade {
             Level level = player.level();
             this.chargeTime++;
             this.stopAiming = 20;
+            int necessaryEnergy = 2+multiArmCapability.levelCharge;
             if(this.chargeTime<71){
                 if(multiArmCapability.levelCharge>0 && (this.chargeTime-10)%20==0){
-                    multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
-                    level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
+                    if(multiArmCapability.energy>=necessaryEnergy){
+                        multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
+                        level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
+                    }else {
+                        stopAbility(multiArmCapability);
+                    }
                 }
 
                 if(this.chargeTime>10){
                     player.setDeltaMovement(player.getDeltaMovement().multiply(0.05F,1.0F,0.05F));
                     if(multiArmCapability.levelCharge==0){
-                        level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
-                        multiArmCapability.levelCharge=1;
+                        if(multiArmCapability.energy>=necessaryEnergy){
+                            level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
+                            multiArmCapability.levelCharge=1;
+                        }else {
+                            stopAbility(multiArmCapability);
+                        }
                     }
                 }
             }
@@ -68,6 +78,12 @@ public class CannonArm extends Upgrade {
                     multiArmCapability.stopAimingAnim = 5;
                     multiArmCapability.stopAimingAnim0 = 5;
                 }
+            }else {
+                this.canRechargeEnergy = true;
+            }
+
+            if(this.canRechargeEnergy && multiArmCapability.getPlayer().tickCount % 20 == 0){
+                multiArmCapability.energy = Math.min(multiArmCapability.energy+1,10);
             }
         }
 
@@ -82,15 +98,22 @@ public class CannonArm extends Upgrade {
 
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
-        super.startAbility(multiArmCapability);
-        if(!this.charge){
-            multiArmCapability.pose =  MultiArmCapability.SkillPose.CHARGE_CANNON;
-            this.charge = true;
+        if (this.canActiveAbility(multiArmCapability)){
+            if(!this.charge){
+                super.startAbility(multiArmCapability);
+                multiArmCapability.pose =  MultiArmCapability.SkillPose.CHARGE_CANNON;
+                this.charge = true;
+                this.canRechargeEnergy = false;
+            }
         }
     }
 
+    @Override
+    public boolean canActiveAbility(MultiArmCapability multiArmCapability) {
+        return multiArmCapability.energy>0;
+    }
 
-    public void reRot(ElectroProjectile projectile,double x, double y, double z, float vel, float miss) {
+    public void reRot(ElectroProjectile projectile, double x, double y, double z, float vel, float miss) {
         Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss)).scale((double) vel);
         double d0 = vec3.horizontalDistance();
         projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
@@ -101,18 +124,21 @@ public class CannonArm extends Upgrade {
 
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {
-        super.stopAbility(multiArmCapability);
-        multiArmCapability.timeShoot = 10;
-        multiArmCapability.timeShoot0 = 10;
-        this.stopAiming = 20;
-        this.charge = false;
-        multiArmCapability.levelCharge = 0;
-        ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),this.chargeTime);
-        orb.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(), 0.0F, 1.0F, 1.0F);
-        orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
+        if(this.charge){
+            super.stopAbility(multiArmCapability);
+            multiArmCapability.timeShoot = 10;
+            multiArmCapability.timeShoot0 = 10;
+            this.stopAiming = 20;
+            this.charge = false;
+            multiArmCapability.energy = Math.max(multiArmCapability.energy-(1+multiArmCapability.levelCharge),0) ;
+            multiArmCapability.levelCharge = 0;
+            ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),this.chargeTime);
+            orb.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(), 0.0F, 1.0F, 1.0F);
+            orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
 
-        multiArmCapability.getPlayer().level().addFreshEntity(orb);
-        this.chargeTime = 0;
+            multiArmCapability.getPlayer().level().addFreshEntity(orb);
+            this.chargeTime = 0;
+        }
     }
 
 

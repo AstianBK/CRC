@@ -1,5 +1,6 @@
 package com.TBK.crc.server.upgrade;
 
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.GanchoEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +50,7 @@ public class GanchoArm extends Upgrade {
 
     @Override
     public SoundEvent getStartSound() {
-        return super.getStartSound();
+        return BKSounds.MULTIARM_HARPOON_SHOOT.get();
     }
 
     @Override
@@ -59,6 +60,7 @@ public class GanchoArm extends Upgrade {
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         if(hasGancho){
+            super.startAbility(multiArmCapability);
             GanchoEntity gancho = new GanchoEntity(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer());
             gancho.setPos(multiArmCapability.getPlayer().getX(),multiArmCapability.getPlayer().getEyeY()-0.1f,multiArmCapability.getPlayer().getZ());
             gancho.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().yHeadRot,0.0F,3.0F,1.0F);

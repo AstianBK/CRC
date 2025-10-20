@@ -437,7 +437,9 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         }
 
         if(this.level().isClientSide){
-            this.tickStep();
+            if(!this.isCharging()){
+                this.tickStep();
+            }
         }
     }
 
@@ -448,27 +450,27 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         float seconds = Util.getElapsedSeconds(RexChickenAnim.walklegs,time);
 
-        if (!step1Played && seconds >= 1.755F) {
+        if (!step1Played && seconds >= 0.92F) {
             level().playLocalSound(getX(), getY(), getZ(),
-                    BKSounds.REX_STEP2.get(), SoundSource.HOSTILE, 10.0F, 1.0F,false);
+                    BKSounds.REX_STEP2.get(), SoundSource.HOSTILE, 4.0F, 1.0F,false);
             step1Played = true;
         }
 
-        if (!step2Played && seconds >= 2.869F) {
+        if (!step2Played && seconds >= 1.63F) {
             level().playLocalSound(getX(), getY(), getZ(),
-                    BKSounds.REX_STEP2.get(), SoundSource.HOSTILE, 10.0F, 1.0F,false);
+                    BKSounds.REX_STEP2.get(), SoundSource.HOSTILE, 4.0F, 1.0F,false);
             step2Played = true;
         }
 
-        if (!lift1Played && seconds >= 0.271F) {
+        if (!lift1Played && seconds >= 0.21F) {
             level().playLocalSound(getX(), getY(), getZ(),
-                    BKSounds.REX_STEP1.get(), SoundSource.HOSTILE, 10.0F, 1.0F,false);
+                    BKSounds.REX_STEP1.get(), SoundSource.HOSTILE, 4.0F, 1.0F,false);
             lift1Played = true;
         }
 
-        if (!lift2Played && seconds >= 2.088F) {
+        if (!lift2Played && seconds >= 1.000F) {
             level().playLocalSound(getX(), getY(), getZ(),
-                    BKSounds.REX_STEP1.get(), SoundSource.HOSTILE, 10.0F, 1.0F,false);
+                    BKSounds.REX_STEP1.get(), SoundSource.HOSTILE, 4.0F, 1.0F,false);
             lift2Played = true;
         }
 
@@ -736,9 +738,10 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     @Override
     public void die(DamageSource p_21014_) {
         super.die(p_21014_);
-        if(this.level().isClientSide){
-            this.level().broadcastEntityEvent(this,(byte) 9);
 
+        if(!this.level().isClientSide){
+            this.deathTime=26;
+            this.level().broadcastEntityEvent(this,(byte) 9);
         }
         this.setHealth(1.0F);
     }
@@ -775,12 +778,15 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             this.prepareChargeTimer=23;
             this.idleAnimationTimeout=23;
         }else if(p_21375_ == 9){
+            CRC.LOGGER.debug("DIE");
             this.idle.stop();
             this.idleAnimationTimeout = 26;
             this.death.start(this.tickCount);
             this.deathTime = 26;
         }else if(p_21375_ == 12){
+            CRC.LOGGER.debug("STUN");
             this.charge.stop();
+            this.idle.stop();
             this.idleAnimationTimeout = 1000;
             this.stunnedTick=1000;
             this.stunned.start(this.tickCount);

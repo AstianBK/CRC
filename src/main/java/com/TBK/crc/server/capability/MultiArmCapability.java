@@ -58,6 +58,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public int stopAimingAnim0 = 0;
     public int levelCharge = 0;
     public int wave = 0;
+    public int energy = 10;
     public Upgrades skills = new Upgrades(Util.getMapArmEmpty());
     public Upgrades passives = new Upgrades(Util.getMapEmpty());
     public ImplantStore implantStore = new ImplantStore();
@@ -93,7 +94,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimLevelWarning(float partialTick){
-        return Mth.lerp(partialTick,this.timeLevelWarning0,this.timeLevelWarning) / 20.0F;
+        return Mth.lerp(partialTick,this.timeLevelWarning0,this.timeLevelWarning) / 10.0F;
     }
     @OnlyIn(Dist.CLIENT)
     public float getAnimShoot(float partialTick){
@@ -110,7 +111,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
     @OnlyIn(Dist.CLIENT)
     public float getChickenTalkAnim(float partialTick){
-        return Mth.lerp(partialTick,this.chickenAnimTime0,this.chickenAnimTime) / 20.0F;
+        return Mth.lerp(partialTick,this.chickenAnimTime0,this.chickenAnimTime) / 30.0F;
     }
     @OnlyIn(Dist.CLIENT)
     @Override
@@ -201,18 +202,18 @@ public class MultiArmCapability implements IMultiArmPlayer {
                             }
                         }
                     }else {
-                        if(this.timeLevelWarning<20){
+                        if(this.timeLevelWarning<10){
                             this.timeLevelWarning++;
-                            if(this.timeLevelWarning==20){
-                                this.chickenAnimTime = 20;
-                                this.chickenAnimTime0 = 20;
+                            if(this.timeLevelWarning==10){
+                                this.chickenAnimTime = 30;
+                                this.chickenAnimTime0 = 30;
                                 this.level.playLocalSound(player.blockPosition().above(1), BKSounds.CHICKEN_CYBORG_SPEECH.get(), SoundSource.AMBIENT,10.0F,1.0F,false);
                             }
                         }
                     }
                 }else {
                     this.chickenAnimTime--;
-                    if(this.chickenAnimTime==10){
+                    if(this.chickenAnimTime==10 || this.chickenAnimTime==20){
                         this.level.playLocalSound(player.blockPosition().above(1), BKSounds.CHICKEN_CYBORG_SPEECH.get(), SoundSource.AMBIENT,10.0F,1.0F,false);
                     }
                     if(this.chickenAnimTime == 0){

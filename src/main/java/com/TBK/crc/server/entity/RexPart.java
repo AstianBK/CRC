@@ -139,7 +139,7 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
                 this.parentMob.stunnedTick = 0;
                 if(!this.level().isClientSide){
                     this.parentMob.recoveryTimer=21;
-                    this.parentMob.level().broadcastEntityEvent(this,(byte) 17);
+                    this.parentMob.level().broadcastEntityEvent(this.parentMob,(byte) 17);
                     this.callReinforcement(p_31020_.getEntity());
                 }
                 return true;
@@ -185,8 +185,8 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
     public void destroy(){
         if(!this.level().isClientSide){
             this.setBreaking(true);
-            this.parentMob.stunnedTick=100;
-            this.parentMob.level().broadcastEntityEvent(this,(byte) 12);
+            this.parentMob.stunnedTick=1000;
+            this.parentMob.level().broadcastEntityEvent(this.parentMob,(byte) 12);
             PacketHandler.sendToAllTracking(new PacketActionRex(this.parentMob.getId(),this.getId(),12),this.parentMob);
         }
     }

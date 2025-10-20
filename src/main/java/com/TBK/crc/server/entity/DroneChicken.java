@@ -201,14 +201,14 @@ public class DroneChicken extends RobotChicken {
                 if (!this.meleeAttack) {
                     double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
                     double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
-                    double heightOffset = this.calculateHeightOffset(target);
+                    double heightOffset = 7.0F;
                     this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
 
-                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(this.speed);
+                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(3);
 
                     Vec3 currentMotion = this.drone.getDeltaMovement();
 
-                    double smoothFactor = 0.1D;
+                    double smoothFactor = 0.7D;
                     Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
 
                     this.drone.setDeltaMovement(smoothedMotion);
@@ -229,7 +229,6 @@ public class DroneChicken extends RobotChicken {
                     this.attackCooldown = 0;
                 } else {
                     if (this.meleeAttack) {
-                        // suavizado también para el movimiento cuerpo a cuerpo
                         Vec3 desiredMotion = target.position().subtract(this.drone.position()).normalize().scale(0.5F);
                         Vec3 currentMotion = this.drone.getDeltaMovement();
                         Vec3 smoothedMotion = currentMotion.add(desiredMotion.subtract(currentMotion).scale(0.3D));

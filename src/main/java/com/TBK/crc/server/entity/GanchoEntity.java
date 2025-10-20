@@ -1,6 +1,7 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.upgrade.GanchoArm;
 import com.TBK.crc.server.upgrade.Upgrade;
@@ -85,7 +86,7 @@ public class GanchoEntity extends AbstractArrow {
             double d0 = 0.6D;
             this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
             if (this.clientSideReturnTridentTickCount == 0) {
-                this.playSound(SoundEvents.TRIDENT_RETURN, 10.0F, 1.0F);
+                this.playSound(BKSounds.MULTIARM_HARPOON_COMEBACK.get(), 10.0F, 1.0F);
             }
 
             ++this.clientSideReturnTridentTickCount;

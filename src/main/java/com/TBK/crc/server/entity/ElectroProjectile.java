@@ -126,6 +126,7 @@ public class ElectroProjectile extends AbstractArrow {
             }else {
                 p_36757_.getEntity().hurt(damageSources().generic(),(float) this.getBaseDamage());
             }
+
             if(time>=50){
                 float maxCharge = ((float) time-50.0F) / 20.0F;
                 BlockPos end = p_36757_.getEntity().blockPosition();
@@ -148,10 +149,10 @@ public class ElectroProjectile extends AbstractArrow {
     @Override
     public void handleEntityEvent(byte p_19882_) {
         if(p_19882_==4){
-            for (int i = 0 ; i<3 ; i++){
+            for (int i = 0 ; i<6 ; i++){
                 this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
             }
-            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,10.0F,1.0f,true);
+            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS,4.0F,1.0f,false);
 
         }
         super.handleEntityEvent(p_19882_);

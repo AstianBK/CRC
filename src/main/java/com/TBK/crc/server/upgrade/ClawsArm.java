@@ -105,7 +105,6 @@ public class ClawsArm extends Upgrade {
     }
 
 
-
     @Override
     public SoundEvent getStartSound() {
         return super.getStartSound();
@@ -122,8 +121,8 @@ public class ClawsArm extends Upgrade {
 
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {
-        super.stopAbility(multiArmCapability);
         if(this.charge){
+            super.stopAbility(multiArmCapability);
             Player player = multiArmCapability.getPlayer();
             Vec3 view = player.getViewVector(1.0F);
             view = view.multiply(1.0F,player.onGround() || view.y>0.0F  ? 0.0F : 1.0F,1.0F);

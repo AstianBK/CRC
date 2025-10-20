@@ -21,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class MultiArmOverlay implements IGuiOverlay {
     protected static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(CRC.MODID,"textures/gui/skill_hotbar.png");
+    protected static final ResourceLocation AMMO_FULL_LOCATION = new ResourceLocation(CRC.MODID,"textures/gui/cannon_ammo_full.png");
+    protected static final ResourceLocation AMMO_EMPTY_LOCATION = new ResourceLocation(CRC.MODID,"textures/gui/cannon_ammo_empty.png");
+
     protected static final ResourceLocation[] FRAMES = new ResourceLocation[]{
             new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_0.png"),
             new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_1.png"),
@@ -80,8 +83,12 @@ public class MultiArmOverlay implements IGuiOverlay {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
 
-                    float xExtra = cap.chickenSpoke ? Mth.lerp(percent,129,-40) : Mth.lerp(percent,30,-40);
-                    float yExtra = cap.chickenSpoke ? Mth.lerp(percent,13,-155) : Mth.lerp(percent,-76,-155);
+                    float xExtra = 129;
+                    float yExtra = 13;
+                    if(cap.playChickenWarning){
+                        xExtra=cap.chickenSpoke ? Mth.lerp(percent,129,-40) : Mth.lerp(percent,30,-40);
+                        yExtra=cap.chickenSpoke ? Mth.lerp(percent,13,-155) : Mth.lerp(percent,-76,-155);
+                    }
                     float centerX = (j1 + xExtra);
                     float centerY = (k1 + yExtra);
 
@@ -126,9 +133,28 @@ public class MultiArmOverlay implements IGuiOverlay {
                                 ,256,256);
                     }
                     graphics.pose().popPose();
+                    graphics.pose().pushPose();
+                    int j1 =  i + 101;
+                    int k1 = height - 58;
+                    printAmmo(graphics,AMMO_EMPTY_LOCATION,j1,k1,10);
+                    printAmmo(graphics,AMMO_FULL_LOCATION, (int) (j1-120), (int) (k1+16),cap.energy);
+
+                    graphics.pose().popPose();
                 }
             }
 
+        }
+    }
+
+    public void printAmmo(GuiGraphics guiGraphics, ResourceLocation resourceLocation, int x, int y, int ammo) {
+        int spriteWidth = 16;
+        int spriteHeight = 16;
+
+
+        for (int i=0 ; i<ammo ; i++){
+            guiGraphics.pose().pushPose();
+            guiGraphics.blit(resourceLocation, x + 6*i, y,0,0,spriteWidth,  Mth.ceil(spriteHeight), spriteWidth, spriteHeight);
+            guiGraphics.pose().popPose();
         }
     }
 
