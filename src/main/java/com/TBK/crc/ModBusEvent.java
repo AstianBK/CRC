@@ -365,6 +365,7 @@ public class ModBusEvent {
         }
     }
 
+
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event){
         if (event.getEntity() instanceof Player player){

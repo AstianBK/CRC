@@ -34,7 +34,7 @@ public class KneesSpiked extends PassivePart{
                     living.invulnerableTime = 0;
                     living.hurt(player.damageSources().playerAttack(player),2.0F);
                     living.invulnerableTime = 0;
-                    if(living instanceof Player player1 && player1.getUseItem().getItem() instanceof ShieldItem){
+                    if(refinements.contains("knees_spiked") && living instanceof Player player1 && player1.getUseItem().getItem() instanceof ShieldItem){
                         ((Player) living).disableShield(true);
                     }
                     hurtEntities.add(living);

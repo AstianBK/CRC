@@ -1,5 +1,6 @@
 package com.TBK.crc.server.upgrade;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;

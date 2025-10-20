@@ -33,12 +33,6 @@ public class Upgrade {
         this.isCasting = tag.getBoolean("isCasting");
         this.load(tag);
     }
-    public Upgrade(FriendlyByteBuf buf){
-        this.name = buf.readUtf();
-        this.cd = buf.readInt();
-        this.canReactive = buf.readBoolean();
-        this.isCasting = buf.readBoolean();
-    }
 
     public void startCooldown(MultiArmCapability multiArmCapability){
         ItemStack stack = multiArmCapability.implantStore.getImplantForSkill(this);

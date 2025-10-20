@@ -20,11 +20,19 @@ public class KneesHard extends PassivePart{
         return false;
     }
 
+
+    @Override
+    public void tick(MultiArmCapability multiArmCapability) {
+        super.tick(multiArmCapability);
+        if (this.refinements.contains("knees_hard")){
+            multiArmCapability.getPlayer().fallDistance = 0.0F;
+        }
+    }
+
     @Override
     public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
         if (event.getSource().is(DamageTypeTags.IS_FALL)){
-            float reduceDamage = this.refinements.contains("knees_hard") ? 0.0F : 0.7F ;
-            event.setAmount(event.getAmount()*reduceDamage);
+            event.setAmount(event.getAmount()*0.7F);
         }
     }
 }
