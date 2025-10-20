@@ -57,7 +57,7 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
             public void onTake(Player p_150645_, ItemStack p_150646_) {
                 super.onTake(p_150645_, p_150646_);
                 if(player.level().isClientSide){
-                    player.level().playLocalSound(player.blockPosition(), BKSounds.CYBORG_TABLE_IMPLANT.get(), SoundSource.BLOCKS,4.0F,1.0F,false);
+                    player.level().playLocalSound(player.blockPosition(), BKSounds.UPGRADE_TABLE_USE.get(), SoundSource.BLOCKS,4.0F,1.0F,false);
                 }
                 UpgradeTableMenu.this.craftSlots.setItem(0,ItemStack.EMPTY);
                 UpgradeTableMenu.this.craftSlots.setItem(1,ItemStack.EMPTY);
