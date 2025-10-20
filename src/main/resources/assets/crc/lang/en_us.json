@@ -30,7 +30,16 @@
   "item.crc.upgrade_arm_claws": "Multi-Arm Upgrade: Electric Claws",
   "item.crc.upgrade_arm_cannon": "Multi-Arm Upgrade: Plasma Cannon",
   "item.crc.upgrade_arm_harpoon": "Multi-Arm Upgrade: Harpoon",
-  "item.crc.upgrade_system_heart": "Heart Upgrade: Better Reflexes",
+  "item.crc.upgrade_system_heart": "Life-Pulse Engine Upgrade: Increased Adrenaline",
+  "item.crc.upgrade_system_thoracic_cage": "Heart Upgrade: Better Reflexes",
+  "item.crc.upgrade_legs_coil_feet": "Springdrive Joints Upgrade: Improved Coils",
+  "item.crc.upgrade_legs_knees": "Reinforced Knees Upgrade: Heavy Reinforcement",
+  "item.crc.upgrade_legs_knees_spiked": "Spiked Knees Upgrade: Piercing Modules",
+
+  "item.crc.upgrade_skin_jetstream": "Multi-Arm Cosmetic: Jetstream",
+  "item.crc.upgrade_skin_military": "Multi-Arm Cosmetic: Master Commander",
+  "item.crc.upgrade_skin_cyborg": "Multi-Arm Cosmetic: Tantalum Coating",
+
 
   "upgrades.claws_arm": "Upgrade: Electric Claws",
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
@@ -44,6 +53,8 @@
   "upgrades.knees_hard": "REINFORCED KNEES DESCRIPTION",
   "upgrades.knees_spiked": "SPIKED KNEES DESCRIPTION",
   "upgrades.coil_feet": "COIL FEET DESCRIPTION",
+
+
 
 
 

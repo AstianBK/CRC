@@ -61,13 +61,13 @@ public class BKItems {
     //COSMETIC
 
     public static final RegistryObject<Item> UPGRADE_SKIN_JETSTREAM = ITEMS.register("upgrade_skin_jetstream",
-            ()-> new CyberSkinItem(new Item.Properties(),"jetstream"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"jetstream"));
 
     public static final RegistryObject<Item> UPGRADE_SKIN_MILITARY = ITEMS.register("upgrade_skin_military",
-            ()-> new CyberSkinItem(new Item.Properties(),"military"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"military"));
 
     public static final RegistryObject<Item> UPGRADE_SKIN_CYBORG = ITEMS.register("upgrade_skin_cyborg",
-            ()-> new CyberSkinItem(new Item.Properties(),"none"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"none"));
 
     //SPAWN-EGGS
 
