@@ -4,6 +4,7 @@ import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ShieldItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class KneesSpiked extends PassivePart{
                     living.invulnerableTime = 0;
                     living.hurt(player.damageSources().playerAttack(player),2.0F);
                     living.invulnerableTime = 0;
+                    if(living instanceof Player player1 && player1.getUseItem().getItem() instanceof ShieldItem){
+                        ((Player) living).disableShield(true);
+                    }
                     hurtEntities.add(living);
                 }
             }

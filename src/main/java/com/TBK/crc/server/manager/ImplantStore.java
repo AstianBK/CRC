@@ -31,8 +31,8 @@ public class ImplantStore{
                 store.setItem(tags.getCompound(i).getInt("index"),itemstack);
             }
         }
-
     }
+
     public void save(CompoundTag tag){
         tag.put("store",createTag());
     }

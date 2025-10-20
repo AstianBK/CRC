@@ -24,9 +24,7 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
     public void armLayer(T p_102866_, float p_102867_, float p_102868_, float p_102869_, float p_102870_, float p_102871_, CallbackInfo ci){
         if (((Object)this) instanceof PlayerModel<?> model && p_102866_ instanceof Player player){
             MultiArmCapability cap = MultiArmCapability.get(player);
-            if(cap!=null && Util.hasMultiArm(cap)){
-                model.rightArm.visible = false;
-            }
+            model.rightArm.visible = cap == null || !Util.hasMultiArm(cap);
         }
     }
 

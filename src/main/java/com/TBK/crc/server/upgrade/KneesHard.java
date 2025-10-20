@@ -23,7 +23,8 @@ public class KneesHard extends PassivePart{
     @Override
     public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
         if (event.getSource().is(DamageTypeTags.IS_FALL)){
-            event.setAmount(event.getAmount()*0.7F);
+            float reduceDamage = this.refinements.contains("knees_hard") ? 0.0F : 0.7F ;
+            event.setAmount(event.getAmount()*reduceDamage);
         }
     }
 }

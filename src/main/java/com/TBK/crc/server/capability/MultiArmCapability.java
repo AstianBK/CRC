@@ -271,9 +271,15 @@ public class MultiArmCapability implements IMultiArmPlayer {
             }
         }
     }
-    
 
 
+    public static float getJumpBoost(MobEffect effect,Player player){
+        MultiArmCapability cap = MultiArmCapability.get(player);
+        if (cap!=null){
+            return cap.passives.getForName("coil_feet").name!="none" ? ((CoilFeet)cap.passives.getForName("coil_feet")).getJumpBoost() : 1.0F;
+        }
+        return 1.0F;
+    }
     public static boolean hasEffect(MobEffect effect,Player player){
         MultiArmCapability cap = MultiArmCapability.get(player);
         if (cap!=null){

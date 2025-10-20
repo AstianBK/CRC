@@ -42,13 +42,11 @@ public class CannonArm extends Upgrade {
             this.chargeTime++;
             this.stopAiming = 20;
             int necessaryEnergy = 2+multiArmCapability.levelCharge;
-            if(this.chargeTime<71){
+            if(this.chargeTime<51){
                 if(multiArmCapability.levelCharge>0 && (this.chargeTime-10)%20==0){
                     if(multiArmCapability.energy>=necessaryEnergy){
                         multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
                         level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
-                    }else {
-                        stopAbility(multiArmCapability);
                     }
                 }
 
@@ -58,8 +56,6 @@ public class CannonArm extends Upgrade {
                         if(multiArmCapability.energy>=necessaryEnergy){
                             level.playSound(player,player.blockPosition(),BKSounds.MULTIARM_CANNON_CHARGING.get(), SoundSource.PLAYERS,3.0F,1.0F);
                             multiArmCapability.levelCharge=1;
-                        }else {
-                            stopAbility(multiArmCapability);
                         }
                     }
                 }
@@ -69,7 +65,6 @@ public class CannonArm extends Upgrade {
                     Util.spawnChargedParticle(getPos(player.getEyePosition(),player));
                 }
             }
-
         }else {
             if(this.stopAiming > 0 ){
                 this.stopAiming--;
@@ -86,7 +81,6 @@ public class CannonArm extends Upgrade {
                 multiArmCapability.energy = Math.min(multiArmCapability.energy+1,10);
             }
         }
-
     }
 
 
@@ -113,14 +107,6 @@ public class CannonArm extends Upgrade {
         return multiArmCapability.energy>0;
     }
 
-    public void reRot(ElectroProjectile projectile, double x, double y, double z, float vel, float miss) {
-        Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss), projectile.level().random.triangle(0.0D, 0.0172275D * (double) miss)).scale((double) vel);
-        double d0 = vec3.horizontalDistance();
-        projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
-        projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180F / (float)Math.PI)));
-        projectile.yRotO = projectile.getYRot();
-        projectile.xRotO = projectile.getXRot();
-    }
 
     @Override
     public void stopAbility(MultiArmCapability multiArmCapability) {

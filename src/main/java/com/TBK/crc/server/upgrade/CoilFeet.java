@@ -24,4 +24,8 @@ public class CoilFeet extends PassivePart{
     public boolean handlerPassive(MultiArmCapability multiArmCapability, Entity source) {
         return false;
     }
+
+    public float getJumpBoost() {
+        return this.refinements.contains("coil_feet") ? 2.0F : 1.5F;
+    }
 }

@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "crc:cyborg_resistor",
+          "weight": 4,
+          "functions": []
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crc:cyborg_capacitor",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crc:cyborg_bone",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crc:cyborg_microchip",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

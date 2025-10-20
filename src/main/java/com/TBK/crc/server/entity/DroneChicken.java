@@ -216,7 +216,7 @@ public class DroneChicken extends RobotChicken {
 
                 this.rotateTowardsTarget(target);
 
-                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 64.0F) {
+                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 128.0F) {
                     ElectroProjectile electro = new ElectroProjectile(this.world, this.drone, 0);
                     electro.setPos(this.drone.position());
                     electro.shoot(

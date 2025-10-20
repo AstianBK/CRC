@@ -131,6 +131,7 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
                 if(healtCurrent<=0){
                     this.parentMob.setHealth(0.0F);
                     this.parentMob.die(p_31020_);
+                    return true;
                 }else {
                     this.parentMob.setHealth(healtCurrent);
                 }

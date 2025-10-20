@@ -7,6 +7,8 @@ import com.TBK.crc.server.entity.ResidualEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -72,9 +74,12 @@ public class HeartReflex extends PassivePart{
 
         multiArmCapability.getPlayer().hurtMarked = false;
         multiArmCapability.getPlayer().setHealth(1.0F);
+        if(this.refinements.contains("heart_reflex")){
+            multiArmCapability.getPlayer().addEffect(new MobEffectInstance(MobEffects.ABSORPTION,100,1));
+        }
         multiArmCapability.getPlayer().teleportTo(teleportPos.x,teleportPos.y+1.0F,teleportPos.z);
-        if(!player.level().isClientSide){
-            player.level().playSound(null,BlockPos.containing(teleportPos),BKSounds.HEART_REFLEX.get(),SoundSource.PLAYERS,3.0F,1.0F);
+        if(player.level().isClientSide){
+            player.level().playLocalSound(BlockPos.containing(teleportPos),BKSounds.HEART_REFLEX.get(),SoundSource.PLAYERS,10.0F,1.0F,false);
         }
         return true;
     }

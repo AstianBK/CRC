@@ -2,6 +2,7 @@ package com.TBK.crc.server.network.messager;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.item.CyberImplantItem;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.upgrade.Upgrade;
@@ -42,6 +43,7 @@ public class PacketAddImplant implements Packet<PacketListener> {
 
                 if(this.stack.getItem() instanceof CyberImplantItem implant){
                     if(implant.typePart == UpgradeableParts.ARM){
+                        cap.skills.upgrades = Util.getMapArmEmpty();
                         for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
                             cap.addNewAbility(upgrade);
                         }

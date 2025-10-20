@@ -3,6 +3,7 @@ package com.TBK.crc.common;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.registry.BKDimension;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.ElectroExplosionEntity;
@@ -110,6 +111,9 @@ public class Util {
     }
     public static boolean hasMultiArm(MultiArmCapability cap){
         return !cap.implantStore.getImplant(0).isEmpty();
+    }
+    public static boolean hasSyntharm(MultiArmCapability cap){
+        return cap.implantStore.getImplant(0).is(BKItems.CYBORG_SYNTHARM.get());
     }
 
     public static DamageSource electricDamage(ServerLevel level,Player player) {

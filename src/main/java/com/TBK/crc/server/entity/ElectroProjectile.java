@@ -49,7 +49,7 @@ public class ElectroProjectile extends AbstractArrow {
         if (!this.level().isClientSide()) {
             HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
             if (result.getType() == HitResult.Type.MISS && this.isAlive()) {
-                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()), this::canHitEntity);
+                List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()-1), this::canHitEntity);
                 if (!intersecting.isEmpty())
                     this.onHit(new EntityHitResult(intersecting.get(0)));
             }

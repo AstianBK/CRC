@@ -22,14 +22,17 @@ public class ContraAttack extends PassivePart{
     }
 
 
+    public float getMaxDamage(){
+        return this.refinements.contains("counter_attack_attack") ? 30.0F : 20.0F;
+    }
     @Override
     public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
         if(event.getSource().getEntity()==null)return;
         float amount = event.getAmount();
         DamageSource source = event.getSource();
         if(!this.contraAttack){
-            float damage = Math.min(this.damageActually + amount,20.0F);
-            if(damage==20.0F){
+            float damage = Math.min(this.damageActually + amount,getMaxDamage());
+            if(damage==getMaxDamage()){
                 this.contraAttack = true;
             }
             this.damageActually = damage;
@@ -39,7 +42,7 @@ public class ContraAttack extends PassivePart{
             if(sourceEntity instanceof LivingEntity living){
                 for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(4),e->e!=player)){
                     entity.invulnerableTime = 0;
-                    entity.hurt(living.damageSources().generic(),20.0F);
+                    entity.hurt(living.damageSources().generic(),getMaxDamage());
                 }
 
                 if(!player.level().isClientSide){

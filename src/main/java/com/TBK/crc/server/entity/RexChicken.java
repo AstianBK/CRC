@@ -780,6 +780,9 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         }else if(p_21375_ == 9){
             CRC.LOGGER.debug("DIE");
             this.idle.stop();
+            this.stunned.stop();
+            this.charge.stop();
+            this.recovery.stop();
             this.idleAnimationTimeout = 26;
             this.death.start(this.tickCount);
             this.deathTime = 26;

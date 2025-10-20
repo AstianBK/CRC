@@ -96,6 +96,9 @@ public class PunchChicken extends PathfinderMob {
         this.entityData.set(ATTACKING,flag);
         this.attackTimer = flag ? 20 : 0;
     }
+    public void playAttack(){
+        this.level().broadcastEntityEvent(this,(byte) 4);
+    }
     public boolean isCharging() {
         return this.entityData.get(CHARGING);
     }
@@ -103,9 +106,7 @@ public class PunchChicken extends PathfinderMob {
         this.entityData.set(CHARGING,flag);
     }
 
-    public void playAttack(){
-        this.level().broadcastEntityEvent(this,(byte) 4);
-    }
+
 
     @Override
     public void handleEntityEvent(byte p_21375_) {

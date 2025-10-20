@@ -81,9 +81,15 @@ public class ElectroExplosionEntity extends Explosion {
         net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
         Vec3 vec3 = new Vec3(this.x, this.y, this.z);
 
+        ElectroProjectile electroProjectile;
+        if(this.source instanceof ElectroProjectile projectile){
+            electroProjectile=projectile;
+        }else {
+            electroProjectile = null;
+        }
         for(int k2 = 0; k2 < list.size(); ++k2) {
             Entity entity = list.get(k2);
-            if (!entity.ignoreExplosion()) {
+            if (!entity.ignoreExplosion() && ((electroProjectile == null || electroProjectile.getOwner()!=null && !electroProjectile.getOwner().is(entity) || electroProjectile.getOwner()==null))) {
                 double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double)f2;
                 if (d12 <= 1.0D) {
                     double d5 = entity.getX() - this.x;
@@ -120,42 +126,11 @@ public class ElectroExplosionEntity extends Explosion {
                 }
             }
         }
+
     }
     @Override
     public void finalizeExplosion(boolean p_46076_) {
-        boolean flag = this.interactsWithBlocks();
 
-        if (this.level.isClientSide) {
-            this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
-        }
-        for (int i = 0 ; i<3 ; i++){
-            level.addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),x+level.random.nextInt(-2,2),y+level.random.nextInt(0,2),z+level.random.nextInt(-2,2),1.0F,0.0F,0.0F);
-        }
-
-        if (this.fire) {
-            for(BlockPos blockpos2 : this.toBlow) {
-                if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
-                    this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
-                }
-            }
-        }
     }
 
-    private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> p_46068_, ItemStack p_46069_, BlockPos p_46070_) {
-        int i = p_46068_.size();
-
-        for(int j = 0; j < i; ++j) {
-            Pair<ItemStack, BlockPos> pair = p_46068_.get(j);
-            ItemStack itemstack = pair.getFirst();
-            if (ItemEntity.areMergable(itemstack, p_46069_)) {
-                ItemStack itemstack1 = ItemEntity.merge(itemstack, p_46069_, 16);
-                p_46068_.set(j, Pair.of(itemstack1, pair.getSecond()));
-                if (p_46069_.isEmpty()) {
-                    return;
-                }
-            }
-        }
-
-        p_46068_.add(Pair.of(p_46069_, p_46070_));
-    }
 }

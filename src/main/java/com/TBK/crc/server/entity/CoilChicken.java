@@ -30,18 +30,17 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public class CoilChicken extends RobotChicken {
-    private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(CoilChicken.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> IS_LAUNCH = SynchedEntityData.defineId(CoilChicken.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> ATTACKING =
+            SynchedEntityData.defineId(CoilChicken.class, EntityDataSerializers.BOOLEAN);
+
     public AnimationState idle = new AnimationState();
     public AnimationState stand = new AnimationState();
     public AnimationState attack = new AnimationState();
 
     public int idleAnimationTimeout = 0;
 
-    public int standTimer = 0;
-    public CoilChicken(Level p_21684_) {
-        super(BKEntityType.COIL_CHICKEN.get(), p_21684_);
-    }
+    private int attackTimer = 0;
+
 
     public CoilChicken(EntityType<CoilChicken> CoilChickenEntityType, Level level) {
         super(CoilChickenEntityType,level);
@@ -67,8 +66,7 @@ public class CoilChicken extends RobotChicken {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_SWELL_DIR,-1);
-        this.entityData.define(IS_LAUNCH,false);
+        this.entityData.define(ATTACKING,false);
     }
 
     public static AttributeSupplier setAttributes() {
@@ -84,6 +82,15 @@ public class CoilChicken extends RobotChicken {
     @Override
     public void tick() {
         super.tick();
+        if(this.isAttacking()){
+            this.attackTimer--;
+            if(this.attackTimer<=0 ){
+                if(this.getTarget()!=null){
+                    this.doHurtTarget(this.getTarget());
+                }
+                this.setAttacking(false);
+            }
+        }
         if(this.level().isClientSide){
             this.setupAnimationStates();
         }
@@ -104,18 +111,50 @@ public class CoilChicken extends RobotChicken {
     public void handleEntityEvent(byte p_21375_) {
         if(p_21375_ == 4){
             this.idle.stop();
-
-            this.idleAnimationTimeout = 18;
-            this.stand.start(this.tickCount);
-            this.standTimer = 18;
-        }else if(p_21375_ == 8){
-            for (int i = 0 ; i<3 ; i++){
-                this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
-            }
-            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,false);
-
+            this.attack.start(this.tickCount);
+            this.idleAnimationTimeout = 10;
         }
         super.handleEntityEvent(p_21375_);
     }
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
+    }
+    public void setAttacking(boolean flag){
+        this.entityData.set(ATTACKING,flag);
+        this.attackTimer = flag ? 20 : 0;
+    }
+    public void playAttack(){
+        this.level().broadcastEntityEvent(this,(byte) 4);
+    }
 
+    class AttackGoal extends MeleeAttackGoal {
+
+        public AttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
+            super(p_25552_, p_25553_, p_25554_);
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity p_25557_, double p_25558_) {
+            double d0 = this.getAttackReachSqr(p_25557_);
+            if (p_25558_ <= d0 && this.getTicksUntilNextAttack()<=0 && CoilChicken.this.attackTimer<=0) {
+                this.resetAttackCooldown();
+                this.mob.getNavigation().stop();
+            }
+        }
+
+
+        @Override
+        protected void resetAttackCooldown() {
+            super.resetAttackCooldown();
+            CoilChicken.this.setAttacking(true);
+            if(!CoilChicken.this.level().isClientSide){
+                CoilChicken.this.playAttack();
+            }
+        }
+    }
 }

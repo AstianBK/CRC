@@ -40,9 +40,10 @@ public class HackerEye extends PassivePart{
             }
         }
     }
+
     @Override
     public float[] getWindowsColor(MultiArmCapability multiArmCapability) {
-        return multiArmCapability.getPlayer().isShiftKeyDown() ? new float[]{0.0F,0.0F,1.0F,0.5F} : super.getWindowsColor(multiArmCapability);
+        return multiArmCapability.getPlayer().isShiftKeyDown() && multiArmCapability.getPlayer().onGround() ? new float[]{0.0F,0.0F,1.0F,0.5F} : super.getWindowsColor(multiArmCapability);
     }
     public void refreshTarget (Player player,Level level){
         BlockPos origin = player.getOnPos();
