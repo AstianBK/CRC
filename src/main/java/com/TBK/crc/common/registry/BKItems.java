@@ -22,6 +22,7 @@ public class BKItems {
     public static final RegistryObject<Item> CYBORG_BONE = ITEMS.register("cyborg_bone",()->new CyberComponentItem(new Item.Properties()));
     public static final RegistryObject<Item> CYBORG_MICROCHIP = ITEMS.register("cyborg_microchip",()->new CyberComponentItem(new Item.Properties().stacksTo(16)));
 
+    public static final RegistryObject<Item> QUANTUM_MICROPROCESSOR = ITEMS.register("quantum_microprocessor",()->new CyberComponentItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
 
     //CYBER-IMPLANT

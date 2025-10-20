@@ -18,9 +18,10 @@
   "item.crc.cyborg_heart": "Cyborg Heart",
 
   "item.crc.cyborg_bone": "Cyborg Bone",
-  "item.crc.cyborg_microchip": "Cyborg Microchip",
   "item.crc.cyborg_resistor": "Cyborg Resistor",
   "item.crc.cyborg_capacitor": "Cyborg Capacitor",
+  "item.crc.cyborg_microchip": "Cyborg Microchip",
+  "item.crc.quantum_microprocessor": "Quantum Microprocessor",
 
   "item.crc.upgrade_arm_claws": "Multi-Arm Upgrade: Electric Claws",
   "item.crc.upgrade_arm_cannon": "Multi-Arm Upgrade: Plasma Cannon",
