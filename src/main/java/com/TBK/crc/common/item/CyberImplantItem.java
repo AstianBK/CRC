@@ -139,12 +139,14 @@ public class CyberImplantItem extends ItemCyborg{
         }
         return upgrades;
     }
-    public static boolean equalsUpgrades(ItemStack stack, ItemStack stack1, boolean isArm){
+    public static boolean equalsUpgrades(ItemStack stack, ItemStack stack1){
         return stack.equals(stack1);
     }
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         List<Upgrade> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
+        List<String> refinements = getRefinement(p_41421_.getOrCreateTag());
+
         p_41423_.add(Component.translatable("tooltip.cyber_implant").withStyle(ChatFormatting.GRAY));
         if(p_41421_.is(BKItems.CYBORG_ARM.get())){
             p_41423_.add(Component.translatable("upgrades.none").withStyle(ChatFormatting.DARK_AQUA));
@@ -153,6 +155,9 @@ public class CyberImplantItem extends ItemCyborg{
             for (Upgrade upgrade : upgrades){
                 p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
             }
+        }
+        for (String name : refinements){
+            p_41423_.add(Component.translatable("refinement."+name));
         }
     }
 }

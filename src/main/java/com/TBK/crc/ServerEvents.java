@@ -20,6 +20,6 @@ public class ServerEvents {
         event.put(BKEntityType.BOOM_CHICKEN.get(), BoomChicken.setAttributes());
         event.put(BKEntityType.COIL_CHICKEN.get(), CoilChicken.setAttributes());
         event.put(BKEntityType.DRONE_CHICKEN.get(), DroneChicken.setAttributes());
-
+        event.put(BKEntityType.PUNCH_CHICKEN.get(), PunchChicken.setAttributes());
     }
 }

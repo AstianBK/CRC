@@ -220,7 +220,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             double tower1X =  ( (-5) * cos) + ( 4 * sin);
             double tower1Y =  ( (-5) * sin) - ( 4 * cos);
 
-            // torre 2: atrás izquierda
             double tower2X =  ( (5) * cos) + ( 4* sin);
             double tower2Y =  ( (5) * sin) - ( 4* cos);
 
@@ -290,7 +289,16 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             if(this.stunnedTick>0){
                 this.stunnedTick--;
                 this.getNavigation().stop();
-                if(this.stunnedTick>990){
+                if(this.stunnedTick>980){
+                    Vec3 vec32 = this.chargeDirection;
+                    double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
+                    double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
+                    this.yHeadRot=(float)f6;
+                    this.setYHeadRot((float) f6);
+                    this.yBodyRot= (float) (f6);
+                    this.setYRot((float) f6);
+                    this.setXRot((float) f5);
+                    this.setRot(this.getYRot(),this.getXRot());
                     this.setDeltaMovement(this.chargeDirection.multiply(-1,1,-1));
                     this.chargeDirection=this.chargeDirection.scale(0.8);
                 }else {
@@ -325,7 +333,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                 this.setDeltaMovement(Vec3.ZERO);
                 this.prepareChargeTimer--;
                 if(this.getTarget()!=null){
-                    this.chargeDirection = this.getTarget().position().subtract(this.position()).normalize().scale(1.0F);
+                    this.chargeDirection = this.getTarget().position().subtract(this.position()).normalize().multiply(1,0,1);
                     if(!this.level().isClientSide){
                         Vec3 vec32 = this.chargeDirection;
                         double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
@@ -778,7 +786,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             this.prepareChargeTimer=23;
             this.idleAnimationTimeout=23;
         }else if(p_21375_ == 9){
-            CRC.LOGGER.debug("DIE");
             this.idle.stop();
             this.stunned.stop();
             this.charge.stop();
@@ -787,7 +794,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             this.death.start(this.tickCount);
             this.deathTime = 26;
         }else if(p_21375_ == 12){
-            CRC.LOGGER.debug("STUN");
             this.charge.stop();
             this.idle.stop();
             this.idleAnimationTimeout = 1000;
@@ -898,29 +904,27 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
         @Override
         protected void checkAndPerformAttack(LivingEntity p_25557_, double p_25558_) {
-            if(RexChicken.this.restTime<=0){
-                double d0 = this.getAttackReachSqr(p_25557_);
-                if (p_25558_ <= d0 && this.getTicksUntilNextAttack()<=0 && RexChicken.this.attackTimer<=0) {
-                    this.resetAttackCooldown();
-                    this.mob.getNavigation().stop();
-                }else {
-                    if(!this.mob.level().isClientSide){
-                        if(RexChicken.this.cooldownLaser<=0 && RexChicken.this.cooldownCharge<=0){
-                            if (p_25558_>64.0F){
-                                ((RexChicken)this.mob).initLaser();
-                            }else {
-                                RexChicken.this.initCharge();
-                            }
-                        }else if(RexChicken.this.cooldownLaser<=0){
+            double d0 = this.getAttackReachSqr(p_25557_);
+            if (p_25558_ <= d0 && this.getTicksUntilNextAttack()<=0 && RexChicken.this.attackTimer<=0) {
+                this.resetAttackCooldown();
+                this.mob.getNavigation().stop();
+                RexChicken.this.restTime = 0;
+            }else  if(RexChicken.this.restTime<=0){
+                if(!this.mob.level().isClientSide){
+                    if(RexChicken.this.cooldownLaser<=0 && RexChicken.this.cooldownCharge<=0){
+                        if (p_25558_>64.0F){
                             ((RexChicken)this.mob).initLaser();
-                        }else if(RexChicken.this.cooldownCharge<=0){
+                        }else {
                             RexChicken.this.initCharge();
                         }
+                    }else if(RexChicken.this.cooldownLaser<=0){
+                        ((RexChicken)this.mob).initLaser();
+                    }else if(RexChicken.this.cooldownCharge<=0){
+                        RexChicken.this.initCharge();
                     }
-
                 }
-            }
 
+            }
         }
 
 
@@ -936,31 +940,31 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
 
     static class ChargedGoal extends Goal {
-        private final RexChicken raider;
+        private final RexChicken rex;
         private final double speedModifier;
         private Vec3 targetDirection;
         public ChargedGoal(RexChicken p_37936_, double p_37937_) {
-            this.raider = p_37936_;
+            this.rex = p_37936_;
             this.speedModifier = p_37937_;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Flag.LOOK));
         }
 
         public boolean canUse() {
-            return this.raider.isCharging();
+            return this.rex.isCharging();
         }
 
         public void start() {
             super.start();
-            if(this.raider.getTarget()!=null){
-                this.targetDirection = this.raider.chargeDirection.normalize().add(triangle(0.0D, 0.0172275D * (double)0.1f,raider.level().random), triangle(0.0D, 0.0172275D * (double)0.1F,raider.level().random), triangle(0.0D, 0.0172275D * (double)0.1F,raider.level().random)).scale((double)this.speedModifier);
-                this.raider.setDeltaMovement(this.targetDirection);
+            if(this.rex.getTarget()!=null){
+                this.targetDirection = this.rex.chargeDirection.normalize().add(triangle(0.0D, 0.0172275D * (double)0.1f, rex.level().random), triangle(0.0D, 0.0172275D * (double)0.1F, rex.level().random), triangle(0.0D, 0.0172275D * (double)0.1F, rex.level().random)).scale((double)this.speedModifier);
+                this.rex.setDeltaMovement(this.targetDirection);
             }
         }
 
         public void tick() {
             if(this.targetDirection!=null){
                 this.targetDirection = this.targetDirection.scale(1F);
-                this.raider.setDeltaMovement(this.targetDirection);
+                this.rex.setDeltaMovement(this.targetDirection);
             }
         }
         public double triangle(double p_216329_, double p_216330_, RandomSource random) {

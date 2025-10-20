@@ -17,7 +17,7 @@ public abstract class LivingEntityMixin {
         if((Object)this instanceof Player player){
             if(MultiArmCapability.hasEffect(MobEffects.JUMP,player)){
                 float original = cir.getReturnValue();
-                cir.setReturnValue(original*1.5F);
+                cir.setReturnValue(original*MultiArmCapability.getJumpBoost(player));
             }
         }
     }

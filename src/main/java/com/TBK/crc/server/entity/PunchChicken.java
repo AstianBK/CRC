@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.level.Level;
 
-public class PunchChicken extends PathfinderMob {
+public class PunchChicken extends RobotChicken {
     public static final EntityDataAccessor<Boolean> CHARGING =
             SynchedEntityData.defineId(PunchChicken.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> ATTACKING =
@@ -22,7 +22,7 @@ public class PunchChicken extends PathfinderMob {
     public AnimationState charge = new AnimationState();
     public int idleAnimationTimeout = 0;
     public int attackTimer = 0;
-    public PunchChicken(EntityType<? extends PathfinderMob> p_21683_, Level p_21684_) {
+    public PunchChicken(EntityType<? extends RobotChicken> p_21683_, Level p_21684_) {
         super(p_21683_, p_21684_);
     }
     public static AttributeSupplier setAttributes() {
@@ -94,7 +94,7 @@ public class PunchChicken extends PathfinderMob {
     }
     public void setAttacking(boolean flag){
         this.entityData.set(ATTACKING,flag);
-        this.attackTimer = flag ? 20 : 0;
+        this.attackTimer = flag ? 5 : 0;
     }
     public void playAttack(){
         this.level().broadcastEntityEvent(this,(byte) 4);
@@ -113,7 +113,7 @@ public class PunchChicken extends PathfinderMob {
         if(p_21375_ == 4){
             this.idle.stop();
             this.attack.start(this.tickCount);
-            this.idleAnimationTimeout = 10;
+            this.idleAnimationTimeout = 5;
         }
         super.handleEntityEvent(p_21375_);
     }
