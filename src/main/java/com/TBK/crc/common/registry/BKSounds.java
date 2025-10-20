@@ -57,6 +57,9 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> HEART_REFLEX =
             registerSoundEvent("heart_reflex");
 
+    public static final RegistryObject<SoundEvent> THORACIC_EXPLOSION =
+            registerSoundEvent("thoracic_explosion");
+
     public static final RegistryObject<SoundEvent> MULTIARM_CLAW_DASH =
             registerSoundEvent("multiarm_claw_dash");
 

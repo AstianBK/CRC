@@ -77,6 +77,12 @@
       "crc:heart_reflex_use"
     ]
   },
+  "thoracic_explosion": {
+    "subtitle": "sounds.crc.thoracic_explosion",
+    "sounds": [
+      "crc:thoracic_explosion"
+    ]
+  },
   "multiarm_claw_dash": {
     "subtitle": "sounds.crc.multiarm_claw_dash",
     "sounds": [
