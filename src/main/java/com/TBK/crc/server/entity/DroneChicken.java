@@ -204,11 +204,11 @@ public class DroneChicken extends RobotChicken {
                     double heightOffset = 7.0F;
                     this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
 
-                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(3);
+                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(1);
 
                     Vec3 currentMotion = this.drone.getDeltaMovement();
 
-                    double smoothFactor = 0.7D;
+                    double smoothFactor = 0.35D;
                     Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
 
                     this.drone.setDeltaMovement(smoothedMotion);

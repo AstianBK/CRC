@@ -207,6 +207,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                         this.fight.setDragonKilled(this);
                     }
                     this.setDeath(true);
+                    this.discard();
                 }
             }
             this.setDeltaMovement(0,this.getDeltaMovement().y,0);
@@ -866,7 +867,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             if(healthShieldActually<=p_21017_){
                 this.setShieldAmount(0);
                 this.regenerationShieldTimer = 200;
-                this.level().playSound(null,this.blockPosition(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
+                this.level().playSound(null,this.getX(),this.getY(),this.getZ(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
             }else {
                 this.setShieldAmount((int) (healthShieldActually-p_21017_));
                 this.level().broadcastEntityEvent(this,(byte) 34);
