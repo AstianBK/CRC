@@ -1,4 +1,10 @@
 {
+  "chicken_cyborg_speech": {
+    "subtitle": "sounds.crc.chicken_cyborg_speech",
+    "sounds": [
+      "crc:chicken_cyborg_speech"
+    ]
+  },
   "chicken_bomb_loop": {
     "subtitle": "sounds.crc.chicken_bomb_loop",
     "sounds": [

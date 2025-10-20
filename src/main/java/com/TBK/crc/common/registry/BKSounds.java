@@ -16,6 +16,9 @@ public class BKSounds {
 
     //ENTITY
 
+    public static final RegistryObject<SoundEvent> CHICKEN_CYBORG_SPEECH =
+            registerSoundEvent("chicken_cyborg_speech");
+
     public static final RegistryObject<SoundEvent> CHICKEN_BOMB_LOOP =
             registerSoundEvent("chicken_bomb_loop");
 
