@@ -136,8 +136,8 @@ public class MultiArmOverlay implements IGuiOverlay {
                     graphics.pose().pushPose();
                     int j1 =  i + 101;
                     int k1 = height - 58;
-                    printAmmo(graphics,AMMO_EMPTY_LOCATION,j1,k1,10);
-                    printAmmo(graphics,AMMO_FULL_LOCATION, (int) (j1-120), (int) (k1+16),cap.energy);
+                    printAmmo(graphics,AMMO_EMPTY_LOCATION,(int) (j1-120), (int) (k1+25),10);
+                    printAmmo(graphics,AMMO_FULL_LOCATION, (int) (j1-120), (int) (k1+25),cap.energy);
 
                     graphics.pose().popPose();
                 }

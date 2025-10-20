@@ -2,6 +2,7 @@ package com.TBK.crc.common.item;
 
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.Util;
+import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -145,6 +146,9 @@ public class CyberImplantItem extends ItemCyborg{
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         List<Upgrade> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
         p_41423_.add(Component.translatable("tooltip.cyber_implant").withStyle(ChatFormatting.GRAY));
+        if(p_41421_.is(BKItems.CYBORG_ARM.get())){
+            p_41423_.add(Component.translatable("upgrades.none").withStyle(ChatFormatting.DARK_AQUA));
+        }
         if(!upgrades.isEmpty()){
             for (Upgrade upgrade : upgrades){
                 p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
