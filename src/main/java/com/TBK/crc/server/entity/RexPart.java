@@ -212,7 +212,7 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
         if(p_19882_==4){
             this.prepareShoot.stop();
             this.towerShoot.start(this.parentMob.tickCount);
-            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), BKSounds.REX_CANNON_SHOOT.get(), SoundSource.HOSTILE,1.0F,1.0F,false);
+            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), BKSounds.REX_CANNON_SHOOT.get(), SoundSource.HOSTILE,3.0F,1.0F,false);
 
         }else if(p_19882_==8){
             this.towerShoot.stop();
@@ -223,7 +223,7 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
             this.towerBreak.start(this.parentMob.tickCount);
             this.setBreaking(true);
             this.explosionTimer = 10;
-            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE,1.0F,1.0F,false);
+            this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE,4.0F,1.0F,false);
         }
         super.handleEntityEvent(p_19882_);
     }

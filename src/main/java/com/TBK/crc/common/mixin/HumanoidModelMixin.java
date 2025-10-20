@@ -20,13 +20,6 @@ import java.util.List;
 
 @Mixin(HumanoidModel.class)
 public abstract class HumanoidModelMixin<T extends LivingEntity> {
-    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V",at = @At("HEAD"))
-    public void armLayer(T p_102866_, float p_102867_, float p_102868_, float p_102869_, float p_102870_, float p_102871_, CallbackInfo ci){
-        if (((Object)this) instanceof PlayerModel<?> model && p_102866_ instanceof Player player){
-            MultiArmCapability cap = MultiArmCapability.get(player);
-            model.rightArm.visible = cap == null || !Util.hasMultiArm(cap);
-        }
-    }
 
     @Inject(method = "poseRightArm",at = @At("HEAD"))
     public void setup(T p_102876_, CallbackInfo ci){
@@ -47,6 +40,11 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
                 model.rightArm.xScale=0;
                 model.rightArm.yScale=0;
                 model.rightArm.zScale=0;
+            }else {
+                model.rightArm.visible = true;
+                model.rightArm.xScale=1;
+                model.rightArm.yScale=1;
+                model.rightArm.zScale=1;
             }
         }
     }

@@ -39,10 +39,10 @@ public class CannonArm extends Upgrade {
         if(charge){
             Player player = multiArmCapability.getPlayer();
             Level level = player.level();
-            this.chargeTime++;
             this.stopAiming = 20;
             int necessaryEnergy = 2+multiArmCapability.levelCharge;
             if(this.chargeTime<51){
+                this.chargeTime++;
                 if(multiArmCapability.levelCharge>0 && (this.chargeTime-10)%20==0){
                     if(multiArmCapability.energy>=necessaryEnergy){
                         multiArmCapability.levelCharge = Math.min(multiArmCapability.levelCharge+1, 3);
@@ -117,12 +117,12 @@ public class CannonArm extends Upgrade {
             this.stopAiming = 20;
             this.charge = false;
             multiArmCapability.energy = Math.max(multiArmCapability.energy-(1+multiArmCapability.levelCharge),0) ;
-            multiArmCapability.levelCharge = 0;
-            ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),this.chargeTime);
+            ElectroProjectile orb = new ElectroProjectile(multiArmCapability.getPlayer().level(),multiArmCapability.getPlayer(),this.chargeTime>10 ? 10 + 20 * multiArmCapability.levelCharge-1 : 0);
             orb.shootFromRotation(multiArmCapability.getPlayer(),multiArmCapability.getPlayer().getXRot(),multiArmCapability.getPlayer().getYRot(), 0.0F, 1.0F, 1.0F);
             orb.setPos(this.getPos(multiArmCapability.getPlayer().getEyePosition(),multiArmCapability.getPlayer()));
 
             multiArmCapability.getPlayer().level().addFreshEntity(orb);
+            multiArmCapability.levelCharge = 0;
             this.chargeTime = 0;
         }
     }

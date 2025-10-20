@@ -96,6 +96,7 @@ public class ClawsArm extends Upgrade {
 
     @Override
     public void onAttack(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
+        if(multiArmCapability.getPlayer().level().isClientSide)return;
         if(event.getSource().is(Util.ELECTRIC_DAMAGE_MOB) || event.getSource().is(Util.ELECTRIC_DAMAGE_PLAYER))return;
 
         event.getEntity().invulnerableTime = 0;

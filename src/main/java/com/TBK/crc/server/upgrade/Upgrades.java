@@ -31,9 +31,11 @@ public class Upgrades {
                 if(tag1.contains("name")){
                     int pos=tag1.getInt("pos");
                     Upgrade power = Util.getTypeSkillForName(tag1.getString("name"));
-                    if(power!=null){
-                        map.put(pos, new UpgradeInstance(power,0));
+                    ListTag tags = tag1.getList("refinements",10);
+                    for(int j = 0 ; j<tags.size() ; j++){
+                        power.refinements.add(tags.getCompound(j).getString("name"));
                     }
+                    map.put(pos, new UpgradeInstance(power,0));
                 }
             }
         }
@@ -47,7 +49,7 @@ public class Upgrades {
             if(this.upgrades.get(i)!=null){
                 Upgrade power=this.upgrades.get(i).getUpgrade();
                 CompoundTag tag1=new CompoundTag();
-                tag1.putString("name",power.name);
+                power.save(tag1);
                 tag1.putInt("pos",i);
                 power.save(tag1);
                 listtag.add(tag1);

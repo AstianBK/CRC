@@ -45,10 +45,16 @@ public class PacketAddImplant implements Packet<PacketListener> {
                     if(implant.typePart == UpgradeableParts.ARM){
                         cap.skills.upgrades = Util.getMapArmEmpty();
                         for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                            if(!CyberImplantItem.getRefinement(this.stack.getOrCreateTag()).isEmpty()){
+                                upgrade.refinements = CyberImplantItem.getRefinement(this.stack.getOrCreateTag());
+                            }
                             cap.addNewAbility(upgrade);
                         }
                     }else {
                         for (Upgrade upgrade : CyberImplantItem.getUpgrade(implant,this.stack.getOrCreateTag())){
+                            if(!CyberImplantItem.getRefinement(this.stack.getOrCreateTag()).isEmpty()){
+                                upgrade.refinements = CyberImplantItem.getRefinement(this.stack.getOrCreateTag());
+                            }
                             cap.addNewPassive(upgrade,index);
                         }
                     }

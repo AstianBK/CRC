@@ -97,7 +97,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public RexPart<?>[] towers;
     public RexPart<?>[] parts;
     public CyberChickenFight fight;
-
+    public int hurtShield = 0;
     private boolean step1Played = false;
     private boolean step2Played = false;
     private boolean lift1Played = false;
@@ -694,6 +694,9 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     }
 
     private void setupAnimationStates() {
+        if(this.hurtShield>0){
+            this.hurtShield--;
+        }
         if(!this.isCharging() && !this.isDeath()){
             if (this.idleAnimationTimeout <= 0) {
                 this.idleAnimationTimeout = 83;
@@ -751,7 +754,9 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             this.deathTime=26;
             this.level().broadcastEntityEvent(this,(byte) 9);
         }
+
         this.setHealth(1.0F);
+
     }
 
     @Override
@@ -814,10 +819,13 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         }else if(p_21375_ == 19){
             this.prepareLaser=23;
         }else if(p_21375_ == 32){
+            level().playLocalSound(this.blockPosition(),BKSounds.REX_SHIELD_ON.get(),SoundSource.HOSTILE,10,1.0f,false);
             this.setShieldAmount(50);
         }else if(p_21375_ == 33){
             this.lastBlockPosBeamExplosion = null;
             this.lastBlockBeam = null;
+        }else if(p_21375_ == 34){
+            this.hurtShield = 10;
         }
         super.handleEntityEvent(p_21375_);
     }
@@ -851,13 +859,17 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
+        p_21017_= net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21016_, p_21017_);
+
         if(this.isPowered() && (p_21016_.is(Util.ELECTRIC_DAMAGE_PLAYER) || p_21016_.is(Util.ELECTRIC_DAMAGE_MOB))){
             int healthShieldActually = this.getShieldAmount();
             if(healthShieldActually<=p_21017_){
                 this.setShieldAmount(0);
                 this.regenerationShieldTimer = 200;
+                this.level().playSound(null,this.blockPosition(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
             }else {
                 this.setShieldAmount((int) (healthShieldActually-p_21017_));
+                this.level().broadcastEntityEvent(this,(byte) 34);
             }
             return false;
         }

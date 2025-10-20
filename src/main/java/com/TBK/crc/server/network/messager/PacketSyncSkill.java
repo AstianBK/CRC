@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.manager.UpgradeInstance;
+import com.TBK.crc.server.upgrade.Upgrade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
@@ -23,8 +24,8 @@ public class PacketSyncSkill implements Packet<PacketListener> {
 
 
     public PacketSyncSkill(FriendlyByteBuf buf) {
-        this.upgrades = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
-        this.upgradesPassive = buf.readMap(PacketSyncSkill::readPowerID, PacketSyncSkill::readCoolDownInstance);
+        this.upgrades = buf.readMap(PacketSyncSkill::readUpgradeIndex, PacketSyncSkill::readUpgradeInstance);
+        this.upgradesPassive = buf.readMap(PacketSyncSkill::readUpgradeIndex, PacketSyncSkill::readUpgradeInstance);
     }
     public PacketSyncSkill(Map<Integer, UpgradeInstance> upgrade, Map<Integer, UpgradeInstance> passives) {
         this.upgrades = upgrade;
@@ -37,13 +38,15 @@ public class PacketSyncSkill implements Packet<PacketListener> {
     }
 
 
-    public static Integer readPowerID(FriendlyByteBuf buffer) {
+    public static Integer readUpgradeIndex(FriendlyByteBuf buffer) {
         return buffer.readInt();
     }
 
-    public static UpgradeInstance readCoolDownInstance(FriendlyByteBuf buffer) {
+    public static UpgradeInstance readUpgradeInstance(FriendlyByteBuf buffer) {
         String name = buffer.readUtf();
-        return new UpgradeInstance(Util.getTypeSkillForName(name), 0);
+        Upgrade upgrade=Util.getTypeSkillForName(name);
+        upgrade.refinements = buffer.readList(FriendlyByteBuf::readUtf);
+        return new UpgradeInstance(upgrade, 0);
     }
 
     public static void writePowerId(FriendlyByteBuf buf, Integer powerId) {
@@ -52,6 +55,7 @@ public class PacketSyncSkill implements Packet<PacketListener> {
 
     public static void writeCoolDownInstance(FriendlyByteBuf buf, UpgradeInstance cooldownInstance) {
         buf.writeUtf(cooldownInstance.getUpgrade().name);
+        buf.writeCollection(cooldownInstance.getUpgrade().refinements,FriendlyByteBuf::writeUtf);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
