@@ -56,6 +56,9 @@ public class BKItems {
     //REGULAR-ITEM
     public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> PORTAL_OPENER = ITEMS.register("portal_opener",()->new Item(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1)));
+
+    public static final RegistryObject<Item> DANGER_INCREASER = ITEMS.register("danger_increaser",()->new Item(new Item.Properties().stacksTo(1)));
 
 
     //COSMETIC

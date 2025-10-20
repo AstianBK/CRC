@@ -19,6 +19,8 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKBlocks.UPGRADE_TABLE.get()));
 
                 a.accept(new ItemStack(BKItems.SIGNAL_JAMMER.get()));
+                a.accept(new ItemStack(BKItems.PORTAL_OPENER.get()));
+                a.accept(new ItemStack(BKItems.DANGER_INCREASER.get()));
 
                 a.accept(new ItemStack(BKItems.CYBORG_ARM.get()));
                 //a.accept(new ItemStack(BKItems.CYBORG_SYNTHARM.get()));
