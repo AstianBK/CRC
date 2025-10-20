@@ -250,7 +250,6 @@ public class ModBusEvent {
                         cap.warningLevel = 1;
                         cap.playChickenWarning = true;
                         PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
-                        cap.playChickenWarning = false;
 
                     }
                 }
@@ -373,6 +372,9 @@ public class ModBusEvent {
             if(cap!=null){
                 cap.passives.upgrades.forEach((i,passive)->{
                     passive.getUpgrade().onHurt(cap, event);
+                });
+                cap.passives.upgrades.forEach((i,passive)->{
+                    cap.getSelectSkill().onHurt(cap, event);
                 });
             }
         }

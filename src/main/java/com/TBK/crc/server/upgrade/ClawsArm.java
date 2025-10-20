@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +49,7 @@ public class ClawsArm extends Upgrade {
             player.fallDistance = 0.0F;
             player.setDeltaMovement(player.getDeltaMovement().multiply(1.0F,0.89F,1.0F));
             if(!player.level().isClientSide){
-                for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(1.5F), e->e!=player)){
+                for (Entity living : player.level().getEntitiesOfClass(Entity.class,player.getBoundingBox().inflate(1.5F), e->e!=player)){
                     living.invulnerableTime = 0;
                     living.hurt(Util.electricDamage((ServerLevel) player.level(),player),5.0F);
                     living.invulnerableTime = 0;
@@ -139,5 +140,11 @@ public class ClawsArm extends Upgrade {
                 player.level().addFreshEntity(residual);
             }
         }
+    }
+
+    @Override
+    public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
+        float damage = event.getAmount()*0.5F;
+        event.setAmount(damage);
     }
 }
