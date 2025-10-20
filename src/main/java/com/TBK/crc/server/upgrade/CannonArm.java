@@ -77,7 +77,7 @@ public class CannonArm extends Upgrade {
                 this.canRechargeEnergy = true;
             }
 
-            if(this.canRechargeEnergy && multiArmCapability.getPlayer().tickCount % 20 == 0){
+            if(this.canRechargeEnergy && multiArmCapability.getPlayer().tickCount % 10 == 0){
                 multiArmCapability.energy = Math.min(multiArmCapability.energy+1,10);
             }
         }

@@ -71,6 +71,18 @@
       "crc:rex_stomp"
     ]
   },
+  "rex_shield_off": {
+    "subtitle": "sounds.crc.rex_shield_off",
+    "sounds": [
+      "crc:rex_shield_off"
+    ]
+  },
+  "rex_shield_on": {
+    "subtitle": "sounds.crc.rex_shield_on",
+    "sounds": [
+      "crc:rex_shield_on"
+    ]
+  },
   "heart_reflex_use": {
     "subtitle": "sounds.crc.heart_reflex_use",
     "sounds": [

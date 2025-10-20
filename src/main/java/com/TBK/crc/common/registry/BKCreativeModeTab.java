@@ -21,7 +21,7 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.SIGNAL_JAMMER.get()));
 
                 a.accept(new ItemStack(BKItems.CYBORG_ARM.get()));
-                a.accept(new ItemStack(BKItems.CYBORG_SYNTHARM.get()));
+                //a.accept(new ItemStack(BKItems.CYBORG_SYNTHARM.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_EYE.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_EYE_HACKER.get()));
                 a.accept(new ItemStack(BKItems.CYBORG_HEART.get()));
