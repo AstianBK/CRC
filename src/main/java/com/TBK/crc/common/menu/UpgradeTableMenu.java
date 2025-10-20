@@ -3,7 +3,10 @@ package com.TBK.crc.common.menu;
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.item.*;
 import com.TBK.crc.common.registry.BKContainers;
+import com.TBK.crc.common.registry.BKSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -53,6 +56,9 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
             @Override
             public void onTake(Player p_150645_, ItemStack p_150646_) {
                 super.onTake(p_150645_, p_150646_);
+                if(player.level().isClientSide){
+                    player.level().playLocalSound(player.blockPosition(), BKSounds.CYBORG_TABLE_IMPLANT.get(), SoundSource.BLOCKS,4.0F,1.0F,false);
+                }
                 UpgradeTableMenu.this.craftSlots.setItem(0,ItemStack.EMPTY);
                 UpgradeTableMenu.this.craftSlots.setItem(1,ItemStack.EMPTY);
             }

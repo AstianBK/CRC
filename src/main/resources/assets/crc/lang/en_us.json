@@ -31,10 +31,13 @@
   "upgrades.claws_arm": "Upgrade: Electric Claws",
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
   "upgrades.gancho_arm": "Upgrade: Harpoon",
+  "upgrades.none": "NONE",
+
   "entity.crc.rex_chicken": "Cyber Chicken",
   "crc.cyborg_table.bottom_implant": "IMPLANT",
   "crc.portal.bottom_accept": "Accept",
-  "crc.portal.bottom_cancel": "Cancel"
+  "crc.portal.bottom_cancel": "Cancel",
+  "tooltip.cyber_implant": "Implant"
 }
 
 
