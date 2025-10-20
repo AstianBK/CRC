@@ -83,6 +83,18 @@
       "crc:multiarm_cannon_charging"
     ]
   },
+  "multiarm_harpoon_shoot": {
+    "subtitle": "sounds.crc.multiarm_harpoon_shoot",
+    "sounds": [
+      "crc:multiarm_harpoon_shoot"
+    ]
+  },
+  "multiarm_harpoon_comeback": {
+    "subtitle": "sounds.crc.multiarm_harpoon_comeback",
+    "sounds": [
+      "crc:multiarm_harpoon_comeback"
+    ]
+  },
   "cyborg_table_implant": {
     "subtitle": "sounds.crc.cyborg_table_implant",
     "sounds": [

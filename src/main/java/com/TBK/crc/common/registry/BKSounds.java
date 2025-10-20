@@ -60,6 +60,12 @@ public class BKSounds {
     public static final RegistryObject<SoundEvent> MULTIARM_CANNON_NORMAL_SHOT =
             registerSoundEvent("multiarm_cannon_normal_shot");
 
+    public static final RegistryObject<SoundEvent> MULTIARM_HARPOON_SHOOT =
+            registerSoundEvent("multiarm_harpoon_shoot");
+
+    public static final RegistryObject<SoundEvent> MULTIARM_HARPOON_COMEBACK =
+            registerSoundEvent("multiarm_harpoon_comeback");
+
     //BLOCKS
 
     public static final RegistryObject<SoundEvent> CYBORG_TABLE_IMPLANT =
