@@ -254,7 +254,7 @@ public class ModBusEvent {
                         cap.warningLevel = 1;
                         cap.playChickenWarning = true;
                         cap.invokeTimer = 1000;
-                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getSource().getEntity().getId()), (ServerPlayer) event.getSource().getEntity());
                     }
                 }
             }

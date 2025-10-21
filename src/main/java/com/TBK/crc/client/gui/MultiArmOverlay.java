@@ -25,12 +25,26 @@ public class MultiArmOverlay implements IGuiOverlay {
     protected static final ResourceLocation AMMO_EMPTY_LOCATION = new ResourceLocation(CRC.MODID,"textures/gui/cannon_ammo_empty.png");
 
     protected static final ResourceLocation[] FRAMES = new ResourceLocation[]{
-            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_0.png"),
-            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_1.png"),
-            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_2.png"),
-            new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_3.png")
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_0/cyborg_chicken_talk_0.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_0/cyborg_chicken_talk_1.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_0/cyborg_chicken_talk_2.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_0/cyborg_chicken_talk_3.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_1/cyborg_chicken1_talk_0.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_1/cyborg_chicken1_talk_1.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_1/cyborg_chicken1_talk_2.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_1/cyborg_chicken1_talk_3.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_0.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_1.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_2.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken_talk_3.png")
+
     };
-    protected static final ResourceLocation STATIC_FRAME = new ResourceLocation(CRC.MODID,"textures/gui/cyborg_chicken_talk_static.png");
+
+    protected static final ResourceLocation[] STATICS_FRAMES = new ResourceLocation[]{
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_0/cyborg_chicken_talk_static.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_1/cyborg_chicken1_talk_static.png"),
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_static.png")
+    };
 
     private final Minecraft mc = Minecraft.getInstance();
     @Override
@@ -74,6 +88,7 @@ public class MultiArmOverlay implements IGuiOverlay {
                 }
                 graphics.pose().pushPose();
                 if(cap.warningLevel>0){
+                    int warningLevel = cap.warningLevel-1;
                     int i = width / 2 -140;
                     int j1 =  i + 101;
                     int k1 = height - 58 ;
@@ -92,13 +107,13 @@ public class MultiArmOverlay implements IGuiOverlay {
                     float centerX = (j1 + xExtra);
                     float centerY = (k1 + yExtra);
 
-                    ResourceLocation location = cap.playChickenWarning ? STATIC_FRAME : (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(cap.warningLevel-1)+".png"));
+                    ResourceLocation location = cap.playChickenWarning ? STATICS_FRAMES[warningLevel] : (new ResourceLocation(CRC.MODID,"textures/mobeffect/location_tracking_"+(warningLevel)+".png"));
                     if(cap.getChickenTalkAnim(partialTicks)>0.0F){
                         graphics.pose().translate(centerX, centerY, 0);
                         graphics.pose().mulPose(Axis.XP.rotationDegrees(Mth.sin((ageInTick *0.5F)) * 30.0F ));
                         graphics.pose().mulPose(Axis.YP.rotationDegrees(Mth.sin((ageInTick *0.9F)) * 15.0F ));
                         graphics.pose().translate(-centerX, -centerY, 0);
-                        location = FRAMES[(int) ((ageInTick)%4)];
+                        location = FRAMES[(int) ((ageInTick)%4)+(warningLevel*3)];
                     }
                     graphics.blit(location, (int) centerX, (int) centerY, 0,0, Mth.ceil(18 + 128*percent),  Mth.ceil(18 + 128*percent), Mth.ceil(18 + 128*percent) ,  Mth.ceil(18 + 128*percent));
                     RenderSystem.disableBlend();

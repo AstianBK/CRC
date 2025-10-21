@@ -191,34 +191,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
             this.cooldownUse--;
         }
 
-        if(this.chickenEnemy){
-
-            if(this.invokeTimer<=0){
-                if(warningLevel>0){
-                    this.teleportChicken();
-                }
-                this.invokeTimer = 1000;
-                this.wave = this.wave+1;
-                if(this.wave>6 && this.warningLevel<3){
-                    this.warningLevel = Math.min(this.warningLevel+1,3);
-                    this.wave = 0;
-                    this.playChickenWarning = true;
-                }else {
-                    this.playChickenWarning = false;
-                }
-                this.wave = Math.min(this.wave,6);
-                if(!this.level.isClientSide){
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
-                }
-            }else {
-                this.invokeTimer--;
-            }
-        }
-
         if(this.level.isClientSide){
             this.timeLevelWarning0 = this.timeLevelWarning;
             this.chickenAnimTime0 = this.chickenAnimTime;
             if(this.playChickenWarning){
+
                 if(this.chickenAnimTime<=0){
                     if(this.chickenSpoke){
                         if(this.timeLevelWarning>0){
@@ -249,6 +226,30 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 }
             }
         }
+        if(this.chickenEnemy){
+            if(this.invokeTimer<=0){
+                if(warningLevel>0){
+                    this.teleportChicken();
+                }
+                this.invokeTimer = 1000;
+                this.wave = this.wave+1;
+                if(this.wave>6 && this.warningLevel<3){
+                    this.warningLevel = Math.min(this.warningLevel+1,3);
+                    this.wave = 0;
+                    this.playChickenWarning = true;
+                }else {
+                    this.playChickenWarning = false;
+                }
+                this.wave = Math.min(this.wave,6);
+                if(!this.level.isClientSide){
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
+                }
+            }else {
+                this.invokeTimer--;
+            }
+        }
+
+
 
         if(player instanceof ServerPlayer){
             if(this.dirty){
@@ -273,6 +274,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                     e.getUpgrade().tick(this);
                 });
             }
+
             this.stopAimingAnim0 = this.stopAimingAnim;
             this.timeCharge0 = this.timeCharge;
             if(this.pose == SkillPose.STOP_AIMING){
