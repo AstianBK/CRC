@@ -320,7 +320,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             boolean hasShield;
             if(warningLevel==2 || wave.type.equals(BKEntityType.PUNCH_CHICKEN.get())){
                 hasShield = true;
-            }else if((warningLevel>0) || this.wave == 6){
+            }else if((warningLevel>1) || this.wave == 6){
                 hasShield = this.level.random.nextBoolean();
             }else {
                 hasShield = false;
