@@ -243,7 +243,7 @@ public class CyberChickenFight{
 
 
 	public void teleport(LivingEntity entity) {
-		Vec3 vec = new Vec3(-53,114,-3);
+		Vec3 vec = this.structure.getCentre().getCenter();
 		if(Util.isInFuture(entity)){
 			vec = ((Player)entity).getSleepingPos().orElse(level.getSharedSpawnPos()).getCenter();
 			entity.teleportTo(getDimensionReturn(), vec.x,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());

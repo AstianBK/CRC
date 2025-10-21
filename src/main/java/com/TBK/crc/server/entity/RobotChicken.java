@@ -1,5 +1,6 @@
 package com.TBK.crc.server.entity;
 
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKSounds;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -36,7 +37,9 @@ public class RobotChicken extends PathfinderMob implements PowerableMob {
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
         if(hasShield()){
-            this.setShield(false);
+            if(p_21016_.is(Util.ELECTRIC_DAMAGE_PLAYER) || p_21016_.is(Util.ELECTRIC_DAMAGE_MOB)){
+                this.setShield(false);
+            }
             return false;
         }
         return super.hurt(p_21016_, p_21017_);

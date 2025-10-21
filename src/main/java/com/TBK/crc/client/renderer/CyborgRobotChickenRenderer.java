@@ -12,7 +12,10 @@ public class CyborgRobotChickenRenderer<T extends CyborgRobotChicken,M extends C
     public CyborgRobotChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new CyborgRobotChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(CyborgRobotChickenModel.LAYER_LOCATION)), 1.0F);
     }
-
+    @Override
+    protected boolean shouldShowName(T p_115333_) {
+        return false;
+    }
     @Override
     public ResourceLocation getTextureLocation(T p_114482_) {
         return new ResourceLocation(CRC.MODID,"textures/entity/cyborg_robot_chicken/cyborg_robot_chicken.png");

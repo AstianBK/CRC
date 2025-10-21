@@ -91,7 +91,9 @@
   "entity.portal.menu": "Do you wish to enter the time-rift and confront your pursuer?",
   "tooltip.item.signal_jammmer": "§3Interrupts any active temporal tracking",
   "tooltip.item.portal_opener": "§3Creates a rift to a different timeline",
-  "tooltip.item.danger_increaser": "§3Raises your notoriety level while being temporally pursued"
+  "tooltip.item.danger_increaser": "§3Raises your notoriety level while being temporally pursued",
+  "chicken_attack.infinite_wave": "Wave Infinite",
+  "chicken_attack.wave": "Wave"
 }
 
 

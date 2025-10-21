@@ -68,48 +68,6 @@ public class ModBusEvent {
 
     @SubscribeEvent
     public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
-        if(event.getLevel().isClientSide){
-            if(event.getItemStack().is(Items.STICK)){
-                if(event.getEntity().isShiftKeyDown()){
-                    CRC.xq-=1D;
-
-                }else {
-                    CRC.x-=1D;
-                }
-                CRC.LOGGER.debug("X :" + CRC.x);
-            }
-
-            if(event.getItemStack().is(Items.BLAZE_ROD)){
-                if(event.getEntity().isShiftKeyDown()){
-                }else {
-                    CRC.y-=1D;
-                }
-                CRC.LOGGER.debug("Y :" + CRC.y);
-            }
-
-            if(event.getItemStack().is(Items.HEART_OF_THE_SEA)){
-                if(event.getEntity().isShiftKeyDown()){
-                    CRC.xq+=1D;
-                }else {
-                    CRC.x+=1D;
-                }
-                CRC.LOGGER.debug("XQ :" + CRC.xq);
-            }
-            if(event.getItemStack().is(Items.GOLD_INGOT)){
-                CRC.y+=1D;
-            }
-
-            if(event.getItemStack().is(Items.NETHERITE_INGOT)){
-
-                CRC.z-=1D;
-            }
-            if(event.getItemStack().is(Items.SADDLE)){
-                CRC.z+=1D;
-            }
-            CRC.LOGGER.debug("X :" + CRC.x + " Y :"+CRC.y+
-                    " Z :" + CRC.z + " XQ :"+CRC.xq+
-                    " YQ :" + CRC.yq + " ZQ :"+CRC.zq);
-        }
 
         if(event.getItemStack().is(BKItems.DANGER_INCREASER.get())){
             MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
@@ -295,7 +253,8 @@ public class ModBusEvent {
                         cap.wave = 0;
                         cap.warningLevel = 1;
                         cap.playChickenWarning = true;
-                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
+                        cap.invokeTimer = 1000;
+                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
                     }
                 }
             }
@@ -400,7 +359,6 @@ public class ModBusEvent {
     @SubscribeEvent
     public static void useBlock(PlayerContainerEvent.Open event){
         if(!event.getEntity().level().isClientSide){
-
             if(event.getContainer() instanceof ChestMenu){
                 CRC.getServer().getPlayerList().getPlayers().forEach(e->{
                     Util.refreshHackingChest(e,e.level());

@@ -20,7 +20,10 @@ public class CoilChickenRenderer<T extends CoilChicken,M extends CoilChickenMode
         this.addLayer(new RobotChickenShieldLayer(this,new CoilChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(CoilChickenModel.ARMOR_LOCATION))));
         this.shadowRadius = 0.25F;
     }
-
+    @Override
+    protected boolean shouldShowName(T p_115333_) {
+        return false;
+    }
     @Override
     public ResourceLocation getTextureLocation(T p_114482_) {
         return new ResourceLocation(CRC.MODID,"textures/entity/minion_chicken/minion_chicken.png");

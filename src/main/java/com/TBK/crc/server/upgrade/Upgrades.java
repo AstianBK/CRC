@@ -86,7 +86,6 @@ public class Upgrades {
     }
 
     public void addMultiArmSkillAbstracts(int pos, Upgrade power){
-        CRC.LOGGER.debug("add skill: "+power.name);
         this.upgrades.put(pos,new UpgradeInstance(power,0));
     }
 
