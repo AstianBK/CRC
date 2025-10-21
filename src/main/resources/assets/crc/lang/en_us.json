@@ -17,7 +17,7 @@
 
   "item.crc.signal_jammer": "Signal Jammer",
   "item.crc.portal_opener": "Portal Opener",
-  "item.crc.danger_increaser": "Notoriety Increaser",
+  "item.crc.danger_increaser": "Notoriety Level Raiser",
 
 
   "item.crc.tantalum_ingot": "Tantalum",
@@ -56,14 +56,14 @@
   "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
   "upgrades.gancho_arm": "Upgrade: Harpoon",
 
-  "upgrades.none": "MULTI-ARM DESCRIPTION",
-  "upgrades.night_eye": "NIGHT EYE DESCRIPTION",
-  "upgrades.hacker_eye": "HACKER EYE DESCRIPTION",
-  "upgrades.heart_reflex": "HEART DESCRIPTION",
-  "upgrades.contra_attack": "THORACIC CAGE DESCRIPTION",
-  "upgrades.knees_hard": "REINFORCED KNEES DESCRIPTION",
-  "upgrades.knees_spiked": "SPIKED KNEES DESCRIPTION",
-  "upgrades.coil_feet": "COIL FEET DESCRIPTION",
+  "upgrades.none": "Allows for multiple combat upgrades to be applied to it. X1-Series most versatile combat implant!",
+  "upgrades.night_eye": "Automatically adjusts photon readings in dark areas. Never be caught off guard!",
+  "upgrades.hacker_eye": "Highlights nearby unopened chests. Illegal in multiple Chicken-States",
+  "upgrades.heart_reflex": "Boosts blood flow and increases adrenaline levels when near-death. Dodge death, literally",
+  "upgrades.contra_attack": "Stores kinetic force of damage received and eventually unleashes it. Zapping crowd-control",
+  "upgrades.knees_hard": "Reduces fall damage by half. Jump off ledges without a worry!",
+  "upgrades.knees_spiked": "Pierces enemies you jump into. A new way to knee someone",
+  "upgrades.coil_feet": "Increases jump height. The Coil Chicken classic",
 
 
 
@@ -74,12 +74,12 @@
 
   "entity.crc.rex_chicken": "Cyber Chicken",
   "crc.cyborg_table.bottom_implant": "IMPLANT",
-  "crc.portal.bottom_accept": "Accept",
-  "crc.portal.bottom_cancel": "Cancel",
-  "entity.portal.menu": "Se pasa o no se pasa paaaaaa",
-  "tooltip.item.signal_jammmer": "Signal jammer descr",
-  "tooltip.item.portal_opener": "descr",
-  "tooltip.item.danger_increaser": ""
+  "crc.portal.bottom_accept": "Go through",
+  "crc.portal.bottom_cancel": "Do not",
+  "entity.portal.menu": "Do you wish to enter the time-rift and confront your pursuer?",
+  "tooltip.item.signal_jammmer": "Interrupts any active temporal tracking",
+  "tooltip.item.portal_opener": "Creates a time-rift to a different timeline",
+  "tooltip.item.danger_increaser": "Raises your notoriety level while being temporally pursued"
 }
 
 
