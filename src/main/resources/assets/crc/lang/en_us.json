@@ -42,19 +42,25 @@
   "item.crc.upgrade_arm_cannon": "Multi-Arm Upgrade: Plasma Cannon",
   "item.crc.upgrade_arm_harpoon": "Multi-Arm Upgrade: Harpoon",
   "item.crc.upgrade_system_heart": "Life-Pulse Engine Upgrade: Increased Adrenaline",
-  "item.crc.upgrade_system_thoracic_cage": "Heart Upgrade: Better Reflexes",
+  "item.crc.upgrade_system_thoracic_cage": "Feedback Module Upgrade: High Voltage",
   "item.crc.upgrade_legs_coil_feet": "Springdrive Joints Upgrade: Improved Coils",
   "item.crc.upgrade_legs_knees": "Reinforced Knees Upgrade: Heavy Reinforcement",
   "item.crc.upgrade_legs_knees_spiked": "Spiked Knees Upgrade: Piercing Modules",
 
-  "item.crc.upgrade_skin_jetstream": "Multi-Arm Cosmetic: Jetstream",
-  "item.crc.upgrade_skin_military": "Multi-Arm Cosmetic: Master Commander",
-  "item.crc.upgrade_skin_cyborg": "Multi-Arm Cosmetic: Tantalum Coating",
+  "item.crc.upgrade_skin_jetstream": "§3Multi-Arm Cosmetic: Jetstream",
+  "item.crc.upgrade_skin_military": "§3Multi-Arm Cosmetic: Master Commander",
+  "item.crc.upgrade_skin_cyborg": "§3Multi-Arm Cosmetic: Tantalum Coating",
 
 
-  "upgrades.claws_arm": "Upgrade: Electric Claws",
-  "upgrades.cannon_arm": "Upgrade: Plasma Cannon",
-  "upgrades.gancho_arm": "Upgrade: Harpoon",
+  "upgrades.claws_arm": "§3Upgrade: Electric Claws",
+  "upgrades.cannon_arm": "§3Upgrade: Plasma Cannon",
+  "upgrades.gancho_arm": "§3Upgrade: Harpoon",
+
+  "refinement.knees_spiked": "§3Upgrade: Piercing Modules",
+  "refinement.knees_hard": "§3Upgrade: Heavy Reinforcement",
+  "refinement.coil_feet": "§3Upgrade: Improved Coils",
+  "refinement.heart_reflex": "§3Upgrade: Increased Adrenaline",
+  "refinement.counter_attack": "§3Upgrade: High Voltage",
 
   "upgrades.none": "Allows for multiple combat upgrades to be applied to it. X1-Series most versatile combat implant!",
   "upgrades.night_eye": "Automatically adjusts photon readings in dark areas. Never be caught off guard!",
@@ -65,11 +71,11 @@
   "upgrades.knees_spiked": "Pierces enemies you jump into. A new way to knee someone",
   "upgrades.coil_feet": "Increases jump height. The Coil Chicken classic",
 
-  "tooltip.refinement.heart_reflex": "Grants absorption after dodging.",
-  "tooltip.refinement.counter_attack": "Increases damage of electric shockwave.",
-  "tooltip.refinement.coil_feet": "Increases jump height by 50%.",
-  "tooltip.refinement.knees_hard": "Completely negates fall damage.",
-  "tooltip.refinement.knees_spiked": "Temporarily disables shields hit.",
+  "tooltip.refinement.heart_reflex": "§3Grants absorption after dodging.",
+  "tooltip.refinement.counter_attack": "§3Increases damage of electric shockwave.",
+  "tooltip.refinement.coil_feet": "§3Increases jump height by 50%.",
+  "tooltip.refinement.knees_hard": "§3Completely negates fall damage.",
+  "tooltip.refinement.knees_spiked": "§3Temporarily disables shields hit.",
 
   "upgrade.skin.jetstream": "Cosmetic Change: Multi-Arm",
   "upgrade.skin.none": "Cosmetic Change: Multi-Arm",
@@ -83,9 +89,9 @@
   "crc.portal.bottom_accept": "Go through",
   "crc.portal.bottom_cancel": "Do not",
   "entity.portal.menu": "Do you wish to enter the time-rift and confront your pursuer?",
-  "tooltip.item.signal_jammmer": "Interrupts any active temporal tracking",
-  "tooltip.item.portal_opener": "Creates a rift to a different timeline",
-  "tooltip.item.danger_increaser": "Raises your notoriety level while being temporally pursued"
+  "tooltip.item.signal_jammmer": "§3Interrupts any active temporal tracking",
+  "tooltip.item.portal_opener": "§3Creates a rift to a different timeline",
+  "tooltip.item.danger_increaser": "§3Raises your notoriety level while being temporally pursued"
 }
 
 

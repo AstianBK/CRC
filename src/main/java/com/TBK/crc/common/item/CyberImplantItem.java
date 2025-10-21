@@ -147,13 +147,13 @@ public class CyberImplantItem extends ItemCyborg{
         List<Upgrade> upgrades = getUpgrade((CyberImplantItem) p_41421_.getItem(),p_41421_.getOrCreateTag());
         List<String> refinements = getRefinement(p_41421_.getOrCreateTag());
 
-        p_41423_.add(Component.translatable("tooltip.cyber_implant").withStyle(ChatFormatting.GRAY));
+        p_41423_.add(Component.translatable("tooltip.cyber_implant").withStyle(ChatFormatting.DARK_AQUA));
         if(p_41421_.is(BKItems.CYBORG_ARM.get())){
-            p_41423_.add(Component.translatable("upgrades.none").withStyle(ChatFormatting.DARK_AQUA));
+            p_41423_.add(Component.translatable("upgrades.none").withStyle(ChatFormatting.GRAY));
         }
         if(!upgrades.isEmpty()){
             for (Upgrade upgrade : upgrades){
-                p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.DARK_AQUA));
+                p_41423_.add(Component.translatable("upgrades."+upgrade.name).withStyle(ChatFormatting.GRAY));
             }
         }
         for (String name : refinements){
