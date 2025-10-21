@@ -64,9 +64,9 @@
 
   "upgrades.none": "Allows for multiple combat upgrades to be applied to it. X1-Series most versatile combat implant!",
   "upgrades.night_eye": "Automatically adjusts photon readings in dark areas. Never be caught off guard!",
-  "upgrades.hacker_eye": "Highlights nearby unopened chests. Illegal in multiple Chicken-States",
+  "upgrades.hacker_eye": "Highlights nearby unopened chests while crouching. Illegal in multiple Chicken-States",
   "upgrades.heart_reflex": "Boosts blood flow and increases adrenaline levels when near-death. Dodge death, literally",
-  "upgrades.contra_attack": "Stores kinetic force of damage received and eventually unleashes it. Zapping crowd-control",
+  "upgrades.contra_attack": "Stores kinetic energy when taking damage and eventually unleashes it. Zapping crowd-control",
   "upgrades.knees_hard": "Reduces fall damage by half. Jump off ledges without a worry!",
   "upgrades.knees_spiked": "Pierces enemies you jump into. A new way to knee someone",
   "upgrades.coil_feet": "Increases jump height. The Coil Chicken classic",
