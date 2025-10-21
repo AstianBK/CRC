@@ -30,7 +30,7 @@ public class BKEntityType {
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "cyborg_robot_chicken"));
     public static final RegistryObject<EntityType<BoomChicken>> BOOM_CHICKEN = ENTITY_TYPES
             .register("boom_chicken", () -> EntityType.Builder.<BoomChicken>of(BoomChicken::new, MobCategory.MISC)
-                    .fireImmune().sized(0.8F, 0.2F).build(CRC.MODID+ "boom_chicken"));
+                    .fireImmune().sized(1F, 0.2F).build(CRC.MODID+ "boom_chicken"));
 
     public static final RegistryObject<EntityType<CoilChicken>> COIL_CHICKEN = ENTITY_TYPES
             .register("coil_chicken", () -> EntityType.Builder.<CoilChicken>of(CoilChicken::new, MobCategory.MISC)
