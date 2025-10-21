@@ -31,4 +31,12 @@ public class ImplantScreen extends AbstractContainerScreen<ImplantMenu> {
         p_283065_.blit(LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         this.renderTooltip(p_283065_,p_97789_,p_97790_);
     }
+
+    @Override
+    public boolean keyPressed(int p_97765_, int p_97766_, int p_97767_) {
+        if(p_97765_ == 86){
+            this.onClose();
+        }
+        return super.keyPressed(p_97765_, p_97766_, p_97767_);
+    }
 }

@@ -83,9 +83,7 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
 
     @Override
     public boolean keyPressed(int p_97765_, int p_97766_, int p_97767_) {
-        if(p_97765_ == 86){
-            this.onClose();
-        }
+
         return super.keyPressed(p_97765_, p_97766_, p_97767_);
     }
 
