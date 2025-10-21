@@ -45,6 +45,8 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
 
     }
 
+
+
     @Override
     protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
         int i = this.leftPos;
