@@ -65,11 +65,11 @@
   "upgrades.knees_spiked": "Pierces enemies you jump into. A new way to knee someone",
   "upgrades.coil_feet": "Increases jump height. The Coil Chicken classic",
 
-  "tooltip.refinement.heart_reflex": "desc",
-  "tooltip.refinement.counter_attack": "desc",
-  "tooltip.refinement.coil_feet": "desc",
-  "tooltip.refinement.knees_hard": "desc",
-  "tooltip.refinement.knees_spiked": "desc",
+  "tooltip.refinement.heart_reflex": "Grants absorption after dodging.",
+  "tooltip.refinement.counter_attack": "Increases damage of electric shockwave.",
+  "tooltip.refinement.coil_feet": "Increases jump height by 50%.",
+  "tooltip.refinement.knees_hard": "Completely negates fall damage.",
+  "tooltip.refinement.knees_spiked": "Temporarily disables shields hit.",
 
   "upgrade.skin.jetstream": "Cosmetic Change: Multi-Arm",
   "upgrade.skin.none": "Cosmetic Change: Multi-Arm",
