@@ -78,7 +78,7 @@
   "crc.portal.bottom_cancel": "Do not",
   "entity.portal.menu": "Do you wish to enter the time-rift and confront your pursuer?",
   "tooltip.item.signal_jammmer": "Interrupts any active temporal tracking",
-  "tooltip.item.portal_opener": "Creates a time-rift to a different timeline",
+  "tooltip.item.portal_opener": "Creates a rift to a different timeline",
   "tooltip.item.danger_increaser": "Raises your notoriety level while being temporally pursued"
 }
 
