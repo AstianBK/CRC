@@ -170,10 +170,11 @@ public class DroneChicken extends RobotChicken {
             this.circlingPosition = null;
             this.circlingAngle = 0.0;
             this.attackCooldown = 0;
-            this.resetAmount();
+            this.resetRot();
+            this.drone.blockTargetActually = null;
         }
 
-        public void resetAmount(){
+        public void resetRot(){
             this.rot=this.world.random.nextBoolean();
         }
 
