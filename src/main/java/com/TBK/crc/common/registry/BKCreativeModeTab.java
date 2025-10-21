@@ -56,6 +56,7 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.COIL_CHICKEN_SPAWN_EGG.get()));
                 a.accept(new ItemStack(BKItems.DRONE_CHICKEN_SPAWN_EGG.get()));
                 a.accept(new ItemStack(BKItems.BOOM_CHICKEN_SPAWN_EGG.get()));
+                a.accept(new ItemStack(BKItems.PUNCH_CHICKEN_SPAWN_EGG.get()));
 
 
             })
