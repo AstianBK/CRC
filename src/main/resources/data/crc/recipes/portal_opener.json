@@ -10,13 +10,13 @@
       "item": "minecraft:redstone_torch"
     },
     "i": {
-      "item": "minecraft:iron_ingot"
+      "item": "crc:cyborg_microchip"
     },
     "R": {
-      "item": "minecraft:redstone"
+      "item": "crc:quantum_microprocessor"
     },
     "g": {
-      "item": "minecraft:gold_ingot"
+      "item": "crc:tantalum_ingot"
     }
   },
   "result": {
