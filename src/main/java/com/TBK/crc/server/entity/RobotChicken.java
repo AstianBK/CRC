@@ -4,11 +4,13 @@ import com.TBK.crc.common.registry.BKSounds;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.PowerableMob;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class RobotChicken extends PathfinderMob implements PowerableMob {
     private static final EntityDataAccessor<Boolean> SHIELD = SynchedEntityData.defineId(RobotChicken.class, EntityDataSerializers.BOOLEAN);
@@ -40,9 +42,11 @@ public class RobotChicken extends PathfinderMob implements PowerableMob {
         return super.hurt(p_21016_, p_21017_);
     }
 
+
+    @Nullable
     @Override
-    protected void playHurtSound(DamageSource p_21493_) {
-        this.playSound(BKSounds.CHICKEN_MINION_HURT.get(),5.0F,1.0f);
+    protected SoundEvent getHurtSound(DamageSource p_21239_) {
+        return BKSounds.CHICKEN_MINION_HURT.get();
     }
 
     @Override
