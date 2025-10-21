@@ -26,6 +26,7 @@ public class PunchChicken extends RobotChicken {
     public static AttributeSupplier setAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.15D)
                 .add(Attributes.FOLLOW_RANGE, 55.D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28d)
                 .add(Attributes.ATTACK_DAMAGE,15.0D)

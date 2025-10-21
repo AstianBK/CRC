@@ -67,7 +67,7 @@ public class DroneChicken extends RobotChicken {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 8.0D)
                 .add(Attributes.FOLLOW_RANGE, 45.D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3d)
+                .add(Attributes.MOVEMENT_SPEED, 0.29d)
                 .build();
     }
 
