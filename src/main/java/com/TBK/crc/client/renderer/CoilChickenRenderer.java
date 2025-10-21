@@ -19,7 +19,6 @@ public class CoilChickenRenderer<T extends CoilChicken,M extends CoilChickenMode
         super(p_174289_, (M) new CoilChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(CoilChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new RobotChickenShieldLayer(this,new CoilChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(CoilChickenModel.ARMOR_LOCATION))));
         this.shadowRadius = 0.25F;
-
     }
 
     @Override

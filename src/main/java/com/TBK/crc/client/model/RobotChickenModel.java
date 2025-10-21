@@ -92,9 +92,9 @@ public class RobotChickenModel<T extends PunchChicken> extends HierarchicalModel
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animateWalk(PunchChickenAnim.walk,limbSwing,limbSwingAmount,ageInTicks,2.0F);
-		this.animate(entity.idle,PunchChickenAnim.idle,1.0F,1.0F);
-		this.animate(entity.attack,PunchChickenAnim.punch,1.0f,1.0f);
+		this.animateWalk(PunchChickenAnim.walk,limbSwing,limbSwingAmount,1.0F,2.0F);
+		this.animate(entity.idle,PunchChickenAnim.idle,ageInTicks,1.0F);
+		this.animate(entity.attack,PunchChickenAnim.punch,ageInTicks,1.0f);
 	}
 
 	@Override

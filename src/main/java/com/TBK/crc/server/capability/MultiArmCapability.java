@@ -173,9 +173,11 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 if(this.wave>6 && this.warningLevel<2){
                     this.warningLevel = Math.min(this.warningLevel+1,3);
                     this.wave = 0;
+                    this.playChickenWarning = true;
+                }else {
+                    this.playChickenWarning = false;
                 }
                 this.wave = Math.min(this.wave,6);
-
                 if(!this.level.isClientSide){
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
                 }
