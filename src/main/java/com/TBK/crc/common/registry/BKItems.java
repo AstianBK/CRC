@@ -74,19 +74,19 @@ public class BKItems {
     //SPAWN-EGGS
 
     public static final RegistryObject<Item> COIL_CHICKEN_SPAWN_EGG = ITEMS.register("coil_chicken_spawn_egg",
-            () -> new ForgeSpawnEggItem(BKEntityType.COIL_CHICKEN,0x29121a, 0xcf844a,
+            () -> new ForgeSpawnEggItem(BKEntityType.COIL_CHICKEN,0xd8e1e6, 0x36b7ff,
                     new Item.Properties()));
 
     public static final RegistryObject<Item> BOOM_CHICKEN_SPAWN_EGG = ITEMS.register("boom_chicken_spawn_egg",
-            () -> new ForgeSpawnEggItem(BKEntityType.BOOM_CHICKEN,0x29121a, 0xcf844a,
+            () -> new ForgeSpawnEggItem(BKEntityType.BOOM_CHICKEN,0xd8e1e6, 0x36b7ff,
                     new Item.Properties()));
 
     public static final RegistryObject<Item> DRONE_CHICKEN_SPAWN_EGG = ITEMS.register("drone_chicken_spawn_egg",
-            () -> new ForgeSpawnEggItem(BKEntityType.DRONE_CHICKEN,0x29121a, 0xcf844a,
+            () -> new ForgeSpawnEggItem(BKEntityType.DRONE_CHICKEN,0xd8e1e6, 0x36b7ff,
                     new Item.Properties()));
 
     public static final RegistryObject<Item> PUNCH_CHICKEN_SPAWN_EGG = ITEMS.register("punch_chicken_spawn_egg",
-            () -> new ForgeSpawnEggItem(BKEntityType.PUNCH_CHICKEN,0x29121a, 0xcf844a,
+            () -> new ForgeSpawnEggItem(BKEntityType.PUNCH_CHICKEN,0xd8e1e6, 0x36b7ff,
                     new Item.Properties()));
 
 
