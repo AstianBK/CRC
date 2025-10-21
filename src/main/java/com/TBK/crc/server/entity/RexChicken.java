@@ -10,7 +10,9 @@ import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.fight.CyberChickenFight;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketActionRex;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -303,6 +305,15 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                     this.setRot(this.getYRot(),this.getXRot());
                     this.setDeltaMovement(this.chargeDirection.multiply(-1,1,-1));
                     this.chargeDirection=this.chargeDirection.scale(0.8);
+                    boolean flag = false;
+                    AABB aabb = this.getBoundingBox().inflate(1D);
+
+                    for(BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
+                        BlockState blockstate = this.level().getBlockState(blockpos);
+                        if (blockstate.is(Blocks.SEA_LANTERN) || blockstate.is(Blocks.POLISHED_DEEPSLATE) || blockstate.is(Blocks.REDSTONE_LAMP)) {
+                            flag = this.level().destroyBlock(blockpos, true, this) || flag;
+                        }
+                    }
                 }else {
                     if(this.isPowered()){
                         this.stunnedTick=0;
@@ -407,6 +418,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                             this.setCharging(false);
                             if(!this.level().isClientSide && !this.isPowered()){
                                 this.level().broadcastEntityEvent(this,(byte) 12);
+                                this.playSound(BKSounds.REX_CRASH.get(),4.0F,1.0F);
                             }
                             this.chargeTimer = 0;
                             this.cooldownCharge = 200;
@@ -421,6 +433,27 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                     this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(4.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(this::doHurtTarget);
                     this.setAttacking(false);
                     this.playSound(BKSounds.REX_STOMP.get(),5.0F,1.0f);
+                    for (BlockPos pos2 : BlockPos.betweenClosed(this.getOnPos().offset(5,1,5),this.getOnPos().offset(-5,-1,-5))){
+                        if(!this.level().getBlockState(pos2).isAir()){
+                            float entityHitDistance = Math.max((float) Math.sqrt((pos2.getZ() - this.getZ()) * (pos2.getZ() - this.getZ()) + (pos2.getX() - this.getX()) * (pos2.getX() - this.getX())),0);
+                            if (entityHitDistance <= 5 && entityHitDistance >=2) {
+                                Random random1 = new Random();
+                                double distance = 0.12F*Math.ceil(entityHitDistance) + random1.nextFloat(0.0F,1.0F);
+                                BlockPos.MutableBlockPos pos1 = pos2.mutable();
+                                boolean canSummon=true;
+                                for (int i=0;i<Mth.ceil(distance);i++){
+                                    if(canSummon && !this.level().getBlockState(pos1.above()).isAir()){
+                                        canSummon=false;
+                                    }
+                                }
+                                if(canSummon){
+                                    for(int j=0;j<this.level().random.nextInt(2,3);j++){
+                                        Minecraft.getInstance().particleEngine.crack(pos2, Direction.UP);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             if(this.level().isClientSide){
@@ -445,13 +478,14 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             if(this.fight!=null){
                 this.fight.updateDragon(this);
             }
-        }
-
-        if(this.level().isClientSide){
-            if(!this.isCharging()){
-                this.tickStep();
+            if(this.level().isClientSide){
+                if(!this.isCharging()){
+                    this.tickStep();
+                }
             }
         }
+
+
     }
 
     public void tickStep(){

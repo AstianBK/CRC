@@ -23,8 +23,8 @@ public class BoomChickenRenderer<T extends BoomChicken,M extends BoomChickenMode
     }
 
     @Override
-    protected void renderNameTag(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_) {
-        super.renderNameTag(p_114498_, p_114499_, p_114500_, p_114501_, p_114502_);
+    protected boolean shouldShowName(T p_115333_) {
+        return false;
     }
 
     @Override

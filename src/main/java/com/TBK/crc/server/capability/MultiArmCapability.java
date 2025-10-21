@@ -178,12 +178,14 @@ public class MultiArmCapability implements IMultiArmPlayer {
             if(this.warningLevel>2){
                 component = Component.translatable("chicken_attack.infinite_wave");
             }else {
-                component = Component.translatable("chicken_attack.wave").append(" : "+this.wave+1);
+                component = Component.translatable("chicken_attack.wave").append(" : "+(this.wave+1));
             }
             event.setName(component);
             BossEvent.BossBarColor color = getColorForWarningLevel();
             event.setColor(color);
             event.setProgress(1.0F-(float) this.invokeTimer/1000.0F);
+        }else {
+            event.removeAllPlayers();
         }
         if(this.cooldownUse>0){
             this.cooldownUse--;
@@ -217,7 +219,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
             this.timeLevelWarning0 = this.timeLevelWarning;
             this.chickenAnimTime0 = this.chickenAnimTime;
             if(this.playChickenWarning){
-                CRC.LOGGER.debug("Play anim states ,"+ "chickenAnimTime :"+this.chickenAnimTime+ " chickenSpoke :"+this.chickenSpoke + " timeLevelWarning :"+this.timeLevelWarning);
                 if(this.chickenAnimTime<=0){
                     if(this.chickenSpoke){
                         if(this.timeLevelWarning>0){
@@ -319,7 +320,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             boolean hasShield;
             if(warningLevel==2 || wave.type.equals(BKEntityType.PUNCH_CHICKEN.get())){
                 hasShield = true;
-            }else if((warningLevel>0) || this.wave == 6){
+            }else if((warningLevel>1) || this.wave == 6){
                 hasShield = this.level.random.nextBoolean();
             }else {
                 hasShield = false;

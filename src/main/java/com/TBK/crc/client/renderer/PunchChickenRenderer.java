@@ -19,7 +19,10 @@ public class PunchChickenRenderer<T extends PunchChicken,M extends RobotChickenM
         this.shadowRadius = 0.25F;
 
     }
-
+    @Override
+    protected boolean shouldShowName(T p_115333_) {
+        return false;
+    }
     @Override
     public ResourceLocation getTextureLocation(T p_114482_) {
         return TEXTURES;

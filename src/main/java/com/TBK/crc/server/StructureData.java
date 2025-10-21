@@ -40,6 +40,7 @@ public class StructureData extends SavedData {
 	public static StructureData load(CompoundTag data) {
 		StructureData created = new StructureData();
 		created.fightManager = new CyberChickenFight(data.getCompound("CyberChickenFight"));
+		CRC.LOGGER.debug("data :"+data);
 		return created;
 	}
 

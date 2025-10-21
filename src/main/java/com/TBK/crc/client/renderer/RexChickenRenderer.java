@@ -32,7 +32,10 @@ public class RexChickenRenderer<T extends RexChicken,M extends RexChickenModel<T
         this.addLayer(new RexGlowingLayer<>(this));
         this.addLayer(new ShieldLayer<>(this));
     }
-
+    @Override
+    protected boolean shouldShowName(T p_115333_) {
+        return false;
+    }
     @Override
     public boolean shouldRender(T p_114491_, Frustum p_114492_, double p_114493_, double p_114494_, double p_114495_) {
         return true;
