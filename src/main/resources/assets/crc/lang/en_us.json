@@ -76,6 +76,9 @@
   "tooltip.refinement.coil_feet": "§3Increases jump height by 50%.",
   "tooltip.refinement.knees_hard": "§3Completely negates fall damage.",
   "tooltip.refinement.knees_spiked": "§3Temporarily disables shields hit.",
+  "tooltipo.multiarm.claws_arm": "§3Hold to dash towards enemies dealing electric damage.",
+  "tooltipo.multiarm.gancho_arm": "§3Pull yourself or others towards you.",
+  "tooltipo.multiarm.cannon_arm": "§3Hold to charge a powershot, consumes energy.",
 
   "upgrade.skin.jetstream": "Cosmetic Change: Multi-Arm",
   "upgrade.skin.none": "Cosmetic Change: Multi-Arm",
