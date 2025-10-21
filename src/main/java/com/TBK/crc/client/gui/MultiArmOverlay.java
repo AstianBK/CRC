@@ -135,13 +135,15 @@ public class MultiArmOverlay implements IGuiOverlay {
                                 ,256,256);
                     }
                     graphics.pose().popPose();
-                    graphics.pose().pushPose();
-                    int j1 =  i + 101;
-                    int k1 = height - 58;
-                    printAmmo(graphics,AMMO_EMPTY_LOCATION,(int) (j1-120), (int) (k1+25),10);
-                    printAmmo(graphics,AMMO_FULL_LOCATION, (int) (j1-120), (int) (k1+25),cap.energy);
+                    if(cap.skills.hasMultiArmSkillAbstract("cannon_arm")){
+                        graphics.pose().pushPose();
+                        int j1 =  i + 101;
+                        int k1 = height - 58;
+                        printAmmo(graphics,AMMO_EMPTY_LOCATION,(int) (j1-120), (int) (k1+25),10);
+                        printAmmo(graphics,AMMO_FULL_LOCATION, (int) (j1-120), (int) (k1+25),cap.energy);
 
-                    graphics.pose().popPose();
+                        graphics.pose().popPose();
+                    }
                 }
             }
 

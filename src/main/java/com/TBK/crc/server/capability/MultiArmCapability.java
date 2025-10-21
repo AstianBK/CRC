@@ -1,5 +1,6 @@
 package com.TBK.crc.server.capability;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.api.IMultiArmPlayer;
 import com.TBK.crc.common.registry.BKEntityType;
@@ -216,6 +217,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
             this.timeLevelWarning0 = this.timeLevelWarning;
             this.chickenAnimTime0 = this.chickenAnimTime;
             if(this.playChickenWarning){
+                CRC.LOGGER.debug("Play anim states ,"+ "chickenAnimTime :"+this.chickenAnimTime+ " chickenSpoke :"+this.chickenSpoke + " timeLevelWarning :"+this.timeLevelWarning);
                 if(this.chickenAnimTime<=0){
                     if(this.chickenSpoke){
                         if(this.timeLevelWarning>0){

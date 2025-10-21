@@ -67,7 +67,6 @@ public class PacketAddImplant implements Packet<PacketListener> {
                 }
                 cap.implantStore.setImplant(this.stack.copy(),this.index);
                 cap.dirty = true;
-                cap.getPlayer().stopSleeping();
             }
         });
         context.get().setPacketHandled(true);
