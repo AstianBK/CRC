@@ -65,9 +65,15 @@
   "upgrades.knees_spiked": "Pierces enemies you jump into. A new way to knee someone",
   "upgrades.coil_feet": "Increases jump height. The Coil Chicken classic",
 
+  "tooltip.refinement.heart_reflex": "desc",
+  "tooltip.refinement.counter_attack": "desc",
+  "tooltip.refinement.coil_feet": "desc",
+  "tooltip.refinement.knees_hard": "desc",
+  "tooltip.refinement.knees_spiked": "desc",
 
-
-
+  "upgrade.skin.jetstream": "Cosmetic Change: Multi-Arm",
+  "upgrade.skin.none": "Cosmetic Change: Multi-Arm",
+  "upgrade.skin.military": "Cosmetic Change: Multi-Arm",
 
   "tooltip.cyber_implant": "Cyber-Implant",
   "tooltip.cyber_component": "Cyber-Component",
