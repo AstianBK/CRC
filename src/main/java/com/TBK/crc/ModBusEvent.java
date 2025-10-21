@@ -109,24 +109,34 @@ public class ModBusEvent {
                     " YQ :" + CRC.yq + " ZQ :"+CRC.zq);
         }
 
-        if(!event.getLevel().isClientSide){
-            if(event.getItemStack().is(BKItems.SIGNAL_JAMMER.get())){
-                MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
-                if (cap!=null){
+
+
+        if(event.getItemStack().is(BKItems.SIGNAL_JAMMER.get())){
+            MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
+
+            if(cap!=null && cap.chickenEnemy){
+                if(!event.getLevel().isClientSide){
                     cap.chickenEnemy = false;
                     cap.warningLevel = 0;
                     cap.wave = 0;
                     cap.timeLevelWarning = 0;
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
                 }
+                if(!event.getEntity().getAbilities().instabuild){
+                    event.getItemStack().shrink(1);
+                }
             }
-        }
 
+        }
         if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !event.getLevel().getBlockState(event.getPos()).isAir()){
             if (!event.getLevel().isClientSide){
                 PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
                 portal.setPos(event.getPos().above().getCenter());
                 event.getLevel().addFreshEntity(portal);
+            }
+
+            if(!event.getEntity().getAbilities().instabuild){
+                event.getItemStack().shrink(1);
             }
         }
     }
