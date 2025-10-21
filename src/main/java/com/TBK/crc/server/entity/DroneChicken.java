@@ -31,7 +31,7 @@ public class DroneChicken extends RobotChicken {
     public AnimationState air = new AnimationState();
     public AnimationState stand = new AnimationState();
     public int idleAnimationTimeout = 0;
-    public int standTimer = 0;
+    public BlockPos blockTargetActually = null;
     public DroneChicken(Level p_21684_) {
         super(BKEntityType.DRONE_CHICKEN.get(), p_21684_);
     }
@@ -133,7 +133,7 @@ public class DroneChicken extends RobotChicken {
         }else {
             this.level().broadcastEntityEvent(this,(byte) 8);
         }
-        return super.doHurtTarget(p_21372_);
+        return true;
     }
 
     static class DroneAttack extends Goal{
@@ -195,17 +195,24 @@ public class DroneChicken extends RobotChicken {
         public void tick() {
             LivingEntity target = this.drone.getTarget();
             if (target != null) {
+                if(this.drone.blockTargetActually == null){
+                    this.drone.blockTargetActually = new BlockPos((int) target.getX(), (int) target.getY(), (int) target.getZ());
+                }
                 double distanceToTarget = this.drone.distanceToSqr(target.getX(), target.getY(), target.getZ());
                 this.circlingAngle += this.rot ? 0.05F : -0.05F;
                 this.meleeAttack = this.drone.getHealth()<this.drone.getMaxHealth()*0.3F;
                 Vec3 direction;
                 if (!this.meleeAttack) {
+
+                    int x = this.drone.blockTargetActually.getX();
+                    int y = this.drone.blockTargetActually.getY();
+                    int z = this.drone.blockTargetActually.getZ();
                     double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
                     double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
                     double heightOffset = 6.0F;
-                    this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
+                    this.circlingPosition = new Vec3(x + offsetX, y + heightOffset, z + offsetZ);
 
-                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.9F);
+                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.75F);
 
                     Vec3 currentMotion = this.drone.getDeltaMovement();
 
@@ -213,9 +220,13 @@ public class DroneChicken extends RobotChicken {
                     Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
 
                     this.drone.setDeltaMovement(smoothedMotion);
+                    if(this.circlingAngle > 360.0F || this.circlingAngle < -360.0F){
+                        this.circlingAngle=0.0F;
+                        this.drone.blockTargetActually = new BlockPos((int) target.getX(), (int) target.getY(), (int) target.getZ());
+                    }
                 }
 
-                this.rotateTowardsTarget(target);
+                this.rotateTowardsTarget();
 
                 if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 1024.0F) {
                     ElectroProjectile electro = new ElectroProjectile(this.world, this.drone, 0);
@@ -250,7 +261,7 @@ public class DroneChicken extends RobotChicken {
         }
 
 
-        private void rotateTowardsTarget(LivingEntity target) {
+        private void rotateTowardsTarget() {
             Vec3 direction = drone.getDeltaMovement();
             double dx = direction.x;
             double dy = direction.y;
