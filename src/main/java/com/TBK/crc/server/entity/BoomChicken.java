@@ -3,10 +3,12 @@ package com.TBK.crc.server.entity;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.common.registry.BKParticles;
+import com.TBK.crc.common.registry.BKSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -226,6 +228,12 @@ public class BoomChicken extends RobotChicken {
         }
 
         this.air.animateWhen(!this.onGround(),this.tickCount);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return BKSounds.CHICKEN_BOMB_LOOP.get();
     }
 
     @Override
