@@ -28,6 +28,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -117,6 +119,8 @@ public class ModBusEvent {
                     cap.warningLevel++;
                     cap.wave = 0;
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                }else {
+                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,5.0F,1.0F,false);
                 }
                 if(!event.getEntity().getAbilities().instabuild){
                     event.getItemStack().shrink(1);
@@ -134,6 +138,8 @@ public class ModBusEvent {
                     cap.wave = 0;
                     cap.timeLevelWarning = 0;
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                }else {
+                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.ILLUSIONER_PREPARE_BLINDNESS, SoundSource.BLOCKS,5.0F,1.0F,false);
                 }
                 if(!event.getEntity().getAbilities().instabuild){
                     event.getItemStack().shrink(1);
@@ -141,9 +147,13 @@ public class ModBusEvent {
             }
         }
         if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !Util.isInFuture(event.getEntity())){
-            PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
-            portal.setPos(event.getPos().above().getCenter());
-            event.getLevel().addFreshEntity(portal);
+            if(!event.getLevel().isClientSide()){
+                PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
+                portal.setPos(event.getPos().above().getCenter());
+                event.getLevel().addFreshEntity(portal);
+            }else {
+                event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS,5.0F,1.0F,false);
+            }
 
             if(!event.getEntity().getAbilities().instabuild){
                 event.getItemStack().shrink(1);
