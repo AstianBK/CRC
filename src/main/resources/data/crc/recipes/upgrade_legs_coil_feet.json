@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "iRi",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:paper"
+    },
+    "i": {
+      "item": "minecraft:tripwire_hook"
+    },
+    "R": {
+      "item": "crc:cyborg_bone"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_legs_coil_feet",
+    "count": 1
+  }
+}

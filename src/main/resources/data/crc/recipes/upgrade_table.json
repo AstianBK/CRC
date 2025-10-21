@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    " ii",
+    " IO"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "O": {
+      "item": "minecraft:observer"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_table",
+    "count": 1
+  }
+}
