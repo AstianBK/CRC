@@ -19,6 +19,7 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -42,6 +43,7 @@ public class CyberChickenFight{
 	private int chickenId = -1;
 	private int ticksChickenSeen = 0;
 	private UUID chickenUUID = null;
+	private UUID portalUUID = null;
 	private ServerLevel level;
 	private final BlockPos origin;
 	private final Predicate<Entity> validPlayer;
@@ -191,16 +193,17 @@ public class CyberChickenFight{
 
 
 	public boolean hasPortalActive(){
-		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(10.0F));
+		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(100.0F));
 
 		return !portals.isEmpty();
 	}
 	private void spawnExitPortal(boolean p_64094_) {
-		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(10.0F));
+		List<PortalEntity> portals = level.getEntitiesOfClass(PortalEntity.class,new AABB(new BlockPos(0,114,0)).inflate(100.0F));
 		if (portals.isEmpty()){
 			PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),level);
 			portal.setPos(new BlockPos(0,114,0).getCenter());
 			level.addFreshEntity(portal);
+			this.portalUUID = portal.getUUID();
 		}
 	}
 	public CompoundTag serialise() {
@@ -238,18 +241,11 @@ public class CyberChickenFight{
 		return CRC.getServer().getLevel(Level.OVERWORLD);
 	}
 
-	public Structure getStructure() {
-		if (this.structure == null) {
-			CRC.LOGGER.warn("Missing realm structures! Creating..");
-			this.structure = new Structure();
-		}
-
-		return this.structure;
-	}
 
 	public void teleport(LivingEntity entity) {
-		Vec3 vec = getStructure().getCentre().getCenter();
+		Vec3 vec = new Vec3(-53,114,-3);
 		if(Util.isInFuture(entity)){
+			vec = ((Player)entity).getSleepingPos().orElse(level.getSharedSpawnPos()).getCenter();
 			entity.teleportTo(getDimensionReturn(), vec.x,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
 		}else {
 			entity.teleportTo(getDimension(), vec.x	,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());

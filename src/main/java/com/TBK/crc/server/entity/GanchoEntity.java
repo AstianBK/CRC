@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 
 import java.util.UUID;
 
@@ -64,9 +65,15 @@ public class GanchoEntity extends AbstractArrow {
             if(!this.level().isClientSide){
                 if(this.getOwner() instanceof Player player){
                     MultiArmCapability cap = MultiArmCapability.get(player);
-                    if(cap!=null && p_36757_.getEntity() instanceof Entity){
-                        cap.catchEntity = p_36757_.getEntity();
-                        PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), player);
+                    if(cap!=null){
+                        if(p_36757_.getEntity() instanceof LivingEntity){
+                            cap.catchEntity = p_36757_.getEntity();
+                            PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity) p_36757_.getEntity());
+
+                        }else if(p_36757_.getEntity() instanceof PartEntity<?> partEntity){
+                            cap.catchEntity = partEntity.getParent();
+                            PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity)partEntity.getParent());
+                        }
                     }
                 }
             }

@@ -79,7 +79,7 @@ public class HeartReflex extends PassivePart{
         }
         multiArmCapability.getPlayer().teleportTo(teleportPos.x,teleportPos.y+1.0F,teleportPos.z);
         if(player.level().isClientSide){
-            player.level().playLocalSound(BlockPos.containing(teleportPos),BKSounds.HEART_REFLEX.get(),SoundSource.PLAYERS,10.0F,1.0F,false);
+            player.level().playLocalSound(BlockPos.containing(teleportPos).above(),BKSounds.HEART_REFLEX.get(),SoundSource.PLAYERS,10.0F,1.0F,false);
         }
         return true;
     }

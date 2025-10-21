@@ -116,7 +116,46 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player p_38941_, int p_38987_) {
-        return ItemStack.EMPTY;
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(p_38987_);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
+            itemstack = itemstack1.copy();
+            if(p_38987_==2){
+                return ItemStack.EMPTY;
+            }else if (p_38987_>=0 && p_38987_<2) {
+                if (itemstack1.getItem() instanceof CyberImplantItem) {
+                    if (!this.moveItemStackTo(itemstack1, 1, 2, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }else if (itemstack1.getItem() instanceof CyberUpgradeItem || itemstack1.getItem() instanceof CyberSkinItem || itemstack1.getItem() instanceof CyberRefinementItem){
+                    if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }else if (p_38987_ >= 3 && p_38987_ < 30) {
+                if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (p_38987_ >= 29 && p_38987_ < 38 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
+                return ItemStack.EMPTY;
+            } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (itemstack1.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+
+            if (itemstack1.getCount() == itemstack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(p_38941_, itemstack1);
+        }
+        return itemstack;
     }
 
     @Override

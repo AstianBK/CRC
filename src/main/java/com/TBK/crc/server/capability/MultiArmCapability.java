@@ -147,6 +147,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.timeLevelWarning = tag.getInt("timeLevelWarning");
         this.timeLevelWarning0 = tag.getInt("timeLevelWarning");
         this.playChickenWarning = tag.getBoolean("playAnim");
+        this.invokeTimer = tag.getInt("invokeTime");
     }
     public void copyFrom(MultiArmCapability cap){
         this.skills = cap.skills;
@@ -161,6 +162,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         tag.putInt("wave",this.wave);
         tag.putInt("timeLevelWarning",this.timeLevelWarning);
         tag.putBoolean("playAnim",this.playChickenWarning);
+        tag.putInt("invokeTime",this.invokeTimer);
         return tag;
     }
     @Override
@@ -168,19 +170,19 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
         if(player instanceof ServerPlayer serverPlayer){
             event.setVisible(this.chickenEnemy);
-            if(event.getPlayers().contains(serverPlayer)){
+            if(!event.getPlayers().contains(serverPlayer)){
                 event.addPlayer(serverPlayer);
             }
             Component component;
             if(this.warningLevel>2){
                 component = Component.translatable("chicken_attack.infinite_wave");
             }else {
-                component = Component.translatable("chicken_attack.wave").append(String.valueOf(this.wave+1));
+                component = Component.translatable("chicken_attack.wave").append(" : "+this.wave+1);
             }
             event.setName(component);
             BossEvent.BossBarColor color = getColorForWarningLevel();
             event.setColor(color);
-            event.setProgress((float) this.invokeTimer/1000.0F);
+            event.setProgress(1.0F-(float) this.invokeTimer/1000.0F);
         }
         if(this.cooldownUse>0){
             this.cooldownUse--;
@@ -297,13 +299,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
     private BossEvent.BossBarColor getColorForWarningLevel() {
         switch (this.warningLevel){
             case 2->{
-                return BossEvent.BossBarColor.BLUE;
+                return BossEvent.BossBarColor.YELLOW;
             }
             case 3->{
                 return BossEvent.BossBarColor.RED;
             }
             default->{
-                return BossEvent.BossBarColor.YELLOW;
+                return BossEvent.BossBarColor.BLUE;
             }
         }
     }
@@ -491,13 +493,17 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.posSelectUpgrade =nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
         this.implantStore = new ImplantStore(nbt);
-        this.loadWarningLevel(nbt);
+        this.warningLevel = nbt.getInt("warningLevel");
+        this.wave = nbt.getInt("wave");
+        this.timeLevelWarning = nbt.getInt("timeLevelWarning");
+        this.timeLevelWarning0 = nbt.getInt("timeLevelWarning");
 
     }
 
     public void init(Player player) {
         this.setPlayer(player);
         this.level=player.level();
+        this.playChickenWarning = false;
     }
 
 

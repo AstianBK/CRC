@@ -115,6 +115,8 @@ public class MultiArmOverlay implements IGuiOverlay {
                     graphics.pose().pushPose();
 
                     if(cap.hotbarActive){
+
+                        graphics.blit(WIDGETS_LOCATION, (int) (i +66), (int) (height-72), 0, 0, 146, 32,256,256);
                         for(int i1 = 0; i1 < cap.skills.upgrades.size(); ++i1) {
                             Upgrade skillAbstract=cap.getHotBarSkill().get(i1);
                             int j1 =  i + 101 + i1 * 20;
@@ -125,9 +127,9 @@ public class MultiArmOverlay implements IGuiOverlay {
                                 graphics.pose().popPose();
                             }
                         }
-                        graphics.blit(WIDGETS_LOCATION, (int) (i +66), (int) (height-72), 0, 0, 146, 32,256,256);
                         graphics.blit(WIDGETS_LOCATION, i + 96 + ForgeInputEvent.selectActual * 20, height - 60 , 20, 32, 24, 21
                                 ,256,256);
+
                     }else {
                         graphics.blit(WIDGETS_LOCATION, i + 132, height - 74 , 0, 34, 18, 32
                                 ,256,256);

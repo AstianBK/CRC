@@ -114,15 +114,17 @@ public class ModBusEvent {
         if(event.getItemStack().is(BKItems.DANGER_INCREASER.get())){
             MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
 
-            if(cap!=null && cap.chickenEnemy && cap.warningLevel<3){
+            if(cap!=null && cap.warningLevel<3){
                 if(!event.getLevel().isClientSide){
-                    cap.warningLevel++;
-                    cap.wave = 0;
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                    if(cap.chickenEnemy){
+                        cap.warningLevel++;
+                        cap.wave = 0;
+                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                    }
                 }else {
-                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,5.0F,1.0F,false);
+                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.ILLUSIONER_PREPARE_BLINDNESS, SoundSource.BLOCKS,5.0F,1.0F,false);
                 }
-                if(!event.getEntity().getAbilities().instabuild){
+                if(!event.getEntity().getAbilities().instabuild && cap.chickenEnemy){
                     event.getItemStack().shrink(1);
                 }
             }
@@ -131,17 +133,21 @@ public class ModBusEvent {
         if(event.getItemStack().is(BKItems.SIGNAL_JAMMER.get())){
             MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
 
-            if(cap!=null && cap.chickenEnemy){
+            if(cap!=null){
                 if(!event.getLevel().isClientSide){
-                    cap.chickenEnemy = false;
-                    cap.warningLevel = 0;
-                    cap.wave = 0;
-                    cap.timeLevelWarning = 0;
-                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                    if(cap.chickenEnemy){
+                        cap.chickenEnemy = false;
+                        cap.warningLevel = 0;
+                        cap.wave = 0;
+                        cap.timeLevelWarning = 0;
+                        cap.playChickenWarning = false;
+                        cap.invokeTimer = 1000;
+                        PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                    }
                 }else {
-                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.ILLUSIONER_PREPARE_BLINDNESS, SoundSource.BLOCKS,5.0F,1.0F,false);
+                    event.getLevel().playLocalSound(event.getPos().above(), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,5.0F,1.0F,false);
                 }
-                if(!event.getEntity().getAbilities().instabuild){
+                if(!event.getEntity().getAbilities().instabuild && cap.chickenEnemy){
                     event.getItemStack().shrink(1);
                 }
             }

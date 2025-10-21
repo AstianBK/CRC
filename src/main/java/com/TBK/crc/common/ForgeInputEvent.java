@@ -42,7 +42,7 @@ public class ForgeInputEvent {
             if(event.getScrollDelta()<0){
                 selectActual = selectActual+1 >= 4 ? 0 : selectActual+1;
             }else {
-                selectActual = selectActual-1<0 ? 4 : selectActual-1;
+                selectActual = selectActual-1<0 ? 3 : selectActual-1;
             }
         }
     }
