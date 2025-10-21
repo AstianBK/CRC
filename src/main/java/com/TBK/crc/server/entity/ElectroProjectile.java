@@ -52,6 +52,8 @@ public class ElectroProjectile extends AbstractArrow {
                 List<Entity> intersecting = this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(getScale()-1), this::canHitEntity);
                 if (!intersecting.isEmpty())
                     this.onHit(new EntityHitResult(intersecting.get(0)));
+            }else if(result.getType() == HitResult.Type.BLOCK){
+                this.onHitBlock((BlockHitResult) result);
             }
         }
 
@@ -90,7 +92,7 @@ public class ElectroProjectile extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult p_36755_) {
-
+        this.discard();
     }
 
     public float getScale(){
@@ -114,6 +116,7 @@ public class ElectroProjectile extends AbstractArrow {
     protected void onHit(HitResult p_37260_) {
         super.onHit(p_37260_);
     }
+
 
     @Override
     protected void onHitEntity(EntityHitResult p_36757_) {

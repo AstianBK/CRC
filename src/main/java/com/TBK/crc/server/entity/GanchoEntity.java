@@ -50,6 +50,11 @@ public class GanchoEntity extends AbstractArrow {
     }
 
     @Override
+    public boolean isSilent() {
+        return true;
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult p_36757_) {
         if (p_36757_.getEntity()!=getOwner()){
             this.cachedID = p_36757_.getEntity().getId();
@@ -59,9 +64,9 @@ public class GanchoEntity extends AbstractArrow {
             if(!this.level().isClientSide){
                 if(this.getOwner() instanceof Player player){
                     MultiArmCapability cap = MultiArmCapability.get(player);
-                    if(cap!=null && p_36757_.getEntity() instanceof LivingEntity){
+                    if(cap!=null && p_36757_.getEntity() instanceof Entity){
                         cap.catchEntity = p_36757_.getEntity();
-                        PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity) p_36757_.getEntity());
+                        PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), player);
                     }
                 }
             }

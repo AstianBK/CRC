@@ -3,6 +3,7 @@ package com.TBK.crc.server.entity;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.common.registry.BKParticles;
+import com.TBK.crc.common.registry.BKSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -34,11 +35,9 @@ public class CoilChicken extends RobotChicken {
             SynchedEntityData.defineId(CoilChicken.class, EntityDataSerializers.BOOLEAN);
 
     public AnimationState idle = new AnimationState();
-    public AnimationState stand = new AnimationState();
     public AnimationState attack = new AnimationState();
 
     public int idleAnimationTimeout = 0;
-
     private int attackTimer = 0;
 
 
@@ -50,7 +49,7 @@ public class CoilChicken extends RobotChicken {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6.0F, 1.0D, 1.2D));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6.0F, 1.0D, 1.2D));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false){
+        this.goalSelector.addGoal(4, new AttackGoal(this, 1.0D, false){
             @Override
             public boolean canUse() {
                 return super.canUse() && CoilChicken.this.onGround();
@@ -97,9 +96,14 @@ public class CoilChicken extends RobotChicken {
     }
 
 
+    @Override
+    protected void playStepSound(BlockPos p_20135_, BlockState p_20136_) {
+        this.playSound(this.level().random.nextBoolean() ? BKSounds.CHICKEN_COIL_MOVE_1.get() : BKSounds.CHICKEN_COIL_MOVE_2.get(),4.0F,1.0F);
+    }
+
     private void setupAnimationStates() {
         if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = 10;
+            this.idleAnimationTimeout = 15;
             this.idle.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
@@ -116,13 +120,16 @@ public class CoilChicken extends RobotChicken {
         }
         super.handleEntityEvent(p_21375_);
     }
+
     public boolean isAttacking() {
         return this.entityData.get(ATTACKING);
     }
+
     public void setAttacking(boolean flag){
         this.entityData.set(ATTACKING,flag);
         this.attackTimer = flag ? 20 : 0;
     }
+
     public void playAttack(){
         this.level().broadcastEntityEvent(this,(byte) 4);
     }

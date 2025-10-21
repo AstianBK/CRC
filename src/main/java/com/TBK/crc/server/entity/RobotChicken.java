@@ -1,5 +1,6 @@
 package com.TBK.crc.server.entity;
 
+import com.TBK.crc.common.registry.BKSounds;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,6 +38,11 @@ public class RobotChicken extends PathfinderMob implements PowerableMob {
             return false;
         }
         return super.hurt(p_21016_, p_21017_);
+    }
+
+    @Override
+    protected void playHurtSound(DamageSource p_21493_) {
+        this.playSound(BKSounds.CHICKEN_MINION_HURT.get(),5.0F,1.0f);
     }
 
     @Override

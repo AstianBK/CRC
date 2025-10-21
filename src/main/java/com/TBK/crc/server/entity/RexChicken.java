@@ -4,6 +4,7 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.client.animacion.RexChickenAnim;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
+import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.fight.CyberChickenFight;
@@ -416,9 +417,10 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             }
             if(this.isAttacking()){
                 this.attackTimer--;
-                if(this.attackTimer<=5 ){
-                    this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(10.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(this::doHurtTarget);
+                if(this.attackTimer==0 ){
+                    this.level().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(4.0F),e->!this.is(e) && !(e instanceof RobotChicken)).forEach(this::doHurtTarget);
                     this.setAttacking(false);
+                    this.playSound(BKSounds.REX_STOMP.get(),5.0F,1.0f);
                 }
             }
             if(this.level().isClientSide){

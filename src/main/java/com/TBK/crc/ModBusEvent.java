@@ -4,10 +4,12 @@ import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.item.CyberSkinItem;
 import com.TBK.crc.common.registry.BKDimension;
+import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.capability.CRCCapability;
 import com.TBK.crc.server.capability.MultiArmCapability;
+import com.TBK.crc.server.entity.PortalEntity;
 import com.TBK.crc.server.manager.UpgradeInstance;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketSyncPlayerData;
@@ -117,6 +119,14 @@ public class ModBusEvent {
                     cap.timeLevelWarning = 0;
                     PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
                 }
+            }
+        }
+
+        if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !event.getLevel().getBlockState(event.getPos()).isAir()){
+            if (!event.getLevel().isClientSide){
+                PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
+                portal.setPos(event.getPos().above().getCenter());
+                event.getLevel().addFreshEntity(portal);
             }
         }
     }

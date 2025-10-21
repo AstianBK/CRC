@@ -219,7 +219,7 @@ public class BoomChicken extends RobotChicken {
     }
     private void setupAnimationStates() {
         if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = 10;
+            this.idleAnimationTimeout = 5;
             this.idle.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
