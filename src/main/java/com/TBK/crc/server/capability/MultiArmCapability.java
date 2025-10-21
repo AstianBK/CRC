@@ -171,7 +171,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 this.invokeTimer = 1000;
                 this.wave = this.wave+1;
                 if(this.wave>6 && this.warningLevel<2){
-                    this.warningLevel = Math.min(this.warningLevel+1,2);
+                    this.warningLevel = Math.min(this.warningLevel+1,3);
                     this.wave = 0;
                 }
                 this.wave = Math.min(this.wave,6);

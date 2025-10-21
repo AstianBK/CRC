@@ -201,7 +201,7 @@ public class DroneChicken extends RobotChicken {
                 if (!this.meleeAttack) {
                     double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
                     double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
-                    double heightOffset = 7.0F;
+                    double heightOffset = 6.0F;
                     this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
 
                     direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(1);
@@ -216,12 +216,12 @@ public class DroneChicken extends RobotChicken {
 
                 this.rotateTowardsTarget(target);
 
-                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 128.0F) {
+                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 1024.0F) {
                     ElectroProjectile electro = new ElectroProjectile(this.world, this.drone, 0);
                     electro.setPos(this.drone.position());
                     electro.shoot(
                             target.getX() - drone.getX(),
-                            target.getY() + target.getBbWidth() / 2 - drone.getY(),
+                                target.getY() + target.getBbHeight() / 2 - drone.getY(),
                             target.getZ() - drone.getZ(),
                             1.0F, 0.1F
                     );

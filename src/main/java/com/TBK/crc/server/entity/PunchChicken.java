@@ -64,9 +64,9 @@ public class PunchChicken extends RobotChicken {
     }
     private void setupAnimationStates() {
         if (this.idleAnimationTimeout <= 0) {
+            this.attack.stop();
             this.idleAnimationTimeout = 20;
             this.idle.start(this.tickCount);
-            this.attack.stop();
         } else {
             --this.idleAnimationTimeout;
         }

@@ -16,6 +16,8 @@ public class PunchChickenRenderer<T extends PunchChicken,M extends RobotChickenM
     public PunchChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new RobotChickenShieldLayer(this,new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.ARMOR_LOCATION))));
+        this.shadowRadius = 0.25F;
+
     }
 
     @Override

@@ -109,7 +109,20 @@ public class ModBusEvent {
                     " YQ :" + CRC.yq + " ZQ :"+CRC.zq);
         }
 
+        if(event.getItemStack().is(BKItems.DANGER_INCREASER.get())){
+            MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
 
+            if(cap!=null && cap.chickenEnemy && cap.warningLevel<3){
+                if(!event.getLevel().isClientSide){
+                    cap.warningLevel++;
+                    cap.wave = 0;
+                    PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
+                }
+                if(!event.getEntity().getAbilities().instabuild){
+                    event.getItemStack().shrink(1);
+                }
+            }
+        }
 
         if(event.getItemStack().is(BKItems.SIGNAL_JAMMER.get())){
             MultiArmCapability cap = MultiArmCapability.get(event.getEntity());
@@ -126,14 +139,11 @@ public class ModBusEvent {
                     event.getItemStack().shrink(1);
                 }
             }
-
         }
-        if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !event.getLevel().getBlockState(event.getPos()).isAir()){
-            if (!event.getLevel().isClientSide){
-                PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
-                portal.setPos(event.getPos().above().getCenter());
-                event.getLevel().addFreshEntity(portal);
-            }
+        if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !Util.isInFuture(event.getEntity()) && !event.getLevel().getBlockState(event.getPos()).isAir()){
+            PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
+            portal.setPos(event.getPos().above().getCenter());
+            event.getLevel().addFreshEntity(portal);
 
             if(!event.getEntity().getAbilities().instabuild){
                 event.getItemStack().shrink(1);
@@ -270,7 +280,6 @@ public class ModBusEvent {
                         cap.warningLevel = 1;
                         cap.playChickenWarning = true;
                         PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,player.getId()), (ServerPlayer) player);
-
                     }
                 }
             }
@@ -285,7 +294,7 @@ public class ModBusEvent {
                     }
                 }
 
-                if(flag){
+                if(!flag){
                     cap.chickenEnemy=false;
                     cap.timeLevelWarning = 0;
                     cap.timeLevelWarning0 = 0;
