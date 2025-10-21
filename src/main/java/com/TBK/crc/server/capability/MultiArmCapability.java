@@ -11,9 +11,12 @@ import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.*;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -67,6 +70,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public ImplantStore implantStore = new ImplantStore();
     public boolean dirty = false;
     public SkillPose pose = SkillPose.NONE;
+    ServerBossEvent event =  (ServerBossEvent)(new ServerBossEvent(Component.translatable("chicken_attack.next_wave"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(true).setCreateWorldFog(false);
     public static MultiArmCapability get(Player player){
         return CRCCapability.getEntityCap(player,MultiArmCapability.class);
     }
@@ -137,7 +141,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     public void copyNbt(CompoundTag tag){
         this.deserializeNBT(tag);
     }
-    public void syncWarningLevel(CompoundTag tag){
+    public void loadWarningLevel(CompoundTag tag){
         this.warningLevel = tag.getInt("warningLevel");
         this.wave = tag.getInt("wave");
         this.timeLevelWarning = tag.getInt("timeLevelWarning");
@@ -161,18 +165,36 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
     @Override
     public void tick(Player player) {
+
+        if(player instanceof ServerPlayer serverPlayer){
+            event.setVisible(this.chickenEnemy);
+            if(event.getPlayers().contains(serverPlayer)){
+                event.addPlayer(serverPlayer);
+            }
+            Component component;
+            if(this.warningLevel>2){
+                component = Component.translatable("chicken_attack.infinite_wave");
+            }else {
+                component = Component.translatable("chicken_attack.wave").append(String.valueOf(this.wave+1));
+            }
+            event.setName(component);
+            BossEvent.BossBarColor color = getColorForWarningLevel();
+            event.setColor(color);
+            event.setProgress((float) this.invokeTimer/1000.0F);
+        }
         if(this.cooldownUse>0){
             this.cooldownUse--;
         }
 
         if(this.chickenEnemy){
+
             if(this.invokeTimer<=0){
                 if(warningLevel>0){
                     this.teleportChicken();
                 }
                 this.invokeTimer = 1000;
                 this.wave = this.wave+1;
-                if(this.wave>6 && this.warningLevel<2){
+                if(this.wave>6 && this.warningLevel<3){
                     this.warningLevel = Math.min(this.warningLevel+1,3);
                     this.wave = 0;
                     this.playChickenWarning = true;
@@ -268,6 +290,20 @@ public class MultiArmCapability implements IMultiArmPlayer {
                         this.timeCharge--;
                     }
                 }
+            }
+        }
+    }
+
+    private BossEvent.BossBarColor getColorForWarningLevel() {
+        switch (this.warningLevel){
+            case 2->{
+                return BossEvent.BossBarColor.BLUE;
+            }
+            case 3->{
+                return BossEvent.BossBarColor.RED;
+            }
+            default->{
+                return BossEvent.BossBarColor.YELLOW;
             }
         }
     }
@@ -455,7 +491,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.posSelectUpgrade =nbt.getInt("select_power");
         this.chickenEnemy=nbt.getBoolean("publicEnemy");
         this.implantStore = new ImplantStore(nbt);
-        this.syncWarningLevel(nbt);
+        this.loadWarningLevel(nbt);
 
     }
 

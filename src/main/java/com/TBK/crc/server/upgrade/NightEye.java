@@ -26,7 +26,7 @@ public class NightEye extends PassivePart{
             if(player.level().getBrightness(LightLayer.SKY,player.getOnPos().above())>0){
                 return false;
             }
-            for (BlockPos pos : BlockPos.betweenClosed(player.getOnPos().offset(10,6,10), player.getOnPos().offset(-10,-3,-10))){
+            for (BlockPos pos : BlockPos.betweenClosed(player.getOnPos().offset(1,3,1), player.getOnPos().offset(1,0,1))){
                 if (player.level().getLightEmission(pos)>0){
                     return false;
                 }

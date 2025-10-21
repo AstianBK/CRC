@@ -3,7 +3,6 @@ package com.TBK.crc.server.network.messager;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -55,7 +54,7 @@ public class PacketSyncPlayerData implements Packet<PacketListener> {
             if(this.wasDeath){
                 cap.copyNbt(this.data);
             }else {
-                cap.syncWarningLevel(this.data);
+                cap.loadWarningLevel(this.data);
             }
         }
     }

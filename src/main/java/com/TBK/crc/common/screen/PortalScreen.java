@@ -2,6 +2,7 @@ package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.ImplantMenu;
+import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.client.Minecraft;
@@ -31,11 +32,19 @@ public class PortalScreen extends Screen {
         super.init();
 
         this.acceptButton = new Button.Builder(Component.translatable("crc.portal.bottom_accept"),(s)->{
+            MultiArmCapability cap = MultiArmCapability.get(player);
+            if(cap!=null){
+                cap.chickenEnemy = false;
+                cap.warningLevel = 0;
+                cap.wave = 0;
+            }
             PacketHandler.sendToServer(new PacketHandlerPowers(6,null,null));
+            onClose();
         }).bounds(this.width / 2 - 100, this.height / 4 + 72 , 200, 20).build();
         this.cancelButton = new Button.Builder(Component.translatable("crc.portal.bottom_cancel"),(s)->{
             this.onClose();
         }).bounds(this.width / 2 - 100, this.height / 4 + 96 , 200, 20).build();
+
         this.addRenderableWidget(this.acceptButton);
 
         this.addRenderableWidget(this.cancelButton);
@@ -45,7 +54,6 @@ public class PortalScreen extends Screen {
     public void render(GuiGraphics p_283488_, int p_283551_, int p_283002_, float p_281981_) {
         p_283488_.fillGradient(0, 0, this.width, this.height, 0x80000000, 0x80000000);
         p_283488_.pose().pushPose();
-        p_283488_.pose().scale(2.0F, 2.0F, 2.0F);
         p_283488_.drawCenteredString(this.font, this.title, this.width / 2 / 2, 30, 16777215);
         p_283488_.pose().popPose();
         super.render(p_283488_, p_283551_, p_283002_, p_281981_);
