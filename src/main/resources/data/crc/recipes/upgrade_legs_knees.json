@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "iRi",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:paper"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "crc:tantalum_ingot"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_legs_knees",
+    "count": 1
+  }
+}

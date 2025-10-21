@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "iRi",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:paper"
+    },
+    "i": {
+      "item": "crc:tantalum_ingot"
+    },
+    "R": {
+      "item": "minecraft:arrow"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_arm_harpoon",
+    "count": 1
+  }
+}

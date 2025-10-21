@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "iRi",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:paper"
+    },
+    "i": {
+      "item": "crc:cyborg_bone"
+    },
+    "R": {
+      "item": "crc:cyborg_capacitor"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_system_thoracic_cage",
+    "count": 1
+  }
+}
