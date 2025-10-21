@@ -75,7 +75,11 @@
   "entity.crc.rex_chicken": "Cyber Chicken",
   "crc.cyborg_table.bottom_implant": "IMPLANT",
   "crc.portal.bottom_accept": "Accept",
-  "crc.portal.bottom_cancel": "Cancel"
+  "crc.portal.bottom_cancel": "Cancel",
+  "entity.portal.menu": "Se pasa o no se pasa paaaaaa",
+  "tooltip.item.signal_jammmer": "Signal jammer descr",
+  "tooltip.item.portal_opener": "descr",
+  "tooltip.item.danger_increaser": ""
 }
 
 

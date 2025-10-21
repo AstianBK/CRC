@@ -167,7 +167,9 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
-                this.teleportChicken();
+                if(warningLevel>0){
+                    this.teleportChicken();
+                }
                 this.invokeTimer = 1000;
                 this.wave = this.wave+1;
                 if(this.wave>6 && this.warningLevel<2){
@@ -271,7 +273,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
     }
 
     private void teleportChicken() {
-        float chanceLeader = this.chanceLeaderSpawn[this.warningLevel];
+        float chanceLeader = this.chanceLeaderSpawn[this.warningLevel-1];
         for (EntityTypeWaves wave : EntityTypeWaves.values()){
             int length = wave.waves[this.wave]>0 ? (wave.waves[this.wave] + this.level.random.nextInt(0,2)) : 0 ;
             boolean hasShield;

@@ -140,7 +140,7 @@ public class ModBusEvent {
                 }
             }
         }
-        if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !Util.isInFuture(event.getEntity()) && !event.getLevel().getBlockState(event.getPos()).isAir()){
+        if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !Util.isInFuture(event.getEntity())){
             PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
             portal.setPos(event.getPos().above().getCenter());
             event.getLevel().addFreshEntity(portal);
@@ -268,7 +268,7 @@ public class ModBusEvent {
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event){
         LivingEntity entity = event.getEntity();
-        if(entity instanceof Chicken){
+        if(entity instanceof Chicken chicken && chicken.isBaby()){
             if(event.getSource().getEntity() instanceof Player player){
                 MultiArmCapability cap = MultiArmCapability.get(player);
                 if(cap!=null){

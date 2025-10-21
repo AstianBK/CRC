@@ -21,14 +21,15 @@ public class PortalScreen extends Screen {
     public Button acceptButton;
     public Button cancelButton;
     public Player player;
-    public PortalScreen(Component component) {
-        super(component);
+    public PortalScreen() {
+        super(Component.translatable("entity.portal.menu"));
         this.player = Minecraft.getInstance().player;
     }
 
     @Override
     protected void init() {
         super.init();
+
         this.acceptButton = new Button.Builder(Component.translatable("crc.portal.bottom_accept"),(s)->{
             PacketHandler.sendToServer(new PacketHandlerPowers(6,null,null));
         }).bounds(this.width / 2 - 100, this.height / 4 + 72 , 200, 20).build();
@@ -43,6 +44,7 @@ public class PortalScreen extends Screen {
 
     public void render(GuiGraphics p_283488_, int p_283551_, int p_283002_, float p_281981_) {
         p_283488_.fillGradient(0, 0, this.width, this.height, 0x80000000, 0x80000000);
+        p_283488_.drawCenteredString(this.font, this.title, this.width / 2 / 2, 30, 16777215);
         super.render(p_283488_, p_283551_, p_283002_, p_281981_);
         refreshButtons();
     }

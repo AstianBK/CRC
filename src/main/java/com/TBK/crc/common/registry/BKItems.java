@@ -4,12 +4,19 @@ import com.TBK.crc.CRC;
 import com.TBK.crc.UpgradeableParts;
 import com.TBK.crc.common.item.*;
 import com.TBK.crc.server.upgrade.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BKItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -22,6 +29,7 @@ public class BKItems {
     public static final RegistryObject<Item> CYBORG_BONE = ITEMS.register("cyborg_bone",()->new CyberComponentItem(new Item.Properties()));
     public static final RegistryObject<Item> CYBORG_MICROCHIP = ITEMS.register("cyborg_microchip",()->new CyberComponentItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> QUANTUM_MICROPROCESSOR = ITEMS.register("quantum_microprocessor",()->new CyberComponentItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new CyberComponentItem(new Item.Properties().stacksTo(16)));
 
 
     //CYBER-IMPLANT
@@ -54,10 +62,27 @@ public class BKItems {
 
 
     //REGULAR-ITEM
-    public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
-    public static final RegistryObject<Item> TANTALUM_INGOT = ITEMS.register("tantalum_ingot",()->new Item(new Item.Properties().stacksTo(16)));
-    public static final RegistryObject<Item> PORTAL_OPENER = ITEMS.register("portal_opener",()->new Item(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1)));
-    public static final RegistryObject<Item> DANGER_INCREASER = ITEMS.register("danger_increaser",()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
+    public static final RegistryObject<Item> SIGNAL_JAMMER = ITEMS.register("signal_jammer",()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)){
+        @Override
+        public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
+            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
+            p_41423_.add(Component.translatable("tooltip.item.signal_jammmer"));
+        }
+    });
+    public static final RegistryObject<Item> PORTAL_OPENER = ITEMS.register("portal_opener",()->new Item(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1)){
+        @Override
+        public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
+            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
+            p_41423_.add(Component.translatable("tooltip.item.portal_opener"));
+        }
+    });
+    public static final RegistryObject<Item> DANGER_INCREASER = ITEMS.register("danger_increaser",()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)){
+        @Override
+        public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
+            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
+            p_41423_.add(Component.translatable("tooltip.item.danger_increaser"));
+        }
+    });
 
 
     //COSMETIC

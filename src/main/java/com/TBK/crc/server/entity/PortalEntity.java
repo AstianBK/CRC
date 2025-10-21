@@ -82,7 +82,7 @@ public class PortalEntity extends Entity {
     @Override
     public void handleEntityEvent(byte p_19882_) {
         if(p_19882_ == 4){
-            Minecraft.getInstance().setScreen(new PortalScreen( Component.nullToEmpty("")));
+            Minecraft.getInstance().setScreen(new PortalScreen());
         }
         super.handleEntityEvent(p_19882_);
     }
