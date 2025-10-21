@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class PunchChicken extends RobotChicken {
@@ -36,7 +37,7 @@ public class PunchChicken extends RobotChicken {
         super.registerGoals();
         this.goalSelector.addGoal(5,new RandomStrollGoal(this,1.0D));
         this.goalSelector.addGoal(3,new AttackGoal(this,1.1D,false));
-        this.targetSelector.addGoal(4,new NearestAttackableTargetGoal<>(this,LivingEntity.class,false));
+        this.targetSelector.addGoal(4,new NearestAttackableTargetGoal<>(this, Player.class,false));
     }
 
     @Override
