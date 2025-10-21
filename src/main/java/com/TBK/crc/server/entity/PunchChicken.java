@@ -75,7 +75,7 @@ public class PunchChicken extends RobotChicken {
     }
     public void setAttacking(boolean flag){
         this.entityData.set(ATTACKING,flag);
-        this.attackTimer = flag ? 5 : 0;
+        this.attackTimer = flag ? 10 : 0;
     }
     public void playAttack(){
         this.level().broadcastEntityEvent(this,(byte) 4);
@@ -94,7 +94,7 @@ public class PunchChicken extends RobotChicken {
         if(p_21375_ == 4){
             this.idle.stop();
             this.attack.start(this.tickCount);
-            this.idleAnimationTimeout = 5;
+            this.idleAnimationTimeout = 10;
         }
         super.handleEntityEvent(p_21375_);
     }
