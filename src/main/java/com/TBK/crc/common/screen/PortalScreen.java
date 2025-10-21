@@ -44,7 +44,10 @@ public class PortalScreen extends Screen {
 
     public void render(GuiGraphics p_283488_, int p_283551_, int p_283002_, float p_281981_) {
         p_283488_.fillGradient(0, 0, this.width, this.height, 0x80000000, 0x80000000);
+        p_283488_.pose().pushPose();
+        p_283488_.pose().scale(2.0F, 2.0F, 2.0F);
         p_283488_.drawCenteredString(this.font, this.title, this.width / 2 / 2, 30, 16777215);
+        p_283488_.pose().popPose();
         super.render(p_283488_, p_283551_, p_283002_, p_281981_);
         refreshButtons();
     }
