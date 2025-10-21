@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,11 +35,18 @@ public class CyborgTableScreen extends AbstractContainerScreen<CyborgTableMenu> 
             this.menu.refreshPlayer(menu.player);
             assert Minecraft.getInstance().player!=null && Minecraft.getInstance().level!=null;
             Minecraft.getInstance().player.closeContainer();
+            Minecraft.getInstance().player.connection.send(
+                    new ServerboundPlayerCommandPacket(
+                            Minecraft.getInstance().player,
+                            ServerboundPlayerCommandPacket.Action.STOP_SLEEPING
+                    )
+            );
             Minecraft.getInstance().level.playLocalSound(menu.player.blockPosition(), BKSounds.CYBORG_TABLE_IMPLANT.get(), SoundSource.BLOCKS,4.0F,1.0F,false);
         }).bounds(this.leftPos + 45, (this.height / 2 - this.imageHeight / 2)  + 135, 100, 20).build();
         this.acceptButton.active = false;
         this.addRenderableWidget(this.acceptButton);
     }
+
 
     @Override
     protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {

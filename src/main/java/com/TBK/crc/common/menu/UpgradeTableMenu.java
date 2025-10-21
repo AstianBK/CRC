@@ -115,32 +115,52 @@ public class UpgradeTableMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player p_38941_, int p_38987_) {
+    public ItemStack quickMoveStack(Player p_38941_, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(p_38987_);
+        Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if(p_38987_==2){
+            if (index == 2) {
                 return ItemStack.EMPTY;
-            }else if (p_38987_>=0 && p_38987_<2) {
+            }
+
+            else if (index >= 0 && index < 2) {
                 if (itemstack1.getItem() instanceof CyberImplantItem) {
                     if (!this.moveItemStackTo(itemstack1, 1, 2, false)) {
                         return ItemStack.EMPTY;
                     }
-                }else if (itemstack1.getItem() instanceof CyberUpgradeItem || itemstack1.getItem() instanceof CyberSkinItem || itemstack1.getItem() instanceof CyberRefinementItem){
+                } else if (itemstack1.getItem() instanceof CyberUpgradeItem
+                        || itemstack1.getItem() instanceof CyberSkinItem
+                        || itemstack1.getItem() instanceof CyberRefinementItem) {
                     if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                }
-            }else if (p_38987_ >= 3 && p_38987_ < 30) {
-                if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
+                } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_38987_ >= 29 && p_38987_ < 38 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
-                return ItemStack.EMPTY;
-            } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
-                return ItemStack.EMPTY;
+            }
+
+            else if (index >= 3 && index < 39) {
+                if (itemstack1.getItem() instanceof CyberImplantItem) {
+                    if (!this.moveItemStackTo(itemstack1, 1, 2, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (itemstack1.getItem() instanceof CyberUpgradeItem
+                        || itemstack1.getItem() instanceof CyberSkinItem
+                        || itemstack1.getItem() instanceof CyberRefinementItem) {
+                    if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= 3 && index < 30) {
+                    if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= 30 && index < 39) {
+                    if (!this.moveItemStackTo(itemstack1, 3, 30, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
             }
 
             if (itemstack1.isEmpty()) {

@@ -89,6 +89,10 @@ public class GanchoEntity extends AbstractArrow {
         super.tick();
         Entity entity = this.getOwner();
 
+        if(entity==null){
+            this.discard();
+            return;
+        }
         if(isBack){
             this.setNoPhysics(true);
             Vec3 vec3 = entity.getEyePosition().subtract(this.position());

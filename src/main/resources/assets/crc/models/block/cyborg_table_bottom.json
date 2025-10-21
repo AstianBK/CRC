@@ -5,7 +5,9 @@
 
 	"texture_size": [64, 64],
 	"textures": {
-		"1": "crc:block/cyborg_table"
+		"1": "crc:block/cyborg_table",
+		"particle": "crc:block/cyborg_table"
+
 	},
 	"elements": [
 		{
