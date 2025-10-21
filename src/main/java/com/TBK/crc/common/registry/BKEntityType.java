@@ -19,7 +19,7 @@ public class BKEntityType {
 
     public static final RegistryObject<EntityType<PortalEntity>> PORTAL = ENTITY_TYPES
             .register("portal", () -> EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)
-                    .fireImmune().sized(0.5F, 5F).build(CRC.MODID+ "portal"));
+                    .fireImmune().sized(1.5F, 2.0F).build(CRC.MODID+ "portal"));
 
     public static final RegistryObject<EntityType<PunchChicken>> PUNCH_CHICKEN = ENTITY_TYPES
             .register("punch_chicken", () -> EntityType.Builder.<PunchChicken>of(PunchChicken::new, MobCategory.MISC)
@@ -30,7 +30,7 @@ public class BKEntityType {
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "cyborg_robot_chicken"));
     public static final RegistryObject<EntityType<BoomChicken>> BOOM_CHICKEN = ENTITY_TYPES
             .register("boom_chicken", () -> EntityType.Builder.<BoomChicken>of(BoomChicken::new, MobCategory.MISC)
-                    .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "boom_chicken"));
+                    .fireImmune().sized(0.8F, 0.2F).build(CRC.MODID+ "boom_chicken"));
 
     public static final RegistryObject<EntityType<CoilChicken>> COIL_CHICKEN = ENTITY_TYPES
             .register("coil_chicken", () -> EntityType.Builder.<CoilChicken>of(CoilChicken::new, MobCategory.MISC)
@@ -38,7 +38,7 @@ public class BKEntityType {
 
     public static final RegistryObject<EntityType<DroneChicken>> DRONE_CHICKEN = ENTITY_TYPES
             .register("drone_chicken", () -> EntityType.Builder.<DroneChicken>of(DroneChicken::new, MobCategory.MISC)
-                    .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "drone_chicken"));
+                    .fireImmune().sized(0.8F, 0.8F).build(CRC.MODID+ "drone_chicken"));
 
     public static final RegistryObject<EntityType<TeleportEntity>> TELEPORT = ENTITY_TYPES
             .register("teleport", () -> EntityType.Builder.<TeleportEntity>of(TeleportEntity::new, MobCategory.MISC)
