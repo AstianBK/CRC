@@ -39,11 +39,10 @@ public class ForgeInputEvent {
         if(CRCKeybinds.attackKey3.isDown()){
             event.setCanceled(true);
             assert MultiArmCapability.get(mc.player)!=null;
-            MultiArmCapability capability = MultiArmCapability.get(mc.player);
             if(event.getScrollDelta()<0){
-                selectActual = selectActual+1>=3 ? 0 : selectActual+1;
+                selectActual = selectActual+1 >= 4 ? 0 : selectActual+1;
             }else {
-                selectActual = selectActual-1<0 ? capability.skills.getSkills().size() : selectActual-1;
+                selectActual = selectActual-1<0 ? 4 : selectActual-1;
             }
         }
     }

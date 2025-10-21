@@ -2,6 +2,7 @@ package com.TBK.crc.common.screen;
 
 import com.TBK.crc.CRC;
 import com.TBK.crc.common.menu.ImplantMenu;
+import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.network.messager.PacketHandlerPowers;
 import net.minecraft.client.Minecraft;
@@ -31,11 +32,19 @@ public class PortalScreen extends Screen {
         super.init();
 
         this.acceptButton = new Button.Builder(Component.translatable("crc.portal.bottom_accept"),(s)->{
+            MultiArmCapability cap = MultiArmCapability.get(player);
+            if(cap!=null){
+                cap.chickenEnemy = false;
+                cap.warningLevel = 0;
+                cap.wave = 0;
+            }
             PacketHandler.sendToServer(new PacketHandlerPowers(6,null,null));
+            onClose();
         }).bounds(this.width / 2 - 100, this.height / 4 + 72 , 200, 20).build();
         this.cancelButton = new Button.Builder(Component.translatable("crc.portal.bottom_cancel"),(s)->{
             this.onClose();
         }).bounds(this.width / 2 - 100, this.height / 4 + 96 , 200, 20).build();
+
         this.addRenderableWidget(this.acceptButton);
 
         this.addRenderableWidget(this.cancelButton);

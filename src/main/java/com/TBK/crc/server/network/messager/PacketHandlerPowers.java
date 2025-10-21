@@ -5,12 +5,14 @@ import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.PortalEntity;
 import com.TBK.crc.server.manager.UpgradeInstance;
+import com.TBK.crc.server.network.PacketHandler;
 import com.TBK.crc.server.upgrade.Upgrade;
 import com.TBK.crc.server.upgrade.PassivePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -60,11 +62,14 @@ public class PacketHandlerPowers implements Packet<PacketListener> {
                         case 4 -> cap.clearForUpgradeStore();
                         case 5 ->{
                             AbstractContainerMenu menu = context.get().getSender().containerMenu;
-                            if(menu instanceof CyborgTableMenu tableMenu){
+                            if(menu instanceof CyborgTableMenu){
                                 cap.dirty = true;
                             }
                         }
                         case 6 ->{
+                            cap.chickenEnemy = false;
+                            cap.warningLevel = 0;
+                            cap.wave = 0;
                             PortalEntity.onTeleport(player);
                         }
 

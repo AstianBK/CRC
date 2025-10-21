@@ -79,7 +79,10 @@
   "entity.portal.menu": "Se pasa o no se pasa paaaaaa",
   "tooltip.item.signal_jammmer": "Signal jammer descr",
   "tooltip.item.portal_opener": "descr",
-  "tooltip.item.danger_increaser": ""
+  "tooltip.item.danger_increaser": "",
+  "chicken_attack.next_wave": "next wave",
+  "chicken_attack.wave": "Wave",
+  "chicken_attack.infinite_wave": "infinite"
 }
 
 
