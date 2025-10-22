@@ -131,7 +131,6 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
             }
 
             this.renderArmWithItem(p_117207_, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, p_117204_, p_117205_, p_117206_);
-            this.renderArmWithItem(p_117207_, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, p_117204_, p_117205_, p_117206_);
             p_117204_.popPose();
         }
     }
