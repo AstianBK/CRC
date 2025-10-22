@@ -118,11 +118,6 @@ public class DroneChicken extends RobotChicken {
 
     @Override
     public boolean doHurtTarget(Entity p_21372_) {
-        if(!this.level().isClientSide){
-            Util.createExplosion(this,this.level(),p_21372_.blockPosition(),5.0F);
-        }else {
-            this.level().broadcastEntityEvent(this,(byte) 8);
-        }
         return true;
     }
 
@@ -261,6 +256,7 @@ public class DroneChicken extends RobotChicken {
                                 electro.setPos(this.drone.position());
                                 electro.shoot(toTarget.x,toTarget.y,toTarget.z,2.0F,1.0F);
                                 this.drone.level().addFreshEntity(electro);
+                                this.drone.level().broadcastEntityEvent(this.drone,(byte) 4);
                                 this.attackCooldown = 30;
                                 this.ammo--;
                             }else {
@@ -303,6 +299,8 @@ public class DroneChicken extends RobotChicken {
                                 electro.setPos(this.drone.position());
                                 electro.shoot(toTarget.x,toTarget.y,toTarget.z,2.0F,1.0F);
                                 this.drone.level().addFreshEntity(electro);
+                                this.drone.level().broadcastEntityEvent(this.drone,(byte) 4);
+
                                 this.attackCooldown = 40;
 
                             }

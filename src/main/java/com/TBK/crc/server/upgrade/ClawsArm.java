@@ -144,7 +144,9 @@ public class ClawsArm extends Upgrade {
 
     @Override
     public void onHurt(MultiArmCapability multiArmCapability, LivingHurtEvent event) {
-        float damage = event.getAmount()*0.5F;
-        event.setAmount(damage);
+        if(this.dash){
+            float damage = event.getAmount()*0.5F;
+            event.setAmount(damage);
+        }
     }
 }

@@ -155,7 +155,17 @@ public class MultiArmCapability implements IMultiArmPlayer {
         this.passives = cap.passives;
         this.implantStore = cap.implantStore;
         this.setPosSelectUpgrade(cap.getPosSelectUpgrade());
+        this.chickenEnemy = false;
+        this.invokeTimer = 0;
+        this.chickenSpoke = false;
+        this.chickenAnimTime = 0;
+        this.chickenAnimTime0 = 0;
         this.dirty = true;
+        cap.event.setVisible(false);
+        cap.event.removeAllPlayers();
+        this.event.setVisible(false);
+        this.event.removeAllPlayers();
+
     }
     public CompoundTag saveChickenEnemyData(){
         CompoundTag tag = new CompoundTag();
@@ -171,22 +181,27 @@ public class MultiArmCapability implements IMultiArmPlayer {
 
         if(player instanceof ServerPlayer serverPlayer){
             event.setVisible(this.chickenEnemy);
-            if(!event.getPlayers().contains(serverPlayer)){
-                event.addPlayer(serverPlayer);
-            }
-            Component component;
-            if(this.warningLevel>2){
-                component = Component.translatable("chicken_attack.infinite_wave");
+            if(this.chickenEnemy){
+                CRC.LOGGER.debug("Event "+event);
+                if(!event.getPlayers().contains(serverPlayer)){
+                    event.addPlayer(serverPlayer);
+                }
+                Component component;
+                if(this.warningLevel>2){
+                    component = Component.translatable("chicken_attack.infinite_wave");
+                }else {
+                    component = Component.translatable("chicken_attack.wave").append(" : "+(this.wave+1));
+                }
+                event.setName(component);
+                BossEvent.BossBarColor color = getColorForWarningLevel();
+                event.setColor(color);
+                event.setProgress(1.0F-(float) this.invokeTimer/1000.0F);
+
             }else {
-                component = Component.translatable("chicken_attack.wave").append(" : "+(this.wave+1));
+                event.removeAllPlayers();
             }
-            event.setName(component);
-            BossEvent.BossBarColor color = getColorForWarningLevel();
-            event.setColor(color);
-            event.setProgress(1.0F-(float) this.invokeTimer/1000.0F);
-        }else {
-            event.removeAllPlayers();
-        }
+
+        }else
         if(this.cooldownUse>0){
             this.cooldownUse--;
         }

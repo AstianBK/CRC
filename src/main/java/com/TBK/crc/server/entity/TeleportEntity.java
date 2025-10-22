@@ -4,6 +4,8 @@ import com.TBK.crc.common.registry.BKEntityType;
 import com.TBK.crc.server.capability.MultiArmCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -72,6 +74,7 @@ public class TeleportEntity extends Entity {
 
     public void summon(){
         if(!this.level().isClientSide){
+            this.level().broadcastEntityEvent(this,(byte) 4);
             Entity entity = this.type.create(this.level());
             if(entity==null)return;
             if(entity instanceof RobotChicken){
@@ -87,6 +90,15 @@ public class TeleportEntity extends Entity {
             }
             this.level().addFreshEntity(entity);
         }
+    }
+
+
+    @Override
+    public void handleEntityEvent(byte p_19882_) {
+        if(p_19882_==4){
+            this.level().playLocalSound(this.blockPosition().above(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE,5.0F,1.0F,false);
+        }
+        super.handleEntityEvent(p_19882_);
     }
 
     @Override

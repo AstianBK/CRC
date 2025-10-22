@@ -124,11 +124,7 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
         ItemStack itemstack1 = flag ? p_117207_.getMainHandItem() : p_117207_.getOffhandItem();
         if (!itemstack.isEmpty() || !itemstack1.isEmpty()) {
             p_117204_.pushPose();
-            if (this.getParentModel().young) {
-                float f = 0.5F;
-                p_117204_.translate(0.0F, 0.75F, 0.0F);
-                p_117204_.scale(0.5F, 0.5F, 0.5F);
-            }
+
 
             this.renderArmWithItem(p_117207_, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, p_117204_, p_117205_, p_117206_);
             p_117204_.popPose();
