@@ -111,6 +111,7 @@ public class ModBusEvent {
             }
         }
         if(event.getItemStack().is(BKItems.PORTAL_OPENER.get()) && !Util.isInFuture(event.getEntity())){
+
             if(!event.getLevel().isClientSide()){
                 PortalEntity portal = new PortalEntity(BKEntityType.PORTAL.get(),event.getLevel());
                 portal.setPos(event.getPos().above().getCenter());
