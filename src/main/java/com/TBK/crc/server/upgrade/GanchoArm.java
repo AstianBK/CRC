@@ -30,13 +30,14 @@ public class GanchoArm extends Upgrade {
                 multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS, getVolumeStartAbility(),1.0f,false);
 
                 ganchoEntity.isBack = true;
-                this.ganchoId = -1;
+                ganchoEntity.hit = false;
+                ganchoEntity.level().broadcastEntityEvent(gancho,(byte) 5);
             } else {
                 if (!ganchoEntity.isBack && gancho.distanceTo(player) > MAX_RANGE) {
                     multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS, getVolumeStartAbility(),1.0f,false);
 
                     ganchoEntity.isBack = true;
-                    this.ganchoId = -1;
+                    ganchoEntity.level().broadcastEntityEvent(gancho,(byte) 5);
                 }
             }
         }
@@ -89,19 +90,22 @@ public class GanchoArm extends Upgrade {
                 if(!ganchoEntity.isBack ){
                     if (!multiArmCapability.getPlayer().isShiftKeyDown()) {
                         if (ganchoEntity.hit) {
-                            Vec3 pushDirection = gancho.position().subtract(multiArmCapability.getPlayer().position()).normalize().scale(3);
+                            Vec3 direction = gancho.position().subtract(multiArmCapability.getPlayer().position());
+                            Vec3 pushDirection = direction.normalize().scale(3*Math.min(direction.length()/6.0F,1.0F));
                             multiArmCapability.getPlayer().setDeltaMovement(pushDirection.x, Math.min(pushDirection.y, 1.5F), pushDirection.z);
                             multiArmCapability.getPlayer().hurtMarked = true;
                         }
                     }
                     ganchoEntity.isBack = true;
-
+                    ganchoEntity.level().broadcastEntityEvent(gancho,(byte) 5);
                 }
 
 
             }else {
                 if(multiArmCapability.catchEntity!=null){
-                    Vec3 pushDirection = multiArmCapability.getPlayer().position().subtract(multiArmCapability.catchEntity.position()).normalize().scale(3);
+                    Vec3 direction = multiArmCapability.getPlayer().position().subtract(multiArmCapability.getPlayer().position());
+                    Vec3 pushDirection = direction.normalize().scale(3*Math.min(direction.length()/6.0F,1.0F));
+
                     multiArmCapability.catchEntity.setDeltaMovement(pushDirection.x,Math.min(pushDirection.y,1.5F),pushDirection.z);
                     multiArmCapability.catchEntity.hurtMarked=true;
 
