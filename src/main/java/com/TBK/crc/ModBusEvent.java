@@ -99,7 +99,7 @@ public class ModBusEvent {
                         cap.wave = 0;
                         cap.timeLevelWarning = 0;
                         cap.playChickenWarning = false;
-                        cap.invokeTimer = 1000;
+                        cap.invokeTimer = 400;
                         PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getEntity().getId()), (ServerPlayer) event.getEntity());
                     }
                 }else {
@@ -254,7 +254,7 @@ public class ModBusEvent {
                         cap.wave = 0;
                         cap.warningLevel = 1;
                         cap.playChickenWarning = true;
-                        cap.invokeTimer = 1000;
+                        cap.invokeTimer = 400;
                         PacketHandler.sendToPlayer(new PacketSyncPlayerData(cap.saveChickenEnemyData(),false,event.getSource().getEntity().getId()), (ServerPlayer) event.getSource().getEntity());
                     }
                 }

@@ -194,7 +194,7 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 event.setName(component);
                 BossEvent.BossBarColor color = getColorForWarningLevel();
                 event.setColor(color);
-                event.setProgress(1.0F-(float) this.invokeTimer/1000.0F);
+                event.setProgress(1.0F-(float) this.invokeTimer/400.0F);
 
             }else {
                 event.removeAllPlayers();
@@ -240,12 +240,13 @@ public class MultiArmCapability implements IMultiArmPlayer {
                 }
             }
         }
+
         if(this.chickenEnemy){
             if(this.invokeTimer<=0){
                 if(warningLevel>0){
                     this.teleportChicken();
                 }
-                this.invokeTimer = 1000;
+                this.invokeTimer = 400;
                 this.wave = this.wave+1;
                 if(this.wave>6 && this.warningLevel<3){
                     this.warningLevel = Math.min(this.warningLevel+1,3);
