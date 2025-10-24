@@ -248,7 +248,7 @@ public class CyberChickenFight{
 			vec = ((Player)entity).getSleepingPos().orElse(level.getSharedSpawnPos()).getCenter();
 			entity.teleportTo(getDimensionReturn(), vec.x,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
 		}else {
-			entity.teleportTo(getDimension(), vec.x	,vec.y,vec.z, new HashSet<>(),entity.getYRot(), entity.getXRot());
+			entity.teleportTo(getDimension(), -10	,114,0, new HashSet<>(),entity.getYRot(), entity.getXRot());
 		}
 	}
 

@@ -182,7 +182,6 @@ public class MultiArmCapability implements IMultiArmPlayer {
         if(player instanceof ServerPlayer serverPlayer){
             event.setVisible(this.chickenEnemy);
             if(this.chickenEnemy){
-                CRC.LOGGER.debug("Event "+event);
                 if(!event.getPlayers().contains(serverPlayer)){
                     event.addPlayer(serverPlayer);
                 }
