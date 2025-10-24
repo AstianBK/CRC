@@ -12,6 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -58,27 +59,34 @@ public class GanchoEntity extends AbstractArrow {
     @Override
     protected void onHitEntity(EntityHitResult p_36757_) {
         if (p_36757_.getEntity()!=getOwner()){
-            this.cachedID = p_36757_.getEntity().getId();
-            this.cachedUUID = p_36757_.getEntity().getUUID();
-            this.cachedTarget = p_36757_.getEntity();
+            if(p_36757_.getEntity() instanceof RexChicken || p_36757_.getEntity() instanceof PartEntity<?> || p_36757_.getEntity() instanceof EnderDragon){
+                 this.isBack = true;
+                 if(!this.level().isClientSide){
+                     this.level().broadcastEntityEvent(this,(byte) 5);
+                 }
+            }else {
+                this.cachedID = p_36757_.getEntity().getId();
+                this.cachedUUID = p_36757_.getEntity().getUUID();
+                this.cachedTarget = p_36757_.getEntity();
 
-            if(!this.level().isClientSide){
-                if(this.getOwner() instanceof Player player){
-                    MultiArmCapability cap = MultiArmCapability.get(player);
-                    if(cap!=null){
-                        if(p_36757_.getEntity() instanceof LivingEntity){
-                            cap.catchEntity = p_36757_.getEntity();
-                            PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity) p_36757_.getEntity());
-
-                        }else if(p_36757_.getEntity() instanceof PartEntity<?> partEntity){
-                            cap.catchEntity = partEntity.getParent();
-                            PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity)partEntity.getParent());
+                if(!this.level().isClientSide){
+                    if(this.getOwner() instanceof Player player){
+                        MultiArmCapability cap = MultiArmCapability.get(player);
+                        if(cap!=null){
+                            if(p_36757_.getEntity() instanceof LivingEntity){
+                                cap.catchEntity = p_36757_.getEntity();
+                                PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity) p_36757_.getEntity());
+                            }else if(p_36757_.getEntity() instanceof PartEntity<?> partEntity){
+                                cap.catchEntity = partEntity.getParent();
+                                PacketHandler.sendToAllTracking(new PacketHandlerPowers(1,p_36757_.getEntity(),player), (LivingEntity)partEntity.getParent());
+                            }
                         }
                     }
                 }
+                discard();
+                p_36757_.getEntity().hurt(damageSources().generic(),2.0F);
+
             }
-            discard();
-            p_36757_.getEntity().hurt(damageSources().generic(),2.0F);
         }
     }
 
@@ -108,7 +116,6 @@ public class GanchoEntity extends AbstractArrow {
             }
 
             ++this.clientSideReturnTridentTickCount;
-
         }
     }
 
@@ -142,6 +149,8 @@ public class GanchoEntity extends AbstractArrow {
                     }
                 }
             }
+        }else if(p_19882_==5){
+            this.isBack = true;
         }
         super.handleEntityEvent(p_19882_);
     }

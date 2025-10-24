@@ -139,6 +139,12 @@ public class ResidualEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if(this.owner==null){
+            discard();
+        }
+        if(this.delayTime==0 && this.residualTime == 0){
+            discard();
+        }
         this.delayTime0 = this.delayTime;
         this.residualTime0 = this.residualTime;
         if(this.delayTime>0){

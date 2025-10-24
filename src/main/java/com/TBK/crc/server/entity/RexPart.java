@@ -186,7 +186,7 @@ public class RexPart<T extends RexChicken> extends PartEntity<T> {
     public void destroy(){
         if(!this.level().isClientSide){
             this.setBreaking(true);
-            this.parentMob.stunnedTick=1000;
+            this.parentMob.stunnedTick=300;
             this.parentMob.level().broadcastEntityEvent(this.parentMob,(byte) 12);
             PacketHandler.sendToAllTracking(new PacketActionRex(this.parentMob.getId(),this.getId(),12),this.parentMob);
         }
