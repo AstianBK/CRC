@@ -422,7 +422,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                             this.setCharging(false);
                             if(!this.level().isClientSide && !this.isPowered()){
                                 this.level().broadcastEntityEvent(this,(byte) 12);
-                                this.playSound(BKSounds.REX_CRASH.get(),4.0F,1.0F);
+                                this.playSound(BKSounds.REX_CRASH.get(),6.0F,1.0F);
                             }
                             this.chargeTimer = 0;
                             this.cooldownCharge = 100;
