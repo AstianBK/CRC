@@ -112,7 +112,7 @@ public class GanchoEntity extends AbstractArrow {
             double d0 = 0.6D;
             this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
             if (this.clientSideReturnTridentTickCount == 0) {
-                this.playSound(BKSounds.MULTIARM_HARPOON_COMEBACK.get(), 10.0F, 1.0F);
+                entity.playSound(BKSounds.MULTIARM_HARPOON_COMEBACK.get(), 10.0F, 1.0F);
             }
 
             ++this.clientSideReturnTridentTickCount;
