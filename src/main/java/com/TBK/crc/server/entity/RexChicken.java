@@ -1,10 +1,8 @@
 package com.TBK.crc.server.entity;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.client.animacion.RexChickenAnim;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
-import com.TBK.crc.common.registry.BKItems;
 import com.TBK.crc.common.registry.BKSounds;
 import com.TBK.crc.server.StructureData;
 import com.TBK.crc.server.fight.CyberChickenFight;
@@ -13,6 +11,7 @@ import com.TBK.crc.server.network.messager.PacketActionRex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -91,7 +90,9 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     public int regenerationShieldTimer = 0;
     public float speedLaserModifier = 0.0F;
+    public int deathAnimTime = 0;
     public int deathTime = 0;
+
     public int recoveryTimer = 0;
     public RexPart<?> head;
     public RexPart<?> body;
@@ -209,14 +210,26 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     @Override
     public void tick() {
         super.tick();
-        if(this.isDeath() || this.deathTime>0){
-            if(this.deathTime>0){
-                this.deathTime--;
-                if(this.deathTime==0){
+        if(this.isDeath() || this.deathAnimTime >0){
+            if(this.deathAnimTime >0){
+
+                this.deathAnimTime--;
+                if(this.deathAnimTime ==0){
                     if(this.fight!=null){
                         this.fight.setDragonKilled(this);
                     }
                     this.setDeath(true);
+                }
+            }
+
+            float f = (this.random.nextFloat() - 0.5F) * 8.0F;
+            float f1 = (this.random.nextFloat() - 0.5F) * 4.0F;
+            float f2 = (this.random.nextFloat() - 0.5F) * 8.0F;
+            this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX() + (double)f, this.getY() + 2.0D + (double)f1, this.getZ() + (double)f2, 0.0D, 0.0D, 0.0D);
+
+            if(this.isDeath()){
+                if(this.deathTime++>100){
+                    ExperienceOrb.award((ServerLevel) this.level(), this.position(), 100);
                     this.discard();
                 }
             }
@@ -610,6 +623,11 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     }
 
     @Override
+    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
+        return false;
+    }
+
+    @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
     }
@@ -774,6 +792,11 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         this.attackTimer = flag ? 40 : 0;
     }
 
+    @Override
+    public boolean ignoreExplosion() {
+        return true;
+    }
+
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
@@ -799,7 +822,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
         super.die(p_21014_);
 
         if(!this.level().isClientSide){
-            this.deathTime=26;
+            this.deathAnimTime =26;
             this.level().broadcastEntityEvent(this,(byte) 9);
         }
 
@@ -822,7 +845,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     @Override
     public boolean isInvulnerable() {
-        return super.isInvulnerable() || this.isDeath() || this.deathTime>0;
+        return super.isInvulnerable() || this.isDeath() || this.deathAnimTime >0;
     }
 
     @Override
@@ -844,7 +867,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             this.recovery.stop();
             this.idleAnimationTimeout = 26;
             this.death.start(this.tickCount);
-            this.deathTime = 26;
+            this.deathAnimTime = 26;
         }else if(p_21375_ == 12){
             this.charge.stop();
             this.idle.stop();
@@ -886,12 +909,14 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             }
         }
     }
+
     private void initCharge() {
         if(!this.level().isClientSide){
             this.prepareChargeTimer=23;
             this.level().broadcastEntityEvent(this,(byte) 8);
         }
     }
+
     public void recreateFromPacket(ClientboundAddEntityPacket p_218825_) {
         super.recreateFromPacket(p_218825_);
         if (true) return;
@@ -904,36 +929,31 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     }
 
+
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
         p_21017_= net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21016_, p_21017_);
 
         if(this.isPowered()){
-            if((p_21016_.is(Util.ELECTRIC_DAMAGE_PLAYER) || p_21016_.is(Util.ELECTRIC_DAMAGE_MOB))){
-                int healthShieldActually = this.getShieldAmount();
-                if(healthShieldActually<=p_21017_){
-                    this.setShieldAmount(0);
-                    this.regenerationShieldTimer = 300;
-                    this.level().playSound(null,this.getX(),this.getY(),this.getZ(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
-                }else {
-                    this.setShieldAmount((int) (healthShieldActually-p_21017_));
-                    this.level().broadcastEntityEvent(this,(byte) 34);
-                }
+            int healthShieldActually = this.getShieldAmount();
+
+            if ((!p_21016_.is(Util.ELECTRIC_DAMAGE_PLAYER) && !p_21016_.is(Util.ELECTRIC_DAMAGE_MOB))) {
+                p_21017_ *= 0.3F;
+            }
+
+            if(healthShieldActually<=p_21017_){
+                this.setShieldAmount(0);
+                this.regenerationShieldTimer = 300;
+                this.level().playSound(null,this.getX(),this.getY(),this.getZ(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
             }else {
-                p_21017_*=0.3F;
-                int healthShieldActually = this.getShieldAmount();
-                if(healthShieldActually<=p_21017_){
-                    this.setShieldAmount(0);
-                    this.regenerationShieldTimer = 300;
-                    this.level().playSound(null,this.getX(),this.getY(),this.getZ(),BKSounds.REX_SHIELD_OFF.get(),SoundSource.HOSTILE,4.0F,1.0F);
-                }else {
-                    this.setShieldAmount((int) (healthShieldActually-p_21017_));
-                    this.level().broadcastEntityEvent(this,(byte) 34);
-                }
+                this.setShieldAmount((int) (healthShieldActually-p_21017_));
+                this.level().broadcastEntityEvent(this,(byte) 34);
             }
             return false;
         }
+
         if(this.getHealth()>1){
+            this.invulnerableTime = 10;
             return super.hurt(p_21016_,Math.min(p_21017_,3.0F));
         }
         return false;
@@ -953,9 +973,11 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
     public int getShieldAmount(){
         return this.entityData.get(SHIELD_AMOUNT);
     }
+
     public void setShieldAmount(int amount){
         this.entityData.set(SHIELD_AMOUNT,amount);
     }
+
     @Override
     public boolean isPowered() {
         return this.getShieldAmount()>0;
@@ -972,10 +994,6 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             return super.canUse() && RexChicken.this.recoveryTimer<=0 && RexChicken.this.stunnedTick<=0 && !RexChicken.this.isLaser() && RexChicken.this.prepareLaser<=0 && !RexChicken.this.isCharging() && RexChicken.this.prepareChargeTimer<=0;
         }
 
-        @Override
-        public void tick() {
-            super.tick();
-        }
 
         @Override
         protected void checkAndPerformAttack(LivingEntity p_25557_, double p_25558_) {

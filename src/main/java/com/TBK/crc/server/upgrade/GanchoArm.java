@@ -5,6 +5,7 @@ import com.TBK.crc.server.capability.MultiArmCapability;
 import com.TBK.crc.server.entity.GanchoEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -26,10 +27,16 @@ public class GanchoArm extends Upgrade {
         if (gancho instanceof GanchoEntity ganchoEntity) {
             Player player = multiArmCapability.getPlayer();
             if (ganchoEntity.hit && gancho.distanceTo(player) > MAX_RANGE*1.5F) {
+                multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS, getVolumeStartAbility(),1.0f,false);
+
                 ganchoEntity.isBack = true;
+                this.ganchoId = -1;
             } else {
                 if (!ganchoEntity.isBack && gancho.distanceTo(player) > MAX_RANGE) {
+                    multiArmCapability.getPlayer().level().playLocalSound(multiArmCapability.getPlayer().blockPosition(),getStopSound(), SoundSource.PLAYERS, getVolumeStartAbility(),1.0f,false);
+
                     ganchoEntity.isBack = true;
+                    this.ganchoId = -1;
                 }
             }
         }
@@ -55,8 +62,14 @@ public class GanchoArm extends Upgrade {
 
     @Override
     public SoundEvent getStopSound() {
-        return super.getStopSound();
+        return BKSounds.MULTIARM_HARPOON_COMEBACK.get();
     }
+
+    @Override
+    public void stopAbility(MultiArmCapability multiArmCapability) {
+
+    }
+
     @Override
     public void startAbility(MultiArmCapability multiArmCapability) {
         if(hasGancho){
