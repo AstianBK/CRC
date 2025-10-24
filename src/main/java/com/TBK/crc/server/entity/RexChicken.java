@@ -134,7 +134,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                 .add(Attributes.MAX_HEALTH, 100.0D)
                 .add(Attributes.FOLLOW_RANGE, 100.D)
                 .add(Attributes.MOVEMENT_SPEED, 0.15d)
-                .add(Attributes.ATTACK_DAMAGE,12.0D)
+                .add(Attributes.ATTACK_DAMAGE,15.0D)
                 .build();
     }
 
