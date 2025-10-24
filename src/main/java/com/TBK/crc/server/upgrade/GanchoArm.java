@@ -25,8 +25,8 @@ public class GanchoArm extends Upgrade {
         Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
         if (gancho instanceof GanchoEntity ganchoEntity) {
             Player player = multiArmCapability.getPlayer();
-            if (ganchoEntity.hit) {
-
+            if (ganchoEntity.hit && gancho.distanceTo(player) > MAX_RANGE*1.5F) {
+                ganchoEntity.isBack = true;
             } else {
                 if (!ganchoEntity.isBack && gancho.distanceTo(player) > MAX_RANGE) {
                     ganchoEntity.isBack = true;
@@ -74,13 +74,18 @@ public class GanchoArm extends Upgrade {
             Entity gancho = multiArmCapability.getPlayer().level().getEntity(this.ganchoId);
             if(gancho instanceof GanchoEntity ganchoEntity){
                 if(!ganchoEntity.isBack ){
-                    if(ganchoEntity.hit){
-                        Vec3 pushDirection = gancho.position().subtract(multiArmCapability.getPlayer().position()).normalize().scale(3);
-                        multiArmCapability.getPlayer().setDeltaMovement(pushDirection.x,Math.min(pushDirection.y,1.5F),pushDirection.z);
-                        multiArmCapability.getPlayer().hurtMarked=true;
+                    if (!multiArmCapability.getPlayer().isShiftKeyDown()) {
+                        if (ganchoEntity.hit) {
+                            Vec3 pushDirection = gancho.position().subtract(multiArmCapability.getPlayer().position()).normalize().scale(3);
+                            multiArmCapability.getPlayer().setDeltaMovement(pushDirection.x, Math.min(pushDirection.y, 1.5F), pushDirection.z);
+                            multiArmCapability.getPlayer().hurtMarked = true;
+                        }
                     }
                     ganchoEntity.isBack = true;
+
                 }
+
+
             }else {
                 if(multiArmCapability.catchEntity!=null){
                     Vec3 pushDirection = multiArmCapability.getPlayer().position().subtract(multiArmCapability.catchEntity.position()).normalize().scale(3);
@@ -92,6 +97,7 @@ public class GanchoArm extends Upgrade {
                     multiArmCapability.getPlayer().level().addFreshEntity(gancho1);
                 }
             }
+
             multiArmCapability.catchEntity=null;
         }
     }

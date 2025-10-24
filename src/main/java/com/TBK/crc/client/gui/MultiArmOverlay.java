@@ -36,7 +36,7 @@ public class MultiArmOverlay implements IGuiOverlay {
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_0.png"),
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_1.png"),
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_2.png"),
-            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken_talk_3.png")
+            new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_3.png")
 
     };
 
@@ -113,7 +113,7 @@ public class MultiArmOverlay implements IGuiOverlay {
                         graphics.pose().mulPose(Axis.XP.rotationDegrees(Mth.sin((ageInTick *0.5F)) * 30.0F ));
                         graphics.pose().mulPose(Axis.YP.rotationDegrees(Mth.sin((ageInTick *0.9F)) * 15.0F ));
                         graphics.pose().translate(-centerX, -centerY, 0);
-                        location = FRAMES[(int) ((ageInTick)%4)+(warningLevel*3)];
+                        location = FRAMES[(int) ((ageInTick)%4)+(warningLevel*4)];
                     }
                     graphics.blit(location, (int) centerX, (int) centerY, 0,0, Mth.ceil(18 + 128*percent),  Mth.ceil(18 + 128*percent), Mth.ceil(18 + 128*percent) ,  Mth.ceil(18 + 128*percent));
                     RenderSystem.disableBlend();

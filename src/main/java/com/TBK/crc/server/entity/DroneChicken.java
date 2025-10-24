@@ -1,10 +1,11 @@
 package com.TBK.crc.server.entity;
 
+import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKEntityType;
-import com.TBK.crc.common.registry.BKParticles;
+import com.TBK.crc.common.registry.BKSounds;
+import com.google.common.collect.Streams;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -31,7 +32,7 @@ public class DroneChicken extends RobotChicken {
     public AnimationState air = new AnimationState();
     public AnimationState stand = new AnimationState();
     public int idleAnimationTimeout = 0;
-    public int standTimer = 0;
+    public BlockPos blockTargetActually = null;
     public DroneChicken(Level p_21684_) {
         super(BKEntityType.DRONE_CHICKEN.get(), p_21684_);
     }
@@ -39,6 +40,7 @@ public class DroneChicken extends RobotChicken {
     public DroneChicken(EntityType<DroneChicken> type, Level level) {
         super(type,level);
         this.moveControl = new FlyingMoveControl(this, 10, true);
+        this.setNoGravity(true);
     }
 
 
@@ -47,7 +49,7 @@ public class DroneChicken extends RobotChicken {
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6.0F, 1.0D, 1.2D));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6.0F, 1.0D, 1.2D));
 
-        this.goalSelector.addGoal(2,new DroneAttack(this,0.75F,15.0F,3,7));
+        this.goalSelector.addGoal(2,new DroneAttack(this,0.75F,7.0F,3,7));
         this.goalSelector.addGoal(4,new DroneFlyGoal(this,0.20F,4,10));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -79,15 +81,6 @@ public class DroneChicken extends RobotChicken {
 
         return currentYaw + clampedDelta;
     }
-    public void updateRot(Vec3 vec3,boolean flag){
-        if (flag) {
-            this.setYRot((float)(Mth.atan2(-vec3.x, -vec3.z) * (double)(180F / (float)Math.PI)));
-        } else {
-            this.setYRot(lerpRotation(this.getYRot(),(float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)),5.0F));
-        }
-
-        this.setXRot(lerpRotation(this.getXRot(),(float)(Mth.atan2(vec3.y, vec3.horizontalDistance()) * (double)(180F / (float)Math.PI)),5.0F));
-    }
 
 
     @Override
@@ -117,29 +110,21 @@ public class DroneChicken extends RobotChicken {
 
     @Override
     public void handleEntityEvent(byte p_21375_) {
-        if(p_21375_ == 8){
-            for (int i = 0 ; i<3 ; i++){
-                this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
-            }
-            this.level().playLocalSound(this.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL,20.0F,1.0f,false);
+        if(p_21375_==4){
+            this.level().playLocalSound(this.blockPosition().above(), BKSounds.MULTIARM_CANNON_NORMAL_SHOT.get(), SoundSource.HOSTILE,5.0F,1.0F,false);
         }
         super.handleEntityEvent(p_21375_);
     }
 
     @Override
     public boolean doHurtTarget(Entity p_21372_) {
-        if(!this.level().isClientSide){
-            Util.createExplosion(this,this.level(),p_21372_.blockPosition(),5.0F);
-        }else {
-            this.level().broadcastEntityEvent(this,(byte) 8);
-        }
-        return super.doHurtTarget(p_21372_);
+        return true;
     }
 
     static class DroneAttack extends Goal{
         private final DroneChicken drone;
         private final double speed;
-        private final double circleRadius;
+        private double circleRadius;
         private final Level world;
         private double circlingAngle;
         private final int minAltitude;
@@ -148,8 +133,10 @@ public class DroneChicken extends RobotChicken {
         private int attackCooldown=0;
         public boolean meleeAttack=false;
         public boolean rot=false;
+        private Mode mode = Mode.ORBIT;
+        private int ammo = 0;
+        private int orbitTime = 0;
 
-        public int timerForMinAltitude = 0;
         public DroneAttack(DroneChicken drone, double speed, double circleRadius, int minAltitude, int maxAltitude) {
             this.drone = drone;
             this.speed = speed;
@@ -170,11 +157,19 @@ public class DroneChicken extends RobotChicken {
             this.circlingPosition = null;
             this.circlingAngle = 0.0;
             this.attackCooldown = 0;
-            this.resetAmount();
+            this.resetRot();
+            this.drone.blockTargetActually = null;
+            this.circleRadius = 7.0F;
+            this.orbitTime = 100 + (int) (this.drone.random.nextFloat()*200.0F);
         }
 
-        public void resetAmount(){
+        public void resetRot(){
             this.rot=this.world.random.nextBoolean();
+        }
+
+        public void startOrbit(){
+            this.mode = Mode.ORBIT;
+            this.orbitTime = 100 + (int) (this.drone.random.nextFloat()*200.0F);
         }
 
         public boolean canContinueToUse() {
@@ -195,53 +190,127 @@ public class DroneChicken extends RobotChicken {
         public void tick() {
             LivingEntity target = this.drone.getTarget();
             if (target != null) {
-                double distanceToTarget = this.drone.distanceToSqr(target.getX(), target.getY(), target.getZ());
-                this.circlingAngle += this.rot ? 0.05F : -0.05F;
-                this.meleeAttack = this.drone.getHealth()<this.drone.getMaxHealth()*0.3F;
-                Vec3 direction;
-                if (!this.meleeAttack) {
-                    double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
-                    double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
-                    double heightOffset = 6.0F;
-                    this.circlingPosition = new Vec3(target.getX() + offsetX, target.getY() + heightOffset, target.getZ() + offsetZ);
-
-                    direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.9F);
-
-                    Vec3 currentMotion = this.drone.getDeltaMovement();
-
-                    double smoothFactor = 0.25D;
-                    Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(smoothFactor));
-
-                    this.drone.setDeltaMovement(smoothedMotion);
+                if (this.drone.blockTargetActually == null) {
+                    this.drone.blockTargetActually = new BlockPos((int) target.getX(), (int) target.getY(), (int) target.getZ());
                 }
 
-                this.rotateTowardsTarget(target);
+                double distanceToTarget = this.drone.distanceToSqr(target.getX(), target.getY(), target.getZ());
+                int x = this.drone.blockTargetActually.getX();
+                int y = this.drone.blockTargetActually.getY();
+                int z = this.drone.blockTargetActually.getZ();
+                double heightOffset = 6.0F;
 
-                if (this.attackCooldown >= 20 && !this.meleeAttack && distanceToTarget < 1024.0F) {
-                    ElectroProjectile electro = new ElectroProjectile(this.world, this.drone, 0);
-                    electro.setPos(this.drone.position());
-                    electro.shoot(
-                            target.getX() - drone.getX(),
-                                target.getY() + target.getBbHeight() / 2 - drone.getY(),
-                            target.getZ() - drone.getZ(),
-                            1.0F, 0.1F
-                    );
-                    this.world.addFreshEntity(electro);
-                    this.attackCooldown = 0;
-                } else {
-                    if (this.meleeAttack) {
-                        Vec3 desiredMotion = target.position().subtract(this.drone.position()).normalize().scale(0.5F);
+                boolean collision = Streams.stream(this.drone.level().getBlockCollisions(this.drone,
+                        this.drone.getBoundingBox().inflate(0.3D))).findAny().isPresent();
+
+                if (collision) {
+                    this.mode = Mode.ATTACK;
+                }
+
+                Vec3 direction;
+                switch (this.mode) {
+                    case ORBIT -> {
+                        double offsetX = Math.cos(this.circlingAngle) * this.circleRadius;
+                        double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
+                        this.circlingPosition = new Vec3(x + offsetX, y + heightOffset, z + offsetZ);
+
+                        direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.75F);
+
                         Vec3 currentMotion = this.drone.getDeltaMovement();
-                        Vec3 smoothedMotion = currentMotion.add(desiredMotion.subtract(currentMotion).scale(0.3D));
+                        Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(0.25D));
                         this.drone.setDeltaMovement(smoothedMotion);
 
-                        if (distanceToTarget < 9.0F) {
-                            this.drone.doHurtTarget(target);
+                        double distanceToCirclePoint = this.drone.position().distanceTo(this.circlingPosition);
+                        if (distanceToCirclePoint < 1.5D)
+                            this.circlingAngle += this.rot ? 0.05F : -0.05F;
+
+                        if (this.circlingAngle > Math.PI*3 || this.circlingAngle < -Math.PI*3) {
+                            this.circlingAngle = 0.0F;
+                            this.drone.blockTargetActually = new BlockPos((int) target.getX(), (int) target.getY(), (int) target.getZ());
+                        }
+                        this.rotateTowardsDelta();
+
+                        if(this.orbitTime--<0){
+                            this.mode = Mode.ORBIT_ATTACK;
+                            this.ammo = this.drone.random.nextInt(3,5);
+                            CRC.LOGGER.debug("switching back to ORBIT Attack");
+                        }
+                    }
+                    case ORBIT_ATTACK->{
+                        this.drone.setPos(this.drone.position());
+                        if(this.drone.getY() > target.getY()+2.0D){
+                            this.drone.setDeltaMovement(new Vec3(0,-0.3,0));
+                        }else {
+                            this.drone.setDeltaMovement(Vec3.ZERO);
+                        }
+                        this.rotateTowardsTarget(target);
+                        Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5F, target.getZ());
+                        Vec3 toTarget = targetPos.subtract(this.drone.position());
+                        double dist = Math.sqrt(distanceToTarget);
+
+                        if (this.attackCooldown > 0) {
+                            this.attackCooldown--;
+                        } else {
+                            if(dist <= 20){
+                                ElectroProjectile electro = new ElectroProjectile(this.drone.level(),this.drone,0);
+                                electro.setPos(this.drone.position());
+                                electro.shoot(toTarget.x,toTarget.y,toTarget.z,2.0F,1.0F);
+                                this.drone.level().addFreshEntity(electro);
+                                this.drone.level().broadcastEntityEvent(this.drone,(byte) 4);
+                                this.attackCooldown = 30;
+                                this.ammo--;
+                            }else {
+                                this.startOrbit();
+                            }
+                        }
+
+                        if(this.ammo==0){
+                            this.startOrbit();
+                        }
+                    }
+
+                    case ATTACK -> {
+                        double desiredDistance = 10.0D;
+                        double dist = Math.sqrt(distanceToTarget);
+                        Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5F, target.getZ());
+                        Vec3 toTarget = targetPos.subtract(this.drone.position());
+                        this.rotateTowardsTarget(target);
+
+                        if(this.drone.getY() > target.getY()+2.0D){
+                            this.drone.setDeltaMovement(new Vec3(0,-0.3,0));
+                        }else {
+                            this.drone.setDeltaMovement(Vec3.ZERO);
+                        }
+                        if (dist > desiredDistance + 2) {
+                            direction = toTarget.normalize().scale(0.8F);
+                        } else if (dist < desiredDistance - 1) {
+                            direction = toTarget.normalize().scale(-0.1F);
+                        } else {
+                            direction = Vec3.ZERO;
+                        }
+
+                        this.drone.setDeltaMovement(direction.scale(0.5F));
+
+                        if (this.attackCooldown > 0) {
+                            this.attackCooldown--;
+                        } else {
+                            if (dist <= 20.0D) {
+                                ElectroProjectile electro = new ElectroProjectile(this.drone.level(),this.drone,0);
+                                electro.setPos(this.drone.position());
+                                electro.shoot(toTarget.x,toTarget.y,toTarget.z,2.0F,1.0F);
+                                this.drone.level().addFreshEntity(electro);
+                                this.drone.level().broadcastEntityEvent(this.drone,(byte) 4);
+
+                                this.attackCooldown = 40;
+
+                            }
+                        }
+
+                        if (!collision && dist <= (this.circleRadius * 1.5D)) {
+                            startOrbit();
                         }
                     }
                 }
-
-                this.attackCooldown = Math.min(this.attackCooldown + 1, 20);
             }
 
         }
@@ -249,8 +318,17 @@ public class DroneChicken extends RobotChicken {
             return true;
         }
 
-
         private void rotateTowardsTarget(LivingEntity target) {
+            Vec3 direction = target.position().subtract(this.drone.position());
+            double dx = direction.x;
+            double dy = direction.y;
+            double dz = direction.z;
+            double targetYaw = Math.toDegrees(Math.atan2(dz, dx)) - 90.0;
+            double pitch = -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+            this.drone.setYRot(this.lerpRotation(this.drone.getYRot(), (float)targetYaw, 30.0F));
+            this.drone.setXRot((float)pitch);
+        }
+        private void rotateTowardsDelta() {
             Vec3 direction = drone.getDeltaMovement();
             double dx = direction.x;
             double dy = direction.y;
@@ -259,7 +337,6 @@ public class DroneChicken extends RobotChicken {
             double pitch = -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
             this.drone.setYRot(this.lerpRotation(this.drone.getYRot(), (float)targetYaw, 30.0F));
             this.drone.setXRot((float)pitch);
-
         }
 
         private float lerpRotation(float currentYaw, float targetYaw, float maxTurnSpeed) {
@@ -272,11 +349,11 @@ public class DroneChicken extends RobotChicken {
 
 
 
-        private double calculateHeightOffset(LivingEntity target) {
-            double currentAltitude = this.drone.getY();
-            double targetAltitude = target.getY();
-            double targetHeight = targetAltitude + (double)this.minAltitude + Math.random() * (double)(this.maxAltitude - this.minAltitude);
-            return targetHeight - currentAltitude;
+
+        enum Mode {
+            ORBIT,
+            ORBIT_ATTACK,
+            ATTACK
         }
     }
     public static class DroneFlyGoal extends Goal {
