@@ -930,7 +930,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
-        if(this.isInvulnerableTo(p_21016_) && this.invulnerableTime > 0)return false;
+        if(this.isInvulnerableTo(p_21016_) || this.invulnerableTime > 0)return false;
         p_21017_= net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21016_, p_21017_);
 
         if(this.isPowered()){
