@@ -150,7 +150,10 @@ public class DroneChicken extends RobotChicken {
 
         public boolean canUse() {
             LivingEntity potentialTarget = this.drone.getTarget();
-            return potentialTarget != null && potentialTarget.isAlive() ;
+            if((potentialTarget instanceof Player player && !player.isCreative())){
+                return false;
+            }
+            return potentialTarget != null && potentialTarget.isAlive();
         }
 
         public void start() {
