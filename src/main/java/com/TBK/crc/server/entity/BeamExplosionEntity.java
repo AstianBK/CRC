@@ -1,12 +1,10 @@
 package com.TBK.crc.server.entity;
 
-import com.TBK.crc.CRC;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -18,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -35,14 +32,14 @@ public class BeamExplosionEntity extends Entity {
     public Map<BlockPos,Integer> crackingBlock = new HashMap<>();
     public int restoreCracking = 0;
     public boolean cracking = false;
-    public LivingEntity owner;
+    public LivingEntity source;
     public BeamExplosionEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
-        this.owner = null;
+        this.source = null;
     }
     public BeamExplosionEntity(EntityType<?> p_19870_, Level p_19871_,LivingEntity livingEntity) {
         super(p_19870_, p_19871_);
-        this.owner = livingEntity;
+        this.source = livingEntity;
     }
 
     public void startCracking(){
@@ -93,7 +90,7 @@ public class BeamExplosionEntity extends Entity {
 
                     for(int k2 = 0; k2 < list.size(); ++k2) {
                         Entity entity = list.get(k2);
-                        if (!entity.ignoreExplosion()) {
+                        if (!entity.ignoreExplosion()  && (this.source == null || !this.source.isAlliedTo(entity))) {
                             double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double)f2;
                             if (d12 <= 1.0D) {
                                 double d5 = entity.getX() - this.getX();
@@ -103,9 +100,9 @@ public class BeamExplosionEntity extends Entity {
                                 if (d13 != 0.0D) {
                                     double d14 = (double)getSeenPercent(vec3, entity);
                                     double d10 = (1.0D - d12) * d14;
-                                    if(this.owner instanceof Mob mob){
+                                    if(this.source instanceof Mob mob){
                                         entity.hurt(Util.electricDamageMob((ServerLevel) this.level(),mob), (float)((int)((d10 * d10 + d10) / 2.0D * 20.0D * (double)f2 + 4.0D)));
-                                    }else if(this.owner instanceof Player player){
+                                    }else if(this.source instanceof Player player){
                                         entity.hurt(Util.electricDamage((ServerLevel) this.level(), player), (float)((int)((d10 * d10 + d10) / 2.0D * 20.0D * (double)f2 + 4.0D)));
                                     }else {
                                         entity.hurt(damageSources().explosion(null,null), (float)((int)((d10 * d10 + d10) / 2.0D * 20.0D * (double)f2 + 4.0D)));

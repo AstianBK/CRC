@@ -46,7 +46,7 @@ public class RobotChicken extends PathfinderMob implements PowerableMob {
 
     @Override
     public boolean isAlliedTo(Entity p_20355_) {
-        return super.isAlliedTo(p_20355_) || p_20355_ instanceof RobotChicken;
+        return super.isAlliedTo(p_20355_) || p_20355_ instanceof RobotChicken || p_20355_ instanceof RexChicken || p_20355_ instanceof RexPart<?>;
     }
 
     @Nullable

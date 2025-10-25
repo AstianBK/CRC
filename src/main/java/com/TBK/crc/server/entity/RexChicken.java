@@ -927,6 +927,10 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     }
 
+    @Override
+    public boolean isAlliedTo(Entity p_20355_) {
+        return super.isAlliedTo(p_20355_) || p_20355_==this || p_20355_ instanceof RexPart<?>;
+    }
 
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
