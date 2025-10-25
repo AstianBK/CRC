@@ -227,7 +227,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
             if(this.isDeath()){
                 if(this.deathTime++>100){
-                    ExperienceOrb.award((ServerLevel) this.level(), this.position(), 100);
+                    ExperienceOrb.award((ServerLevel) this.level(), this.position(), 1395);
                     this.discard();
                 }
             }
