@@ -313,18 +313,20 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
                 this.getNavigation().stop();
                 if(this.stunnedTick>280){
                     Vec3 vec32 = this.chargeDirection;
-                    double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
-                    double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
-                    this.yHeadRot=(float)f6;
-                    this.setYHeadRot((float) f6);
-                    this.yBodyRot= (float) (f6);
-                    this.setYRot((float) f6);
-                    this.setXRot((float) f5);
-                    this.setRot(this.getYRot(),this.getXRot());
+                    if(!this.level().isClientSide){
+                        double f5 = -Math.toDegrees(Math.atan2(vec32.y,Math.sqrt(vec32.x*vec32.x + vec32.z*vec32.z)));
+                        double f6 = Math.toDegrees(Math.atan2(vec32.z, vec32.x)) - 90.0F;
+                        this.yHeadRot=(float)f6;
+                        this.setYHeadRot((float) f6);
+                        this.yBodyRot= (float) (f6);
+                        this.setYRot((float) f6);
+                        this.setXRot((float) f5);
+                        this.setRot(this.getYRot(),this.getXRot());
+                    }
                     this.setDeltaMovement(this.chargeDirection.multiply(-1,1,-1));
                     this.chargeDirection=this.chargeDirection.scale(0.8);
                     boolean flag = false;
-                    AABB aabb = this.getBoundingBox().inflate(1D);
+                    AABB aabb = this.body.getBoundingBox().inflate(0.4D);
 
                     for(BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
                         BlockState blockstate = this.level().getBlockState(blockpos);
