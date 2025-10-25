@@ -200,7 +200,7 @@ public class DroneChicken extends RobotChicken {
                 int z = this.drone.blockTargetActually.getZ();
                 double heightOffset = 6.0F;
 
-                boolean collision = this.drone.level().noCollision(this.drone,this.drone.getBoundingBox().inflate(0.1F));
+                boolean collision = !this.drone.level().noCollision(this.drone,this.drone.getBoundingBox().inflate(0.1F));
 
                 if (collision) {
                     this.mode = Mode.ATTACK;
