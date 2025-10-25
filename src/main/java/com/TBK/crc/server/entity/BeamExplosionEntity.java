@@ -59,19 +59,20 @@ public class BeamExplosionEntity extends Entity {
         }
         if(this.level().isClientSide){
             if(this.restoreCracking>0){
-
                 if (this.restoreCracking%5==0){
                     //this.level().playLocalSound(this.getX(),this.getY(),this.getY(), SoundEvents.ROOTED_DIRT_BREAK,SoundSource.HOSTILE,10.0f,1.0f,false);
                     for (BlockPos pos : this.crackingBlock.keySet()){
                         Minecraft.getInstance().particleEngine.crack(pos, Direction.UP);
                     }
                 }
+
                 if (this.restoreCracking==1){
                     for (int i = 0 ; i<3 ; i++){
                         this.level().addParticle(BKParticles.ELECTRO_EXPLOSION_PARTICLES.get(),this.getX()+this.random.nextInt(-2,2),this.getY()+this.random.nextInt(0,2),this.getZ()+this.random.nextInt(-2,2),0.0F,0.0F,0.0F);
                     }
                     this.level().playLocalSound(this.getX(),this.getY(),this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS,4.0F,1.0f,false);
                 }
+
             }
         }else {
             if(this.crackingBlock.isEmpty() && !this.cracking){

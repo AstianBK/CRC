@@ -105,6 +105,7 @@ public class BoomChicken extends RobotChicken {
 
         this.updateRot(new Vec3(vx,vy,vz),true);
     }
+
     private float lerpRotation(float currentYaw, float targetYaw, float maxTurnSpeed) {
         float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
@@ -112,6 +113,7 @@ public class BoomChicken extends RobotChicken {
 
         return currentYaw + clampedDelta;
     }
+
     public void updateRot(Vec3 vec3,boolean flag){
         if (flag) {
             this.setYRot((float)(Mth.atan2(-vec3.x, -vec3.z) * (double)(180F / (float)Math.PI)));
@@ -128,19 +130,12 @@ public class BoomChicken extends RobotChicken {
         double dy = to.getY() - from.getY();
         double dz = (to.getZ() + 0.5) - (from.getZ() + 0.5);
 
-        //double horizontalDist = Math.sqrt(dx * dx + dz * dz);
-
-        //double vHoriz = 0.6;
 
         int ticks = 40;
 
         double vx = dx / ticks;
         double vz = dz / ticks;
         double vy = (dy + 0.5 * g * ticks * ticks) / ticks;
-
-        //int tickAltura = Mth.ceil(vy / g);
-        //this.maxHeight = (vy * vy) / (2 * g);
-        //this.maxTickAltura = tickAltura+this.tickCount+Mth.ceil(tickAltura*0.25F);
 
         return new Vec3(vx, vy, vz);
     }

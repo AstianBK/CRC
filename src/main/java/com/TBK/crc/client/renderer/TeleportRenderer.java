@@ -1,7 +1,6 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
-import com.TBK.crc.common.registry.BKRenderType;
 import com.TBK.crc.server.entity.TeleportEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,7 +17,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class TeleportRenderer<T extends TeleportEntity> extends NoopRenderer<T> {
-    private static final ResourceLocation GUARDIAN_BEAM_LOCATION = new ResourceLocation(CRC.MODID,"textures/entity/beacon_beam.png");
+    private static final ResourceLocation CHICKEN_TP_LOCATION = new ResourceLocation(CRC.MODID,"textures/entity/chicken_tp.png");
 
     public TeleportRenderer(EntityRendererProvider.Context p_174326_) {
         super(p_174326_);
@@ -45,7 +44,7 @@ public class TeleportRenderer<T extends TeleportEntity> extends NoopRenderer<T> 
             pMatrixStack.pushPose();
             float scale = entity.getTeleportPorcent(pPartialTicks) * 3;
             pMatrixStack.scale(scale,3.0F,scale);
-            renderBeaconBeam(pMatrixStack,pBuffer, GUARDIAN_BEAM_LOCATION, pPartialTicks, 1.0F, entity.level().getGameTime(), i1, (int) distance,f1, 0.2F, 0.25F);
+            renderBeaconBeam(pMatrixStack,pBuffer, CHICKEN_TP_LOCATION, pPartialTicks, 1.0F, entity.level().getGameTime(), i1, (int) distance,f1, 0.2F, 0.25F);
 
             pMatrixStack.popPose();
         }

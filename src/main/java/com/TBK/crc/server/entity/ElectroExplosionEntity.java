@@ -81,15 +81,10 @@ public class ElectroExplosionEntity extends Explosion {
         net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
         Vec3 vec3 = new Vec3(this.x, this.y, this.z);
 
-        ElectroProjectile electroProjectile;
-        if(this.source instanceof ElectroProjectile projectile){
-            electroProjectile=projectile;
-        }else {
-            electroProjectile = null;
-        }
+
         for(int k2 = 0; k2 < list.size(); ++k2) {
             Entity entity = list.get(k2);
-            if (!entity.ignoreExplosion() && ((electroProjectile == null || electroProjectile.getOwner()!=null && !electroProjectile.getOwner().is(entity) || electroProjectile.getOwner()==null))) {
+            if (!entity.ignoreExplosion() && (this.source == null || !this.source.isAlliedTo(entity))) {
                 double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double)f2;
                 if (d12 <= 1.0D) {
                     double d5 = entity.getX() - this.x;

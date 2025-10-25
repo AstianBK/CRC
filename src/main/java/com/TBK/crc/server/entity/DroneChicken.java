@@ -200,8 +200,7 @@ public class DroneChicken extends RobotChicken {
                 int z = this.drone.blockTargetActually.getZ();
                 double heightOffset = 6.0F;
 
-                boolean collision = Streams.stream(this.drone.level().getBlockCollisions(this.drone,
-                        this.drone.getBoundingBox().inflate(0.3D))).findAny().isPresent();
+                boolean collision = this.drone.level().noCollision(this.drone,this.drone.getBoundingBox().inflate(0.1F));
 
                 if (collision) {
                     this.mode = Mode.ATTACK;
@@ -214,7 +213,7 @@ public class DroneChicken extends RobotChicken {
                         double offsetZ = Math.sin(this.circlingAngle) * this.circleRadius;
                         this.circlingPosition = new Vec3(x + offsetX, y + heightOffset, z + offsetZ);
 
-                        direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.75F);
+                        direction = this.circlingPosition.subtract(this.drone.position()).normalize().scale(0.60F);
 
                         Vec3 currentMotion = this.drone.getDeltaMovement();
                         Vec3 smoothedMotion = currentMotion.add(direction.subtract(currentMotion).scale(0.25D));
