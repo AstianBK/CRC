@@ -96,7 +96,10 @@
   "tooltip.item.portal_opener": "§3Creates a rift to a different timeline",
   "tooltip.item.danger_increaser": "§3Raises your notoriety level while being temporally pursued",
   "chicken_attack.infinite_wave": "Wave Infinite",
-  "chicken_attack.wave": "Wave"
+  "chicken_attack.wave": "Wave",
+
+  "key.crc.attack_key3": "Show Multi-Arm Abilities",
+  "key.crc.bottom_implant_store": "Show Current Installed Implants"
 }
 
 

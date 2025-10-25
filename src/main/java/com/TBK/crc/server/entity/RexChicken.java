@@ -132,7 +132,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
 
     public static AttributeSupplier setAttributes() {
         return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 150.0D)
+                .add(Attributes.MAX_HEALTH, 180.0D)
                 .add(Attributes.FOLLOW_RANGE, 100.D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.15d)
