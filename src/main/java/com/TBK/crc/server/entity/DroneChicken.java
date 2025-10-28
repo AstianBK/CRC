@@ -163,7 +163,7 @@ public class DroneChicken extends RobotChicken {
             this.resetRot();
             this.drone.blockTargetActually = null;
             this.circleRadius = 7.0F;
-            this.orbitTime = 100 + (int) (this.drone.random.nextFloat()*200.0F);
+            this.orbitTime = 0;
         }
 
         public void resetRot(){
