@@ -131,7 +131,7 @@ public class ElectroProjectile extends AbstractArrow {
                 p_36757_.getEntity().hurt(Util.electricDamage((ServerLevel) level(),player), (float) this.getBaseDamage());
             }else if(this.getOwner() instanceof Mob mob && !this.getOwner().isAlliedTo(p_36757_.getEntity())){
                 p_36757_.getEntity().hurt(Util.electricDamageMob((ServerLevel) level(),mob), (float) this.getBaseDamage());
-            }else {
+            }else if(this.getOwner()==null){
                 p_36757_.getEntity().hurt(damageSources().generic(),(float) this.getBaseDamage());
             }
 
