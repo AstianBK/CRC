@@ -103,7 +103,7 @@ public class GanchoArm extends Upgrade {
 
             }else {
                 if(multiArmCapability.catchEntity!=null){
-                    Vec3 direction = multiArmCapability.getPlayer().position().subtract(multiArmCapability.getPlayer().position());
+                    Vec3 direction = multiArmCapability.getPlayer().position().subtract(multiArmCapability.catchEntity.position());
                     Vec3 pushDirection = direction.normalize().scale(3*Math.min(direction.length()/6.0F,1.0F));
 
                     multiArmCapability.catchEntity.setDeltaMovement(pushDirection.x,Math.min(pushDirection.y,1.5F),pushDirection.z);
