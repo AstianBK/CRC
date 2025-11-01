@@ -225,7 +225,7 @@ public class RexChicken extends PathfinderMob implements PowerableMob{
             float f2 = (this.random.nextFloat() - 0.5F) * 8.0F;
             this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX() + (double)f, this.getY() + 2.0D + (double)f1, this.getZ() + (double)f2, 0.0D, 0.0D, 0.0D);
 
-            if(this.isDeath()){
+            if(this.isDeath() && this.level() instanceof ServerLevel){
                 if(this.deathTime++>100){
                     ExperienceOrb.award((ServerLevel) this.level(), this.position(), 1395);
                     this.discard();

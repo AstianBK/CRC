@@ -37,7 +37,6 @@ public class MultiArmOverlay implements IGuiOverlay {
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_1.png"),
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_2.png"),
             new ResourceLocation(CRC.MODID,"textures/gui/chicken_talk_2/cyborg_chicken2_talk_3.png")
-
     };
 
     protected static final ResourceLocation[] STATICS_FRAMES = new ResourceLocation[]{
@@ -68,6 +67,7 @@ public class MultiArmOverlay implements IGuiOverlay {
                         if(passive.name.equals("night_eye")){
                             int frame = (int) ((1.25F * ageInTick) % CRC.NIGHT_VISION_STAGES.size());
                             ResourceLocation location = CRC.NIGHT_VISION_LOCATIONS.get(frame);
+
 
                             RenderSystem.disableDepthTest();
                             RenderSystem.depthMask(false);
