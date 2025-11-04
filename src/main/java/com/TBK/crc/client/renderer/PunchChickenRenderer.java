@@ -1,6 +1,7 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.layer.RobotChickenEyeLayer;
 import com.TBK.crc.client.layer.RobotChickenShieldLayer;
 import com.TBK.crc.client.model.RobotChickenModel;
 import com.TBK.crc.server.entity.PunchChicken;
@@ -16,8 +17,8 @@ public class PunchChickenRenderer<T extends PunchChicken,M extends RobotChickenM
     public PunchChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new RobotChickenShieldLayer(this,new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.ARMOR_LOCATION))));
+        this.addLayer(new RobotChickenEyeLayer(this,new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.ARMOR_LOCATION))));
         this.shadowRadius = 0.25F;
-
     }
     @Override
     protected boolean shouldShowName(T p_115333_) {

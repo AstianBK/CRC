@@ -26,7 +26,7 @@ public class BKEntityType {
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "punch_chicken"));
 
     public static final RegistryObject<EntityType<CyborgRobotChicken>> CYBORG_ROBOT_CHICKEN = ENTITY_TYPES
-            .register("cyborg_robot_chicken", () -> EntityType.Builder.<CyborgRobotChicken>of(CyborgRobotChicken::new, MobCategory.MISC)
+            .register("cyborg_robot_chicken", () -> EntityType.Builder.<CyborgRobotChicken>of(CyborgRobotChicken::new, MobCategory.MISC).noSummon()
                     .fireImmune().sized(1F, 0.8F).build(CRC.MODID+ "cyborg_robot_chicken"));
     public static final RegistryObject<EntityType<BoomChicken>> BOOM_CHICKEN = ENTITY_TYPES
             .register("boom_chicken", () -> EntityType.Builder.<BoomChicken>of(BoomChicken::new, MobCategory.MISC)
@@ -41,7 +41,7 @@ public class BKEntityType {
                     .fireImmune().sized(0.8F, 0.8F).build(CRC.MODID+ "drone_chicken"));
 
     public static final RegistryObject<EntityType<TeleportEntity>> TELEPORT = ENTITY_TYPES
-            .register("teleport", () -> EntityType.Builder.<TeleportEntity>of(TeleportEntity::new, MobCategory.MISC)
+            .register("teleport", () -> EntityType.Builder.<TeleportEntity>of(TeleportEntity::new, MobCategory.MISC).noSummon()
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "teleport"));
     public static final RegistryObject<EntityType<GanchoEntity>> GANCHO = ENTITY_TYPES
             .register("gancho", () -> EntityType.Builder.<GanchoEntity>of(GanchoEntity::new, MobCategory.MISC)
@@ -56,7 +56,7 @@ public class BKEntityType {
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "cracking_beam"));
 
     public static final RegistryObject<EntityType<ResidualEntity>> RESIDUAL = ENTITY_TYPES
-            .register("residual", () -> EntityType.Builder.<ResidualEntity>of(ResidualEntity::new, MobCategory.MISC)
+            .register("residual", () -> EntityType.Builder.<ResidualEntity>of(ResidualEntity::new, MobCategory.MISC).noSummon()
                     .fireImmune().sized(0.6F, 1.95F).build(CRC.MODID+ "residual"));
 
 
