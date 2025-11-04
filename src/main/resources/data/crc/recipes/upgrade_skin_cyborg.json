@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#R#",
+    "RAR",
+    "#R#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:paper"
+    },
+    "R": {
+      "item": "minecraft:gray_dye"
+    },
+    "A": {
+      "item": "crc:quantum_microprocessor"
+    }
+  },
+  "result": {
+    "item": "crc:upgrade_skin_cyborg",
+    "count": 1
+  }
+}
