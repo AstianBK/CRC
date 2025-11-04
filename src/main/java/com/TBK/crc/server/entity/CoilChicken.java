@@ -83,8 +83,8 @@ public class CoilChicken extends RobotChicken {
         super.tick();
         if(this.isAttacking()){
             this.attackTimer--;
-            if(this.attackTimer<=0 ){
-                if(this.getTarget()!=null){
+            if(this.attackTimer<=0){
+                if(this.getTarget()!=null && this.distanceTo(this.getTarget())<3.0F){
                     this.doHurtTarget(this.getTarget());
                 }
                 this.setAttacking(false);

@@ -1,9 +1,11 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.layer.RobotChickenEyeLayer;
 import com.TBK.crc.client.layer.RobotChickenShieldLayer;
 import com.TBK.crc.client.model.BoomChickenModel;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
+import com.TBK.crc.client.model.RobotChickenModel;
 import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.CyborgRobotChicken;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,6 +20,8 @@ public class BoomChickenRenderer<T extends BoomChicken,M extends BoomChickenMode
     public BoomChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new BoomChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BoomChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new RobotChickenShieldLayer(this,new BoomChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(BoomChickenModel.ARMOR_LOCATION))));
+        this.addLayer(new RobotChickenEyeLayer(this,new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.ARMOR_LOCATION))));
+
         this.shadowRadius = 0.25F;
 
     }

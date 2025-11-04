@@ -23,7 +23,6 @@ public class BKItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, CRC.MODID);
 
     //CYBER-COMPONENT
-
     public static final RegistryObject<Item> CYBORG_RESISTOR = ITEMS.register("cyborg_resistor",()->new CyberComponentItem(new Item.Properties()));
     public static final RegistryObject<Item> CYBORG_CAPACITOR = ITEMS.register("cyborg_capacitor",()->new CyberComponentItem(new Item.Properties()));
     public static final RegistryObject<Item> CYBORG_BONE = ITEMS.register("cyborg_bone",()->new CyberComponentItem(new Item.Properties()));
@@ -33,7 +32,6 @@ public class BKItems {
 
 
     //CYBER-IMPLANT
-
     public static final RegistryObject<Item> CYBORG_ARM = ITEMS.register("cyborg_arm",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.ARM, Upgrade.NONE));
     public static final RegistryObject<Item> CYBORG_EYE = ITEMS.register("cyborg_eye",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE,new NightEye()));
     public static final RegistryObject<Item> CYBORG_EYE_HACKER = ITEMS.register("cyborg_eye_hacker",()->new CyberImplantItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), UpgradeableParts.EYE,new HackerEye()));
@@ -46,7 +44,6 @@ public class BKItems {
 
 
     //CYBER-UPGRADE
-
     public static final RegistryObject<Item> UPGRADE_ARM_CANNON = ITEMS.register("upgrade_arm_cannon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new CannonArm(),null));
     public static final RegistryObject<Item> UPGRADE_ARM_GANCHO = ITEMS.register("upgrade_arm_harpoon",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new GanchoArm(),null));
     public static final RegistryObject<Item> UPGRADE_ARM_CLAWS = ITEMS.register("upgrade_arm_claws",()->new CyberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),UpgradeableParts.ARM,new ClawsArm(),null));
@@ -69,6 +66,7 @@ public class BKItems {
             p_41423_.add(Component.translatable("tooltip.item.signal_jammmer"));
         }
     });
+
     public static final RegistryObject<Item> PORTAL_OPENER = ITEMS.register("portal_opener",()->new Item(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1)){
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
@@ -76,6 +74,7 @@ public class BKItems {
             p_41423_.add(Component.translatable("tooltip.item.portal_opener"));
         }
     });
+
     public static final RegistryObject<Item> DANGER_INCREASER = ITEMS.register("danger_increaser",()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)){
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
@@ -93,11 +92,13 @@ public class BKItems {
     public static final RegistryObject<Item> UPGRADE_SKIN_MILITARY = ITEMS.register("upgrade_skin_military",
             ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"military"));
 
+    public static final RegistryObject<Item> UPGRADE_SKIN_SYMBIOTIC = ITEMS.register("upgrade_skin_symbiotic",
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"symbiotic"));
+
     public static final RegistryObject<Item> UPGRADE_SKIN_CYBORG = ITEMS.register("upgrade_skin_cyborg",
             ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"none"));
 
     //SPAWN-EGGS
-
     public static final RegistryObject<Item> COIL_CHICKEN_SPAWN_EGG = ITEMS.register("coil_chicken_spawn_egg",
             () -> new ForgeSpawnEggItem(BKEntityType.COIL_CHICKEN,0xd8e1e6, 0x36b7ff,
                     new Item.Properties()));
