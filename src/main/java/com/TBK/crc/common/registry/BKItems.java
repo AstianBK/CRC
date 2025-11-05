@@ -87,16 +87,16 @@ public class BKItems {
     //COSMETIC
 
     public static final RegistryObject<Item> UPGRADE_SKIN_JETSTREAM = ITEMS.register("upgrade_skin_jetstream",
-            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"jetstream"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"jetstream",new float[]{1.0F,0.0F,0.0F}));
 
     public static final RegistryObject<Item> UPGRADE_SKIN_MILITARY = ITEMS.register("upgrade_skin_military",
-            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"military"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"military",new float[]{1.0F,0.466F,0.0F}));
 
     public static final RegistryObject<Item> UPGRADE_SKIN_SYMBIOTIC = ITEMS.register("upgrade_skin_symbiotic",
-            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"symbiotic"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"symbiotic",new float[]{0.9843F,0.0F,1.0F}));
 
     public static final RegistryObject<Item> UPGRADE_SKIN_CYBORG = ITEMS.register("upgrade_skin_cyborg",
-            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"none"));
+            ()-> new CyberSkinItem(new Item.Properties().rarity(Rarity.EPIC).stacksTo(1),"none",new float[3]));
 
     //SPAWN-EGGS
     public static final RegistryObject<Item> COIL_CHICKEN_SPAWN_EGG = ITEMS.register("coil_chicken_spawn_egg",

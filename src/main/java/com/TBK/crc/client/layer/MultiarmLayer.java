@@ -62,15 +62,25 @@ public class MultiarmLayer <T extends LivingEntity,M extends HumanoidModel<T>> e
                 if(location==null){
                     location = TEXTURE;
                 }
+                String skinName = CyberSkinItem.getName(cap.implantStore.getImplant(0).getOrCreateTag());
+
                 multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucent(location)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
-                multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.eyes(GLOWING)),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
+                multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.eyes(skinName==null ? GLOWING :getGlowingTexture(skinName))),p_117351_, OverlayTexture.NO_OVERLAY,1.0f,1.0f,1.0f,1.0f);
                 if(cap.levelCharge>0){
                     ResourceLocation texture = ModBusEvent.PULSING[cap.levelCharge];
+                    if(skinName!=null){
+                        texture = ModBusEvent.getPulsingTextureForSkin(cap.levelCharge,skinName);
+                    }
+
                     multiarm.renderToBuffer(p_117349_, p_117350_.getBuffer(RenderType.entityTranslucentEmissive(texture)), p_117351_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
                 p_117349_.popPose();
             }
         }
+    }
+
+    public static ResourceLocation getGlowingTexture(String skin){
+        return new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_glowing_"+skin+".png");
     }
 
     private void selectPoseArm(T entity,String name) {

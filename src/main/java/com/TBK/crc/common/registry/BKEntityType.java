@@ -56,7 +56,7 @@ public class BKEntityType {
                     .fireImmune().sized(0.2F, 0.2F).build(CRC.MODID+ "cracking_beam"));
 
     public static final RegistryObject<EntityType<ResidualEntity>> RESIDUAL = ENTITY_TYPES
-            .register("residual", () -> EntityType.Builder.<ResidualEntity>of(ResidualEntity::new, MobCategory.MISC).noSummon()
+            .register("residual", () -> EntityType.Builder.<ResidualEntity>of(ResidualEntity::new, MobCategory.MISC)
                     .fireImmune().sized(0.6F, 1.95F).build(CRC.MODID+ "residual"));
 
 

@@ -1,5 +1,6 @@
 package com.TBK.crc;
 
+import com.TBK.crc.client.layer.MultiarmLayer;
 import com.TBK.crc.client.model.MultiArmModel;
 import com.TBK.crc.common.Util;
 import com.TBK.crc.common.item.CyberSkinItem;
@@ -36,7 +37,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderArmEvent;
@@ -65,6 +65,9 @@ public class ModBusEvent {
             new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_3.png")
     };
 
+    public static ResourceLocation getPulsingTextureForSkin(int levelCharge, String skinName){
+        return new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_pulsating_"+levelCharge+"_"+skinName+".png");
+    }
 
     @SubscribeEvent
     public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
@@ -141,12 +144,18 @@ public class ModBusEvent {
             float partialTick = event.getPartialTick();
             LivingEntity entity = event.getEntity();
             if (cap.isCatchedTarget(entity)){
-                renderLeash(entity,partialTick,stack,bufferSource,player,event.getPackedLight());
+                CompoundTag tag =cap.implantStore.getImplant(0).getOrCreateTag();
+                float[] colors = CyberSkinItem.getColors(tag);
+                if(colors==null){
+                    colors=new float[]{0.3176F, 0.819F,0.96F};
+                }
+
+                renderLeash(entity,partialTick,stack,bufferSource,player,event.getPackedLight(),colors);
             }
         }
     }
 
-    private static void renderLeash(LivingEntity p_115462_, float p_115463_, PoseStack p_115464_, MultiBufferSource p_115465_, LivingEntity p_115466_,int packedLight) {
+    private static void renderLeash(LivingEntity p_115462_, float p_115463_, PoseStack p_115464_, MultiBufferSource p_115465_, LivingEntity p_115466_, int packedLight, float[] colors) {
         p_115464_.pushPose();
 
         Vec3 vec3 = p_115466_.getRopeHoldPosition(p_115463_);
@@ -175,26 +184,26 @@ public class ModBusEvent {
         int l = p_115462_.level().getBrightness(LightLayer.SKY, blockpos1);
 
         for(int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(p_115462_,vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+            addVertexPair(p_115462_,vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, colors);
         }
 
         for(int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(p_115462_,vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+            addVertexPair(p_115462_,vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, colors);
         }
 
         p_115464_.popPose();
     }
 
 
-    private static void addVertexPair(LivingEntity p_115462_,VertexConsumer p_174308_, Matrix4f p_254405_, float p_174310_, float p_174311_, float p_174312_, int p_174313_, int p_174314_, int p_174315_, int p_174316_, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
+    private static void addVertexPair(LivingEntity p_115462_, VertexConsumer p_174308_, Matrix4f p_254405_, float p_174310_, float p_174311_, float p_174312_, int p_174313_, int p_174314_, int p_174315_, int p_174316_, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, float[] p_174322_) {
         float f = (float)p_174321_ / 24.0F;
         int i = (int)Mth.lerp(f, (float)p_174313_, (float)p_174314_);
         int j = (int)Mth.lerp(f, (float)p_174315_, (float)p_174316_);
         int k = LightTexture.pack(i, j);
         float f1 = p_174321_ == (p_115462_.tickCount%25) ? 1F : 0.7F;
-        float f2 = 0.3176F * f1;
-        float f3 = 0.819F * f1;
-        float f4 = 0.96F * f1;
+        float f2 = p_174322_[0] * f1;
+        float f3 = p_174322_[1] * f1;
+        float f4 = p_174322_[2] * f1;
 
         float f5 = p_174310_ * f;
         float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
@@ -225,15 +234,19 @@ public class ModBusEvent {
             }
 
             RenderType renderType = RenderType.entityTranslucent(location);
+            String skinName = CyberSkinItem.getName(cap.implantStore.getImplant(0).getOrCreateTag());
 
             modelLeft.setPoseArmInGuiForPose(cap,poseStack,partialTicks);
             modelLeft.selectArm(event.getPlayer(),cap.getSelectSkill().name,cap.getSelectSkill(),event.getPlayer().tickCount+partialTicks);
             modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
             modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             modelLeft.setupAnim(event.getPlayer(),0.0F,0.0F,partialTicks+event.getPlayer().tickCount,0.0F,0.0F);
-            modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.eyes(GLOWING)), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.eyes(skinName==null ? GLOWING : MultiarmLayer.getGlowingTexture(skinName))), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             if(cap.levelCharge>0){
-                ResourceLocation texture = PULSING[cap.levelCharge];
+                ResourceLocation texture = ModBusEvent.PULSING[cap.levelCharge];
+                if(skinName!=null){
+                    texture = ModBusEvent.getPulsingTextureForSkin(cap.levelCharge,skinName);
+                }
                 modelLeft.renderToBuffer(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.entityTranslucentEmissive(texture)), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             }
             event.setCanceled(true);

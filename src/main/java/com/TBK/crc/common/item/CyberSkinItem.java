@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -16,10 +17,25 @@ import java.util.List;
 public class CyberSkinItem extends ItemCyborg{
     public ResourceLocation location;
     public String name;
-    public CyberSkinItem(Properties p_41383_,String name) {
+    public float[] colorsEnergy;
+    public CyberSkinItem(Properties p_41383_,String name,float[] colorsEnergy) {
         super(p_41383_, UpgradeableParts.ARM,0);
         location = new ResourceLocation(CRC.MODID,"textures/hand/cyborgarm_"+name+".png");
         this.name = name;
+        this.colorsEnergy = colorsEnergy;
+    }
+
+    public static float[] getColors(CompoundTag tag){
+        if(tag.contains("r") && tag.contains("g") && tag.contains("b")){
+            return new float[]{tag.getFloat("r"),tag.getFloat("g"),tag.getFloat("b")};
+        }
+        return null;
+    }
+    public static String getName(CompoundTag tag){
+        if(tag.contains("name")){
+            return tag.getString("name");
+        }
+        return null;
     }
 
     public static ResourceLocation getTextures(CompoundTag tag){
@@ -32,8 +48,16 @@ public class CyberSkinItem extends ItemCyborg{
     public static void addSkin(CompoundTag tag,CyberSkinItem skin){
         if(skin.name.equals("none")){
             tag.remove("skin");
+            tag.remove("r");
+            tag.remove("g");
+            tag.remove("b");
+            tag.remove("name");
         }else{
             tag.putString("skin",skin.location.toString());
+            tag.putFloat("r",skin.colorsEnergy[0]);
+            tag.putFloat("g",skin.colorsEnergy[1]);
+            tag.putFloat("b",skin.colorsEnergy[2]);
+            tag.putString("name",skin.name);
         }
     }
 

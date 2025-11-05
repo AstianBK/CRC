@@ -24,8 +24,8 @@ public class PortalScreen extends Screen {
     public Button cancelButton;
     public Player player;
     public PortalEntity portal;
-    public PortalScreen(PortalEntity entity) {
-        super(Component.translatable("entity.portal.menu"));
+    public PortalScreen(PortalEntity entity,boolean isExitPortal) {
+        super(Component.translatable( isExitPortal ? "entity.portal.menu_exit" : "entity.portal.menu_entry"));
         this.player = Minecraft.getInstance().player;
         this.portal = entity;
     }

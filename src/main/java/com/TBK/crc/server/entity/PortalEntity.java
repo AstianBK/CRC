@@ -1,9 +1,11 @@
 package com.TBK.crc.server.entity;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.common.Util;
 import com.TBK.crc.common.registry.BKParticles;
 import com.TBK.crc.common.screen.PortalScreen;
 import com.TBK.crc.server.StructureData;
+import com.TBK.crc.server.fight.CyberChickenFight;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -64,7 +66,7 @@ public class PortalEntity extends Entity {
     @Override
     public InteractionResult interactAt(Player p_19980_, Vec3 p_19981_, InteractionHand p_19982_) {
         if(!this.level().isClientSide){
-            this.level().broadcastEntityEvent(this,(byte) 4);
+            this.level().broadcastEntityEvent(this,(byte) (Util.isInFuture(p_19980_) ? 5 : 4));
         }
         return super.interactAt(p_19980_, p_19981_, p_19982_);
     }
@@ -82,7 +84,9 @@ public class PortalEntity extends Entity {
     @Override
     public void handleEntityEvent(byte p_19882_) {
         if(p_19882_ == 4){
-            Minecraft.getInstance().setScreen(new PortalScreen(this));
+            Minecraft.getInstance().setScreen(new PortalScreen(this,false));
+        }else if(p_19882_ == 5){
+            Minecraft.getInstance().setScreen(new PortalScreen(this,true));
         }
         super.handleEntityEvent(p_19882_);
     }
