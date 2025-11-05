@@ -25,6 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -82,6 +84,7 @@ public class PortalEntity extends Entity {
 
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte p_19882_) {
         if(p_19882_ == 4){
             Minecraft.getInstance().setScreen(new PortalScreen(this,false));

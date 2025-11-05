@@ -1,5 +1,6 @@
 package com.TBK.crc;
 
+import com.TBK.crc.common.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -50,6 +51,6 @@ public class Config
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-
+        Util.initUpgrades();
     }
 }

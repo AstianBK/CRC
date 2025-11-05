@@ -28,6 +28,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -81,6 +83,7 @@ public class Util {
         map.put(5,new UpgradeInstance(Upgrade.NONE,0));
         return map;
     }
+    @OnlyIn(Dist.CLIENT)
 
     public static void spawnChargedParticle(Vec3 entity){
         Random random = new Random();
@@ -141,6 +144,7 @@ public class Util {
             eye.refreshTarget(player,level);
         }
     }
+    @OnlyIn(Dist.CLIENT)
     public static boolean isHackingChest(BlockPos pos){
         Minecraft mc = Minecraft.getInstance();
         MultiArmCapability cap = MultiArmCapability.get(mc.player);
@@ -161,7 +165,6 @@ public class Util {
         upgrades.put("coil_feet", CoilFeet::new);
         upgrades.put("knees_spiked",KneesSpiked::new);
         upgrades.put("knees_hard",KneesHard::new);
-
     }
 
     

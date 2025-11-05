@@ -31,6 +31,7 @@ public class ClientEvent {
     public static final CubeDeformation OUT_ARMOR_DEFORMATION = new CubeDeformation(2F);
 
     @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
     public static void clientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(BKContainers.TABLE_MENU.get(), CyborgTableScreen::new);
         MenuScreens.register(BKContainers.UPGRADE_MENU.get(), UpgradeTableScreen::new);
