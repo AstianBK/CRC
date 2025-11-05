@@ -101,7 +101,11 @@
   "chicken_attack.wave": "Wave",
 
   "key.crc.attack_key3": "Show Multi-Arm Abilities",
-  "key.crc.bottom_implant_store": "Show Current Installed Implants"
+  "key.crc.bottom_implant_store": "Show Current Installed Implants",
+
+  "crc.tooltip.cyborg_table" : "",
+  "crc.tooltip.upgrade_table" : ""
+
 }
 
 
