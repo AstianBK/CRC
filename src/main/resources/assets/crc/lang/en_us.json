@@ -103,8 +103,8 @@
   "key.crc.attack_key3": "Show Multi-Arm Abilities",
   "key.crc.bottom_implant_store": "Show Current Installed Implants",
 
-  "crc.tooltip.cyborg_table" : "",
-  "crc.tooltip.upgrade_table" : ""
+  "crc.tooltip.cyborg_table" : "Used to install Cyber-Implants on yourself",
+  "crc.tooltip.upgrade_table" : "Used to upgrade Cyber-Implants"
 
 }
 
