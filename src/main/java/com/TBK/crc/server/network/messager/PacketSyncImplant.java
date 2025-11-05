@@ -11,6 +11,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -49,16 +51,20 @@ public class PacketSyncImplant implements Packet<PacketListener> {
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->{
             assert context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-            Player player = Minecraft.getInstance().player;
-            MultiArmCapability cap = MultiArmCapability.get(player);
-            if(cap!=null){
-                cap.implantStore.setStoreForList(this.container);
-            }
+            handlerClient();
 
         });
         context.get().setPacketHandled(true);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void handlerClient() {
+        Player player = Minecraft.getInstance().player;
+        MultiArmCapability cap = MultiArmCapability.get(player);
+        if(cap!=null){
+            cap.implantStore.setStoreForList(this.container);
+        }
+    }
 
 
     @Override

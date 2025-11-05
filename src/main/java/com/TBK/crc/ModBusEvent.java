@@ -39,6 +39,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -128,7 +130,7 @@ public class ModBusEvent {
             }
         }
     }
-
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void renderPreEvent(RenderLivingEvent.Post<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event){
         if(event.getRenderer().getModel() instanceof MultiArmModel model){
@@ -216,7 +218,7 @@ public class ModBusEvent {
         return p_114496_.isOnFire() ? 15 : p_114496_.level().getBrightness(LightLayer.BLOCK, p_114497_);
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void renderHand(RenderArmEvent event) {
         MultiArmCapability cap = MultiArmCapability.get(event.getPlayer());

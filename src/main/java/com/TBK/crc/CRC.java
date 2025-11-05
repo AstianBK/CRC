@@ -62,7 +62,7 @@ public class CRC
     public static final List<ResourceLocation> BREAKING_LOCATIONS = DESTROY_STAGES.stream().map((p_119371_) -> {
         return new ResourceLocation(MODID,"textures/" + p_119371_.getPath() + ".png");
     }).collect(Collectors.toList());
-    public static final List<RenderType> DESTROY_TYPES = BREAKING_LOCATIONS.stream().map(RenderType::crumbling).collect(Collectors.toList());
+    public static List<RenderType> DESTROY_TYPES;
 
     public static final List<ResourceLocation> GUI_STAGES = IntStream.range(0, 155).mapToObj((p_119253_) -> {
         return new ResourceLocation(MODID,"gui/cyborg_table/cyborg_table_gui_" + p_119253_);
@@ -97,8 +97,7 @@ public class CRC
         BKContainers.CONTAINERS.register(modEventBus);
         BKSounds.register(modEventBus);
         PacketHandler.registerMessages();
-        modEventBus.addListener(CRCCapability::registerCapabilities);
-        Util.initUpgrades();
+        MinecraftForge.EVENT_BUS.addListener(CRCCapability::registerCapabilities);
 
         MinecraftForge.EVENT_BUS.addListener(this::sleepLocationCheck);
         MinecraftForge.EVENT_BUS.addListener(this::sleepTimeCheck);
@@ -109,9 +108,6 @@ public class CRC
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,()->()->{
             modEventBus.addListener(this::registerRenderers);
         });
-    }
-
-    public void startServer(ServerStartedEvent event){
     }
 
     public void sleepLocationCheck(@NotNull SleepingLocationCheckEvent event) {
@@ -146,6 +142,7 @@ public class CRC
 
     @OnlyIn(Dist.CLIENT)
     public void registerRenderers(FMLCommonSetupEvent event){
+        DESTROY_TYPES = BREAKING_LOCATIONS.stream().map(RenderType::crumbling).collect(Collectors.toList());
         EntityRenderers.register(BKEntityType.TELEPORT.get(), TeleportRenderer::new);
         EntityRenderers.register(BKEntityType.PORTAL.get(), PortalRenderer::new);
         EntityRenderers.register(BKEntityType.REX_CHICKEN.get(), RexChickenRenderer::new);
