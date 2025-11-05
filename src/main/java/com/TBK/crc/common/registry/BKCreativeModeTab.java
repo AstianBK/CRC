@@ -41,6 +41,7 @@ public class BKCreativeModeTab {
                 a.accept(new ItemStack(BKItems.UPGRADE_LEGS_COIL_FEET.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_LEGS_KNEES_SPIKED.get()));
+                a.accept(new ItemStack(BKItems.UPGRADE_SKIN_SYMBIOTIC.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_JETSTREAM.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_MILITARY.get()));
                 a.accept(new ItemStack(BKItems.UPGRADE_SKIN_CYBORG.get()));
