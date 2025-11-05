@@ -93,7 +93,7 @@
   "crc.portal.bottom_accept": "Go through",
   "crc.portal.bottom_cancel": "Do not",
   "entity.portal.menu_entry": "Do you wish to enter the time-rift and confront your pursuer?",
-  "entity.portal.menu_exit": "Do you wish to enter the time-rift and confront your pursuer?",
+  "entity.portal.menu_exit": "Exit this timeline and return to your own?",
   "tooltip.item.signal_jammmer": "§3Interrupts any active temporal tracking",
   "tooltip.item.portal_opener": "§3Creates a rift to a different timeline",
   "tooltip.item.danger_increaser": "§3Raises your notoriety level while being temporally pursued",
