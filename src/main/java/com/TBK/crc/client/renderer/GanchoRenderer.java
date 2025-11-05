@@ -64,8 +64,6 @@ public class GanchoRenderer<T extends GanchoEntity> extends NoopRenderer<T> {
                 CompoundTag tag =cap.implantStore.getImplant(0).getOrCreateTag();
                 location = CyberSkinItem.getTextures(tag);
                 colors = CyberSkinItem.getColors(tag);
-                CRC.LOGGER.debug("Colors"+ Arrays.toString(colors));
-                CRC.LOGGER.debug("Tag"+tag);
             }
             if(colors==null){
                colors=new float[]{0.3176F, 0.819F,0.96F};

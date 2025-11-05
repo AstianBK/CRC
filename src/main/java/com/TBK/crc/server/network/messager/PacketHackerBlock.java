@@ -42,7 +42,6 @@ public class PacketHackerBlock implements Packet<PacketListener> {
             MultiArmCapability cap = MultiArmCapability.get(player);
             if(cap!=null){
                 ((HackerEye)cap.passives.getForName("hacker_eye")).hackingBlock = this.block;
-                CRC.LOGGER.debug("block :"+((HackerEye)cap.passives.getForName("hacker_eye")).hackingBlock);
             }
 
         });

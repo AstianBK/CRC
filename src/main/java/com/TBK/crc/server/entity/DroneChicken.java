@@ -235,7 +235,6 @@ public class DroneChicken extends RobotChicken {
                         if(this.orbitTime--<0){
                             this.mode = Mode.ORBIT_ATTACK;
                             this.ammo = this.drone.random.nextInt(3,5);
-                            CRC.LOGGER.debug("switching back to ORBIT Attack");
                         }
                     }
                     case ORBIT_ATTACK->{

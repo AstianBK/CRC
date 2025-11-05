@@ -83,9 +83,6 @@ public class PacketSyncSkill implements Packet<PacketListener> {
         this.upgradesPassive.forEach((k, v) -> {
             passives.addMultiArmSkillAbstracts(k,v.getUpgrade());
         });
-        for(int i = 0 ; i < 6 ; i++){
-            CRC.LOGGER.debug("skill :"+ cap.skills.get(i).name + " passive :"+cap.passives.get(i).name);
-        }
     }
 
 
