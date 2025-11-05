@@ -1,10 +1,12 @@
 package com.TBK.crc.client.renderer;
 
 import com.TBK.crc.CRC;
+import com.TBK.crc.client.layer.RobotChickenEyeLayer;
 import com.TBK.crc.client.layer.RobotChickenShieldLayer;
 import com.TBK.crc.client.model.BoomChickenModel;
 import com.TBK.crc.client.model.CyborgRobotChickenModel;
 import com.TBK.crc.client.model.DroneChickenModel;
+import com.TBK.crc.client.model.RobotChickenModel;
 import com.TBK.crc.server.entity.BoomChicken;
 import com.TBK.crc.server.entity.CyborgRobotChicken;
 import com.TBK.crc.server.entity.DroneChicken;
@@ -18,6 +20,7 @@ public class DroneChickenRenderer<T extends DroneChicken,M extends DroneChickenM
     public DroneChickenRenderer(EntityRendererProvider.Context p_174289_) {
         super(p_174289_, (M) new DroneChickenModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(DroneChickenModel.LAYER_LOCATION)), 1.0F);
         this.addLayer(new RobotChickenShieldLayer(this,new DroneChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(DroneChickenModel.ARMOR_LOCATION))));
+        this.addLayer(new RobotChickenEyeLayer(this,new RobotChickenModel(Minecraft.getInstance().getEntityModels().bakeLayer(RobotChickenModel.ARMOR_LOCATION))));
         this.shadowRadius = 0.25F;
     }
     @Override
